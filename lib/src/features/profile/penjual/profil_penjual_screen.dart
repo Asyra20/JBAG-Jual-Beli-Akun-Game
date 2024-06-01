@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class ProfilPembeli extends StatelessWidget {
-  const ProfilPembeli({super.key});
+class ProfilPenjual extends StatelessWidget {
+  const ProfilPenjual({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      // resizeToAvoidBottomInset: false,
       backgroundColor: Color(0xFF131A2A),
       appBar: AppBar(
         backgroundColor: Color(0xFF131A2A),
@@ -19,42 +19,47 @@ class ProfilPembeli extends StatelessWidget {
           ),
         ),
       ),
-      body: ProfilPembeliBody(),
+      body: ProfilPenjualBody(),
     );
   }
 }
 
-class ProfilPembeliBody extends StatefulWidget {
-  const ProfilPembeliBody({super.key});
+class ProfilPenjualBody extends StatefulWidget {
+  const ProfilPenjualBody({super.key});
 
   @override
-  State<ProfilPembeliBody> createState() => _ProfilPembeliBodyState();
+  State<ProfilPenjualBody> createState() => _ProfilPenjualBodyState();
 }
 
-class _ProfilPembeliBodyState extends State<ProfilPembeliBody> {
+class _ProfilPenjualBodyState extends State<ProfilPenjualBody> {
   final _formKey = GlobalKey<FormState>();
+  _ProfilPembeliData _data = _ProfilPembeliData();
 
   bool _isEditable = false;
-  
+
   final TextEditingController _namaController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _noTelpController = TextEditingController();
+  final TextEditingController _namaProfilEwalletController =
+      TextEditingController();
+  final TextEditingController _noEwalletController = TextEditingController();
 
-  final String _initNama = 'Dzaky';
-  final String _initUsername = '';
-  final String _initEmail = '';
-  final String _initPassword = '';
-  final String _initNoTelp = '';
+  String _selectedEwallet = "";
+
+  List<String> listEwallet = ["Gopay", "Dana", "OVO"];
 
   @override
   void initState() {
-    _namaController.text = _initNama;
-    _usernameController.text = _initUsername;
-    _emailController.text = _initEmail;
-    _passwordController.text = _initPassword;
-    _noTelpController.text = _initNoTelp;
+    _namaController.text = _data.nama;
+    _usernameController.text = _data.username;
+    _emailController.text = _data.email;
+    _passwordController.text = _data.password;
+    _noTelpController.text = _data.noTelp;
+    _selectedEwallet = _data.jenisEwallet;
+    _namaProfilEwalletController.text = _data.namaProfilEwallet;
+    _noEwalletController.text = _data.noEwallet;
     super.initState();
   }
 
@@ -65,6 +70,8 @@ class _ProfilPembeliBodyState extends State<ProfilPembeliBody> {
     _emailController.dispose();
     _passwordController.dispose();
     _noTelpController.dispose();
+    _namaProfilEwalletController.dispose();
+    _noEwalletController.dispose();
     super.dispose();
   }
 
@@ -81,7 +88,7 @@ class _ProfilPembeliBodyState extends State<ProfilPembeliBody> {
                 child: Column(
                   children: [
                     const Text(
-                      'Profil Pembeli',
+                      'Profil Penjual',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontFamily: 'BebasNeue',
@@ -120,6 +127,31 @@ class _ProfilPembeliBodyState extends State<ProfilPembeliBody> {
                       controller: _noTelpController,
                       inputType: TextInputType.number,
                     ),
+                    MyDropdown(
+                      initialSelection: _selectedEwallet,
+                      listEwallet: listEwallet,
+                      onSelected: (value) {
+                        if (_isEditable) {
+                          if (value != null) {
+                            setState(() {
+                              _selectedEwallet = value;
+                            });
+                          }
+                        }
+                      },
+                    ),
+                    MyTextField(
+                      label: "Nama Profil pada e-Wallet",
+                      isReadOnly: !_isEditable,
+                      controller: _namaProfilEwalletController,
+                      inputType: TextInputType.text,
+                    ),
+                    MyTextField(
+                      label: "Nomor e-Wallet",
+                      isReadOnly: !_isEditable,
+                      controller: _noEwalletController,
+                      inputType: TextInputType.text,
+                    ),
                     const SizedBox(height: 50),
                     Align(
                       alignment: Alignment.bottomCenter,
@@ -131,10 +163,16 @@ class _ProfilPembeliBodyState extends State<ProfilPembeliBody> {
                             isEditable: _isEditable,
                             onPressed: () {
                               if (_isEditable) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text("Data akan diedit"),
-                                  ),
+                                sumbit(
+                                  _formKey,
+                                  _namaController.text,
+                                  _usernameController.text,
+                                  _emailController.text,
+                                  _passwordController.text,
+                                  _noTelpController.text,
+                                  _selectedEwallet,
+                                  _namaProfilEwalletController.text,
+                                  _noEwalletController.text,
                                 );
                               }
                               setState(() {
@@ -147,12 +185,16 @@ class _ProfilPembeliBodyState extends State<ProfilPembeliBody> {
                               color: const Color(0xFFF9564F),
                               isEditable: _isEditable,
                               onPressed: () {
-                                _namaController.text = _initNama;
-                                _usernameController.text = _initUsername;
-                                _emailController.text = _initEmail;
-                                _passwordController.text = _initPassword;
-                                _noTelpController.text = _initNoTelp;
-      
+                                _namaController.text = _data.nama;
+                                _usernameController.text = _data.username;
+                                _emailController.text = _data.email;
+                                _passwordController.text = _data.password;
+                                _noTelpController.text = _data.noTelp;
+                                _selectedEwallet = _data.jenisEwallet;
+                                _namaProfilEwalletController.text =
+                                    _data.namaProfilEwallet;
+                                _noEwalletController.text = _data.noEwallet;
+
                                 setState(() {
                                   _isEditable = false;
                                 });
@@ -167,6 +209,95 @@ class _ProfilPembeliBodyState extends State<ProfilPembeliBody> {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+void sumbit(
+  GlobalKey<FormState> formKey,
+  String nama,
+  String username,
+  String email,
+  String password,
+  String noTelp,
+  String selectedEwallet,
+  String namaProfilEwallet,
+  String noEwallet,
+) {
+  formKey.currentState?.save();
+  print('Nama: $nama');
+  print('Username: $username');
+  print('Email: $email');
+  print('Password: $password');
+  print('Nomor Telepon: $noTelp');
+  print('Jenis Ewallet: $selectedEwallet');
+  print('Nama Profil Ewallet: $namaProfilEwallet');
+  print('Nomor Ewallet: $noEwallet');
+}
+
+class MyDropdown extends StatelessWidget {
+  final List<String> listEwallet;
+  final ValueChanged onSelected;
+  final String _initialSelection;
+
+  const MyDropdown({
+    super.key,
+    required this.listEwallet,
+    required this.onSelected,
+    required String initialSelection,
+  }) : _initialSelection = initialSelection;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: DropdownMenu(
+        expandedInsets: EdgeInsets.zero,
+        menuStyle: MenuStyle(
+          padding: WidgetStateProperty.all(EdgeInsets.zero),
+          shape: WidgetStateProperty.all(
+            const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+          ),
+        ),
+        inputDecorationTheme: const InputDecorationTheme(
+          constraints: BoxConstraints(maxHeight: 50), // Size TextField
+          isDense: true,
+          contentPadding: EdgeInsets.symmetric(horizontal: 6),
+          filled: true,
+          fillColor: Color(0xFFECE8E1),
+          hintStyle: TextStyle(
+            color: Color(0xFF393E46),
+            fontFamily: 'LeagueGothic',
+            fontSize: 32,
+          ),
+          border: InputBorder.none,
+        ),
+        hintText: "Jenis e-Wallet",
+        textStyle: const TextStyle(
+          fontSize: 32,
+          fontFamily: 'LeagueGothic',
+          color: Color(0xFF131A2A),
+        ),
+        enableSearch: false,
+        initialSelection: _initialSelection,
+        dropdownMenuEntries: listEwallet
+            .map(
+              (e) => DropdownMenuEntry(
+                value: e,
+                label: e,
+                style: MenuItemButton.styleFrom(
+                  backgroundColor: const Color(0xFFECE8E1),
+                  textStyle: const TextStyle(
+                    fontSize: 32,
+                    fontFamily: 'LeagueGothic',
+                    color: Color(0xFF131A2A),
+                  ),
+                ),
+              ),
+            )
+            .toList(),
+        onSelected: onSelected,
       ),
     );
   }
@@ -289,4 +420,15 @@ class MyTextField extends StatelessWidget {
       ),
     );
   }
+}
+
+class _ProfilPembeliData {
+  String nama = 'Dzaky';
+  String username = '';
+  String email = '';
+  String password = '';
+  String noTelp = '';
+  String jenisEwallet = 'Dana';
+  String namaProfilEwallet = '';
+  String noEwallet = '';
 }
