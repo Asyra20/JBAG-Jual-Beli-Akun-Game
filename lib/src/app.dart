@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jbag/src/features/admin/admin_homescreen.dart';
 import 'package:jbag/src/features/profile/pembeli/profil_pembeli_screen.dart';
 
 class MyApp extends StatelessWidget {
@@ -8,7 +9,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: ProfilPembeli(),
+      home: HomeS(),
     );
   }
 }
