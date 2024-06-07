@@ -36,47 +36,28 @@ class AdminMenuScreen extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    ReviewAkunPenjualScreen()),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.yellow,
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 10),
-                        ),
-                        child: Text(
-                          'REVIEW AKUN PENJUAL',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 18,
+                      MyButton(
+                        text: "review akun penjual",
+                        color: const Color(0xFFFFC639),
+                        onPressed: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return ReviewAkunPenjualScreen();
+                            },
                           ),
                         ),
                       ),
                       SizedBox(height: 20),
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => CekTransaksiScreen()),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.yellow,
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 10),
-                        ),
-                        child: Text(
-                          'CEK TRANSAKSI',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 18,
+                      MyButton(
+                        text: "CEK TRANSAKSI",
+                        color: const Color(0xFFFFC639),
+                        onPressed: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return CekTransaksiScreen();
+                            },
                           ),
                         ),
                       ),
@@ -87,20 +68,10 @@ class AdminMenuScreen extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(bottom: 40.0),
                 child: Center(
-                  child: ElevatedButton(
+                  child: MyButton(
+                    text: "logout",
+                    color: const Color(0xFFF9564F),
                     onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                    ),
-                    child: Text(
-                      'LOGOUT',
-                      style: TextStyle(
-                        color: Color(0xFFFFFAFF),
-                        fontSize: 18,
-                      ),
-                    ),
                   ),
                 ),
               ),
@@ -145,7 +116,7 @@ class ReviewAkunPenjualScreen extends StatelessWidget {
               SizedBox(height: 40),
               Container(
                 width: double.infinity,
-                color: Colors.yellow,
+                color: const Color(0xFFFFC639),
                 child: ListTile(
                   title: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -154,7 +125,8 @@ class ReviewAkunPenjualScreen extends StatelessWidget {
                         'NAMA PENJUAL',
                         style: TextStyle(
                           color: Colors.black,
-                          fontSize: 18,
+                          fontSize: 32,
+                          fontFamily: 'BebasNeue',
                         ),
                       ),
                     ],
@@ -227,35 +199,15 @@ class NamaPenjualScreen extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        ElevatedButton(
+                        MyButton(
+                          text: "Reject",
+                          color: const Color(0xFFF9564F),
                           onPressed: () {},
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.red,
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 30, vertical: 15),
-                          ),
-                          child: Text(
-                            'REJECT',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 18,
-                            ),
-                          ),
                         ),
-                        ElevatedButton(
+                        MyButton(
+                          text: "accept",
+                          color: const Color(0xFFFFC639),
                           onPressed: () {},
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.yellow,
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 30, vertical: 15),
-                          ),
-                          child: Text(
-                            'ACCEPT',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 18,
-                            ),
-                          ),
                         ),
                       ],
                     ),
@@ -273,6 +225,7 @@ class NamaPenjualScreen extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: TextField(
+        readOnly: true,
         decoration: InputDecoration(
           labelText: label,
           labelStyle: TextStyle(color: Colors.black),
@@ -321,7 +274,7 @@ class CekTransaksiScreen extends StatelessWidget {
               SizedBox(height: 40),
               Container(
                 width: double.infinity,
-                color: Colors.yellow,
+                color: const Color(0xFFFFC639),
                 child: ListTile(
                   title: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -330,7 +283,8 @@ class CekTransaksiScreen extends StatelessWidget {
                         'NOMOR INVOICE',
                         style: TextStyle(
                           color: Colors.black,
-                          fontSize: 18,
+                          fontSize: 32,
+                          fontFamily: 'BebasNeue',
                         ),
                       ),
                     ],
@@ -392,19 +346,18 @@ class DetailTransaksiScreen extends StatelessWidget {
               SizedBox(height: 40),
               Container(
                 width: double.infinity,
-                color: Colors.yellow,
+                color: const Color(0xFFFFC639),
                 child: ListTile(
                   title: Text(
                     'DETAIL AKUN',
                     style: TextStyle(
                       color: Colors.black,
-                      fontSize: 18,
+                      fontSize: 32,
+                      fontFamily: 'BebasNeue',
                     ),
                   ),
                   trailing: Icon(Icons.arrow_forward, color: Colors.black),
-                  onTap: () {
-                    
-                  },
+                  onTap: () {},
                 ),
               ),
               SizedBox(height: 30),
@@ -420,14 +373,15 @@ class DetailTransaksiScreen extends StatelessWidget {
               Spacer(),
               Container(
                 width: double.infinity,
-                color: Colors.yellow,
+                color: const Color(0xFFFFC639),
                 child: TextButton(
                   onPressed: () {},
                   child: Text(
                     'HUBUNGI PENJUAL',
                     style: TextStyle(
                       color: Colors.black,
-                      fontSize: 18,
+                      fontSize: 32,
+                      fontFamily: 'BebasNeue',
                     ),
                   ),
                 ),
@@ -452,6 +406,42 @@ class DetailTransaksiScreen extends StatelessWidget {
           fontSize: 18,
         ),
       ),
+    );
+  }
+}
+
+class MyButton extends StatelessWidget {
+  const MyButton({
+    super.key,
+    required this.text,
+    required this.onPressed,
+    required this.color,
+    this.padding = 20,
+  });
+
+  final String text;
+  final Color color;
+  final VoidCallback onPressed;
+  final double padding;
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: onPressed,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: color,
+        foregroundColor: const Color(0xFF131A2A),
+        padding: EdgeInsets.symmetric(horizontal: padding),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.zero,
+        ),
+        textStyle: const TextStyle(
+          fontSize: 32,
+          fontFamily: 'BebasNeue',
+          color: Color(0xFF393E46),
+        ),
+      ),
+      child: Text(text),
     );
   }
 }
