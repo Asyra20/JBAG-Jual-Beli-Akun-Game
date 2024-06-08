@@ -3,16 +3,38 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:jbag/src/features/transaction/bukti_pembayaran_screen.dart';
 import 'package:jbag/src/utils/format/currency_format.dart';
 
-class TransaksiScreen extends StatelessWidget {
-  const TransaksiScreen({
+class DetailTransaksi extends StatelessWidget {
+  const DetailTransaksi({
     super.key,
-    required this.transaksiData,
   });
-
-  final Map<String, dynamic> transaksiData;
 
   @override
   Widget build(BuildContext context) {
+    Map<String, dynamic> detailTransaksi = {
+      'invoice': "",
+      'penjual': 'NOP Gaming Store',
+      'status_pembayaran': 'belum_bayar',
+      'akun': [
+        {
+          'judul': 'AKUN RAWAT PRIBADI SULTAN',
+          'harga': 5000000,
+        },
+        {
+          'judul': 'AKUN PRO PLAYER SULTAN',
+          'harga': 2000000,
+        },
+      ],
+      'harga_total': 7000000,
+      'paymentMethod': {
+        'nama': "Dana",
+        'image': "assets/logo/logo-dana.png",
+      },
+      'namaProfilEwallet': "NOP NOP Gaming Store",
+      'nomorEwallet': "0852250411",
+    };
+
+    final List akun = detailTransaksi['akun'];
+
     return Scaffold(
       backgroundColor: const Color(0xFF131A2A),
       appBar: AppBar(
@@ -29,39 +51,80 @@ class TransaksiScreen extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Transaksi',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontFamily: 'BebasNeue',
-                  fontSize: 48,
-                  color: Color(0xFFFFFAFF),
-                ),
-              ),
-              const SizedBox(height: 20),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              const Row(
+                mainAxisSize: MainAxisSize.max,
                 children: [
-                  Text(
-                    transaksiData['judul'],
-                    maxLines: 3,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontFamily: 'LeagueGothic',
-                      fontSize: 38,
-                      color: Color(0xFFFFFAFF),
-                    ),
-                  ),
-                  Text(
-                    transaksiData['penjual'],
-                    style: const TextStyle(
-                      fontFamily: 'LeagueGothic',
-                      fontSize: 24,
-                      color: Color(0xFFECE8E1),
+                  Expanded(
+                    child: Text(
+                      'Transaksi',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontFamily: 'BebasNeue',
+                        fontSize: 48,
+                        color: Color(0xFFFFFAFF),
+                      ),
                     ),
                   ),
                 ],
+              ),
+              const SizedBox(height: 20),
+              Text(
+                detailTransaksi['penjual'],
+                style: const TextStyle(
+                  fontFamily: 'LeagueGothic',
+                  fontSize: 42,
+                  color: Color(0xFFECE8E1),
+                ),
+              ),
+              const SizedBox(height: 20),
+              ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: akun.length,
+                itemBuilder: (context, index) {
+                  final item = akun[index];
+
+                  return Container(
+                    margin: const EdgeInsets.symmetric(vertical: 4.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    color: const Color(0xFFECE8E1),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          flex: 7,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                maxLines: 1,
+                                item['judul'],
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  fontFamily: 'LeagueGothic',
+                                  fontSize: 24,
+                                  color: Color(0xFF393E46),
+                                ),
+                              ),
+                              Text(
+                                maxLines: 1,
+                                CurrencyFormat.convert2Idr(item['harga'], 2),
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  fontFamily: 'BebasNeue',
+                                  fontSize: 32,
+                                  color: Color(0xFF131A2A),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
               ),
               const SizedBox(height: 30),
               Row(
@@ -72,7 +135,7 @@ class TransaksiScreen extends StatelessWidget {
                       padding: const EdgeInsets.all(8.0),
                       color: const Color(0xFFFFFAFF),
                       child: Image.asset(
-                        transaksiData['payment']['paymentMethod']['image'],
+                        detailTransaksi['payment']['paymentMethod']['image'],
                         height: 40,
                         alignment: Alignment.centerLeft,
                       ),
@@ -89,7 +152,7 @@ class TransaksiScreen extends StatelessWidget {
                       padding: const EdgeInsets.all(8.0),
                       color: const Color(0xFFECE8E1),
                       child: Text(
-                        transaksiData["payment"]["namaProfilEwallet"],
+                        detailTransaksi["payment"]["namaProfilEwallet"],
                         style: const TextStyle(
                           color: Color(0xFF393E46),
                           fontSize: 32,
@@ -109,7 +172,7 @@ class TransaksiScreen extends StatelessWidget {
                       padding: const EdgeInsets.all(8.0),
                       color: const Color(0xFFECE8E1),
                       child: Text(
-                        transaksiData["payment"]["nomorEwallet"],
+                        detailTransaksi["payment"]["nomorEwallet"],
                         style: const TextStyle(
                           color: Color(0xFF393E46),
                           fontSize: 32,
@@ -131,7 +194,7 @@ class TransaksiScreen extends StatelessWidget {
                   children: [
                     HargaRow(
                       text: "Harga Total",
-                      harga: transaksiData["hargaTotal"].toInt(),
+                      harga: detailTransaksi['harga_total'],
                     ),
                   ],
                 ),
