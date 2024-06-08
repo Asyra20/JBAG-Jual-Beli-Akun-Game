@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:jbag/src/features/admin/admin_homescreen.dart';
-import 'package:jbag/src/features/profile/pembeli/profil_pembeli_screen.dart';
-import 'package:jbag/src/features/cart/keranjang_screen.dart';
+import 'package:jbag/src/common_widgets/splash_screen.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: KeranjangScreen(),
+      home: SplashScreen(),
     );
   }
 }
