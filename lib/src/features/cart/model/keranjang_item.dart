@@ -1,21 +1,30 @@
 class KeranjangItem {
-  final String _judul;
-  final int _harga;
-  bool _isSelected;
+  String? judul;
+  int? harga;
+  String? usernamePenjual;
+  bool? isSelected;
 
   KeranjangItem({
-    required String judul,
-    required int harga,
-    bool isSelected = true,
-  })  : _judul = judul,
-        _harga = harga,
-        _isSelected = isSelected;
+    required this.judul,
+    required this.harga,
+    required this.usernamePenjual,
+    this.isSelected = true,
+  });
 
-  String get judul => _judul;
-  int get harga => _harga;
-  bool get isSelected => _isSelected;
+  KeranjangItem.fromJson(Map<String, dynamic> json) {
+    judul = json['judul'];
+    harga = json['harga'];
+    usernamePenjual = json['usernamePenjual'];
+    isSelected = json['isSelected'];
+  }
 
-  set selectItem(bool isSelected) {
-    _isSelected = isSelected;
-  } 
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['judul'] = judul;
+    data['harga'] = harga;
+    data['usernamePenjual'] = usernamePenjual;
+    data['isSelected'] = isSelected;
+    
+    return data;
+  }
 }

@@ -24,6 +24,7 @@ class _BuktiPembayaranScreenState extends State<BuktiPembayaranScreen> {
 
       setState(() => _image = imageTemp);
     } on PlatformException catch (e) {
+      // ignore: avoid_print
       print('failed to pick image: $e');
     }
   }

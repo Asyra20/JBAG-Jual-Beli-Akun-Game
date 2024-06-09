@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:jbag/src/features/cart/model/keranjang_item.dart';
+import 'package:jbag/src/features/checkout/checkout_screen.dart';
 import 'package:jbag/src/utils/format/currency_format.dart';
 
 class KeranjangScreen extends StatefulWidget {
@@ -12,10 +13,20 @@ class KeranjangScreen extends StatefulWidget {
 
 class _KeranjangScreenState extends State<KeranjangScreen> {
   List<KeranjangItem> itemKeranjang = [
-    KeranjangItem(judul: 'AKUN RAWAT PRIBADI SULTAN', harga: 5000000),
-    KeranjangItem(judul: 'AKUN PRO PLAYER SULTAN', harga: 2000000),
-    KeranjangItem(judul: 'AKUN PRO PLAYER GG', harga: 1500000),
+    KeranjangItem(
+        judul: 'AKUN RAWAT PRIBADI SULTAN',
+        harga: 5000000,
+        usernamePenjual: "NOP Gaming Store"),
+    KeranjangItem(
+        judul: 'AKUN PRO PLAYER SULTAN',
+        harga: 2000000,
+        usernamePenjual: "NOP Gaming Store"),
+    KeranjangItem(
+        judul: 'AKUN PRO PLAYER GG',
+        harga: 1500000,
+        usernamePenjual: "Dzzzzzz Store"),
   ];
+
   int _selectedCount = 0;
   double _totalHarga = 0;
 
@@ -46,8 +57,8 @@ class _KeranjangScreenState extends State<KeranjangScreen> {
         selectedCount: _selectedCount,
         onItemSelected: (int index) {
           setState(() {
-            itemKeranjang[index].selectItem = !itemKeranjang[index].isSelected;
-            if (itemKeranjang[index].isSelected) {
+            itemKeranjang[index].isSelected = !itemKeranjang[index].isSelected!;
+            if (itemKeranjang[index].isSelected!) {
               _selectedCount++;
             } else {
               _selectedCount--;
@@ -58,7 +69,7 @@ class _KeranjangScreenState extends State<KeranjangScreen> {
         },
         onItemRemoved: (int index) {
           setState(() {
-            if (itemKeranjang[index].isSelected) {
+            if (itemKeranjang[index].isSelected!) {
               _selectedCount--;
             }
             itemKeranjang.removeAt(index);
@@ -71,11 +82,14 @@ class _KeranjangScreenState extends State<KeranjangScreen> {
         totalHarga: _totalHarga,
         onCheckout: () {
           if (_selectedCount > 0) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  "$_selectedCount item dengan total ${CurrencyFormat.convert2Idr(_totalHarga, 2)}",
-                ),
+            List<KeranjangItem> selectedItems =
+                itemKeranjang.where((item) => item.isSelected!).toList();
+
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>
+                    CheckoutScreen(itemKeranjang: selectedItems),
               ),
             );
           }
@@ -87,8 +101,8 @@ class _KeranjangScreenState extends State<KeranjangScreen> {
   double hitungHarga() {
     double totalHarga = 0;
     for (var item in itemKeranjang) {
-      if (item.isSelected) {
-        totalHarga += item.harga;
+      if (item.isSelected!) {
+        totalHarga += item.harga!;
       }
     }
     return totalHarga;
@@ -184,6 +198,16 @@ class KeranjangBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Map<String, List<KeranjangItem>> grupPenjual = {};
+
+    for (var item in itemKeranjang) {
+      if (grupPenjual.containsKey(item.usernamePenjual)) {
+        grupPenjual[item.usernamePenjual]!.add(item);
+      } else {
+        grupPenjual[item.usernamePenjual!] = [item];
+      }
+    }
+
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -200,82 +224,112 @@ class KeranjangBody extends StatelessWidget {
           ListView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            itemCount: itemKeranjang.length,
-            itemBuilder: (context, index) {
-              final item = itemKeranjang[index];
+            itemCount: grupPenjual.keys.length,
+            itemBuilder: (context, penjualIndex) {
+              final penjual = grupPenjual.keys.elementAt(penjualIndex);
+              final itemPenjual = grupPenjual[penjual]!;
 
-              return Padding(
-                padding:
+              return Container(
+                margin:
                     const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                child: Container(
-                  color: const Color(0xFFECE8E1),
-                  child: Row(
-                    children: [
-                      IconButton(
-                        iconSize: 32,
-                        padding: const EdgeInsets.all(16.0),
-                        icon: FaIcon(
-                          item.isSelected
-                              ? FontAwesomeIcons.solidSquareCheck
-                              : FontAwesomeIcons.square,
-                          color: const Color(0xFF131A2A),
-                        ),
-                        onPressed: () => onItemSelected(index),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      penjual,
+                      style: const TextStyle(
+                        fontFamily: 'BebasNeue',
+                        fontSize: 28,
+                        color: Color(0xFFFFFAFF),
                       ),
-                      Expanded(
-                        flex: 7,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              maxLines: 1,
-                              item.judul,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                fontFamily: 'LeagueGothic',
-                                fontSize: 24,
-                                color: Color(0xFF393E46),
-                              ),
-                            ),
-                            Text(
-                              maxLines: 1,
-                              CurrencyFormat.convert2Idr(item.harga, 2),
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                fontFamily: 'BebasNeue',
-                                fontSize: 32,
-                                color: Color(0xFF131A2A),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Expanded(
-                        flex: 2,
-                        child: Material(
-                          child: Ink(
-                            decoration: const BoxDecoration(
-                              color: Color(0xFFF9564F),
-                            ),
-                            child: InkWell(
-                              highlightColor: Colors.white,
-                              onTap: () => onItemRemoved(index),
-                              child: const Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 16.0, vertical: 24),
-                                child: FaIcon(
-                                  size: 32,
-                                  FontAwesomeIcons.solidTrashCan,
-                                  color: Color(0xFF131A2A),
+                    ),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: itemPenjual.length,
+                      itemBuilder: (context, itemIndex) {
+                        final item = itemPenjual[itemIndex];
+                        final globalIndex = itemKeranjang.indexOf(item);
+
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: Container(
+                            color: const Color(0xFFECE8E1),
+                            child: Row(
+                              children: [
+                                IconButton(
+                                  iconSize: 32,
+                                  padding: const EdgeInsets.all(16.0),
+                                  icon: FaIcon(
+                                    item.isSelected!
+                                        ? FontAwesomeIcons.solidSquareCheck
+                                        : FontAwesomeIcons.square,
+                                    color: const Color(0xFF131A2A),
+                                  ),
+                                  onPressed: () => onItemSelected(globalIndex),
                                 ),
-                              ),
+                                Expanded(
+                                  flex: 7,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        maxLines: 1,
+                                        item.judul!,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                          fontFamily: 'LeagueGothic',
+                                          fontSize: 24,
+                                          color: Color(0xFF393E46),
+                                        ),
+                                      ),
+                                      Text(
+                                        maxLines: 1,
+                                        CurrencyFormat.convert2Idr(
+                                            item.harga, 2),
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                          fontFamily: 'BebasNeue',
+                                          fontSize: 32,
+                                          color: Color(0xFF131A2A),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Expanded(
+                                  flex: 2,
+                                  child: Material(
+                                    child: Ink(
+                                      decoration: const BoxDecoration(
+                                        color: Color(0xFFF9564F),
+                                      ),
+                                      child: InkWell(
+                                        highlightColor: Colors.white,
+                                        onTap: () => onItemRemoved(globalIndex),
+                                        child: const Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 16.0, vertical: 24),
+                                          child: FaIcon(
+                                            size: 32,
+                                            FontAwesomeIcons.solidTrashCan,
+                                            color: Color(0xFF131A2A),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                        ),
-                      ),
-                    ],
-                  ),
+                        );
+                      },
+                    ),
+                    const Divider(),
+                  ],
                 ),
               );
             },
