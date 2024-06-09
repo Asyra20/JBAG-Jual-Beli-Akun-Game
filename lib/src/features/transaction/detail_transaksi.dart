@@ -134,10 +134,22 @@ class DetailTransaksi extends StatelessWidget {
                     child: Container(
                       padding: const EdgeInsets.all(8.0),
                       color: const Color(0xFFFFFAFF),
-                      child: Image.asset(
-                        detailTransaksi['payment']['paymentMethod']['image'],
-                        height: 40,
-                        alignment: Alignment.centerLeft,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            "Metode Pembayaran",
+                            style: TextStyle(
+                              fontFamily: 'LeagueGothic',
+                              fontSize: 28,
+                              color: Color(0xFF393E46),
+                            ),
+                          ),
+                          Image.asset(
+                            detailTransaksi["paymentMethod"]["image"],
+                            height: 30,
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -152,9 +164,9 @@ class DetailTransaksi extends StatelessWidget {
                       padding: const EdgeInsets.all(8.0),
                       color: const Color(0xFFECE8E1),
                       child: Text(
-                        detailTransaksi["payment"]["namaProfilEwallet"],
+                        detailTransaksi["namaProfilEwallet"],
                         style: const TextStyle(
-                          color: Color(0xFF393E46),
+                          color: Color(0xFF131A2A),
                           fontSize: 32,
                           fontFamily: 'LeagueGothic',
                         ),
@@ -172,9 +184,9 @@ class DetailTransaksi extends StatelessWidget {
                       padding: const EdgeInsets.all(8.0),
                       color: const Color(0xFFECE8E1),
                       child: Text(
-                        detailTransaksi["payment"]["nomorEwallet"],
+                        detailTransaksi["nomorEwallet"],
                         style: const TextStyle(
-                          color: Color(0xFF393E46),
+                          color: Color(0xFF131A2A),
                           fontSize: 32,
                           fontFamily: 'LeagueGothic',
                         ),
