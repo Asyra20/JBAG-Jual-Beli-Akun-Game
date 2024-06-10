@@ -236,7 +236,60 @@ class DetailTransaksi extends StatelessWidget {
               child: MyButton(
                 text: "Batal",
                 color: const Color(0xFFF9564F),
-                onPressed: () => Navigator.pop(context),
+                onPressed: () {
+                  BuildContext dialogContext;
+                  showDialog(
+                    barrierDismissible: false,
+                    context: context,
+                    builder: (context) {
+                      dialogContext = context;
+                      return Dialog(
+                        backgroundColor: const Color(0xFFECE8E1),
+                        shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.zero),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 20, horizontal: 16),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Text(
+                                "Pemberitahuan",
+                                style: TextStyle(
+                                  fontFamily: 'BebasNeue',
+                                  fontSize: 38,
+                                  color: Color(0xFF131A2A),
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              const Text(
+                                "Apakah Ingin Membatalkan Transaksi?",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontFamily: 'BebasNeue',
+                                  fontSize: 28,
+                                  color: Color(0xFF131A2A),
+                                ),
+                              ),
+                              const SizedBox(height: 25),
+                              MyButton(
+                                text: "Batal",
+                                onPressed: () {
+                                  Navigator.of(
+                                    dialogContext,
+                                    rootNavigator: true,
+                                  ).pop();
+                                },
+                                color: const Color(0xFFF9564F),
+                              )
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
               ),
             ),
             const SizedBox(width: 30),
@@ -248,7 +301,7 @@ class DetailTransaksi extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) {
-                      return BuktiPembayaranScreen();
+                      return const BuktiPembayaranScreen();
                     },
                   ),
                 ),
