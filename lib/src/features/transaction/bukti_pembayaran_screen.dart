@@ -140,14 +140,20 @@ class _BuktiPembayaranScreenState extends State<BuktiPembayaranScreen> {
                               const Text(
                                 "Pemberitahuan",
                                 style: TextStyle(
-                                    fontFamily: 'BebasNeue', fontSize: 38),
+                                  fontFamily: 'BebasNeue',
+                                  fontSize: 38,
+                                  color: Color(0xFF131A2A),
+                                ),
                               ),
                               const SizedBox(height: 10),
                               const Text(
                                 "Pembelian Akun akan Segera Diproses oleh Penjual",
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                    fontFamily: 'BebasNeue', fontSize: 28),
+                                  fontFamily: 'BebasNeue',
+                                  fontSize: 28,
+                                  color: Color(0xFF131A2A),
+                                ),
                               ),
                               const SizedBox(height: 25),
                               MyButton(
