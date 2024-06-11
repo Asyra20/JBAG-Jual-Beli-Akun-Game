@@ -241,7 +241,8 @@ class DaftarAkunScreen extends StatelessWidget {
                 Expanded(
                   child: Text(
                     description,
-                    style: TextStyle(color: Colors.yellow, fontSize: 18),
+                    style:
+                        TextStyle(color: const Color(0xFFFFC639), fontSize: 18),
                   ),
                 ),
                 Text(
@@ -341,7 +342,7 @@ class AkunDetailScreen extends StatelessWidget {
                       // Implement your edit functionality here
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.yellow,
+                      backgroundColor: const Color(0xFFFFC639),
                       foregroundColor: Colors.black,
                     ),
                     child: Row(
