@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jbag/src/features/auth/login_screen.dart';
 import 'package:jbag/src/features/profile/pembeli/profil_pembeli_screen.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -68,8 +69,14 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
               ListTile(
-                title: const Text('Profile',
-                    style: TextStyle(color: Colors.white)),
+                title: const Text(
+                  'Profile',
+                  style: TextStyle(
+                    fontFamily: 'BebasNeue',
+                    fontSize: 24,
+                    color: Colors.white,
+                  ),
+                ),
                 selected: _selectedIndex == 0,
                 onTap: () {
                   _onItemTapped(0);
@@ -77,8 +84,14 @@ class _MyHomePageState extends State<MyHomePage> {
                 },
               ),
               ListTile(
-                title: const Text('Daftar Akun',
-                    style: TextStyle(color: Colors.white)),
+                title: const Text(
+                  'Daftar Akun',
+                  style: TextStyle(
+                    fontFamily: 'BebasNeue',
+                    fontSize: 24,
+                    color: Colors.white,
+                  ),
+                ),
                 selected: _selectedIndex == 1,
                 onTap: () {
                   _onItemTapped(1);
@@ -86,8 +99,14 @@ class _MyHomePageState extends State<MyHomePage> {
                 },
               ),
               ListTile(
-                title: const Text('Tambah Akun',
-                    style: TextStyle(color: Colors.white)),
+                title: const Text(
+                  'Tambah Akun',
+                  style: TextStyle(
+                    fontFamily: 'BebasNeue',
+                    fontSize: 24,
+                    color: Colors.white,
+                  ),
+                ),
                 selected: _selectedIndex == 2,
                 onTap: () {
                   _onItemTapped(2);
@@ -96,14 +115,107 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               Spacer(),
               ListTile(
-                title:
-                    const Text('Report', style: TextStyle(color: Colors.white)),
+                title: const Text(
+                  'Report',
+                  style: TextStyle(
+                    fontFamily: 'BebasNeue',
+                    fontSize: 24,
+                    color: Colors.white,
+                  ),
+                ),
                 onTap: () {},
               ),
               ListTile(
-                title:
-                    const Text('Logout', style: TextStyle(color: Colors.white)),
-                onTap: () {},
+                title: const Text(
+                  'Logout',
+                  style: TextStyle(
+                    fontFamily: 'BebasNeue',
+                    fontSize: 24,
+                    color: Colors.white,
+                  ),
+                ),
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        backgroundColor: const Color(0xFFECE8E1),
+                        content: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              "PEMBERITAHUAN",
+                              style: TextStyle(
+                                fontFamily: 'BebasNeue',
+                                fontSize: 24,
+                                color: Color(0xFF131A2A),
+                              ),
+                            ),
+                            SizedBox(height: 20),
+                            Text(
+                              'APAKAH ANDA INGIN LOGOUT!?',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontFamily: 'BebasNeue',
+                                fontSize: 18,
+                                color: Color(0xFF131A2A),
+                              ),
+                            ),
+                            SizedBox(height: 16),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Color(0xFFFFC639),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.zero,
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => LoginScreen()),
+                                    );
+                                  },
+                                  child: Text(
+                                    "YES SIR!",
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontFamily: 'BebasNeue',
+                                      fontSize: 20,
+                                    ),
+                                  ),
+                                ),
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Color(0xFFF9564F),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.zero,
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text(
+                                    "NAH!",
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontFamily: 'BebasNeue',
+                                      fontSize: 20,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  );
+                },
               ),
             ],
           ),
@@ -127,12 +239,17 @@ class DaftarAkunScreen extends StatelessWidget {
           elevation: 0,
           title: Text(
             'Daftar Akun',
-            style: TextStyle(color: Colors.white, fontSize: 24),
+            style: TextStyle(
+              fontFamily: 'BebasNeue',
+              fontSize: 48,
+              color: Colors.white,
+            ),
           ),
           centerTitle: true,
         ),
         body: Column(
           children: [
+            SizedBox(height: 20),
             Container(
               color: const Color(0xFFFFC639),
               child: TabBar(
@@ -214,10 +331,7 @@ class DaftarAkunScreen extends StatelessWidget {
           context,
           MaterialPageRoute(
             builder: (context) => AkunDetailScreen(
-                price: price,
-                description: description,
-                akunName:
-                    description), // Menggunakan description sebagai nama akun
+                price: price, description: description, akunName: description),
           ),
         );
       },
@@ -243,8 +357,10 @@ class DaftarAkunScreen extends StatelessWidget {
                 Expanded(
                   child: Text(
                     description,
-                    style:
-                        TextStyle(color: const Color(0xFFFFC639), fontSize: 18),
+                    style: TextStyle(
+                        color: const Color(0xFFFFC639),
+                        fontSize: 18,
+                        fontFamily: 'BebasNeue'),
                   ),
                 ),
                 Text(
@@ -269,7 +385,8 @@ class DaftarAkunScreen extends StatelessWidget {
             builder: (context) => PendingDetailScreen(
               imageUrl: imageUrl,
               email: 'NopalGaming@gmail.com',
-              detail: 'Email Akun ML via Moonton:\nDzakyGG@gmail.com\n\nPassword Akun:\nDzakyTampan123\n\nTerima Kasih telah membeli di toko kami, jangan lupa bintang 5 :D',
+              detail:
+                  'Email Akun ML via Moonton:\nDzakyGG@gmail.com\n\nPassword Akun:\nDzakyTampan123\n\nTerima Kasih telah membeli di toko kami, jangan lupa bintang 5 :D',
             ),
           ),
         );
@@ -296,8 +413,10 @@ class DaftarAkunScreen extends StatelessWidget {
                 Expanded(
                   child: Text(
                     description,
-                    style:
-                        TextStyle(color: const Color(0xFFFFC639), fontSize: 18),
+                    style: TextStyle(
+                        color: const Color(0xFFFFC639),
+                        fontSize: 18,
+                        fontFamily: 'BebasNeue'),
                   ),
                 ),
                 Text(
@@ -312,7 +431,8 @@ class DaftarAkunScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTerjualAkunItem(BuildContext context, String imageUrl, String price, String description, String soldDate) {
+  Widget _buildTerjualAkunItem(BuildContext context, String imageUrl,
+      String price, String description, String soldDate) {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
       padding: EdgeInsets.all(10),
@@ -335,7 +455,10 @@ class DaftarAkunScreen extends StatelessWidget {
               Expanded(
                 child: Text(
                   description,
-                  style: TextStyle(color: const Color(0xFFFFC639), fontSize: 18),
+                  style: TextStyle(
+                      color: const Color(0xFFFFC639),
+                      fontSize: 18,
+                      fontFamily: 'BebasNeue'),
                 ),
               ),
               Text(
@@ -350,7 +473,8 @@ class DaftarAkunScreen extends StatelessWidget {
             children: [
               Text(
                 'Terjual tanggal',
-                style: TextStyle(color: Colors.white, fontSize: 14),
+                style: TextStyle(
+                    color: Colors.white, fontSize: 14, fontFamily: 'BebasNeue'),
               ),
               SizedBox(height: 4),
               Row(
@@ -358,18 +482,27 @@ class DaftarAkunScreen extends StatelessWidget {
                 children: [
                   Text(
                     soldDate,
-                    style: TextStyle(color: Colors.white, fontSize: 14),
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontFamily: 'BebasNeue'),
                   ),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFFFFC639),
-                                  foregroundColor: Colors.black,
-                                ),
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.zero,
+                      ),
+                      backgroundColor: const Color(0xFFFFC639),
+                      foregroundColor: Colors.black,
+                    ),
                     onPressed: () {
                       showDialog(
                         context: context,
                         builder: (BuildContext context) {
                           return AlertDialog(
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.zero,
+                            ),
                             backgroundColor: const Color(0xFFECE8E1),
                             content: Column(
                               mainAxisSize: MainAxisSize.min,
@@ -380,17 +513,22 @@ class DaftarAkunScreen extends StatelessWidget {
                                     'PENILAIAN',
                                     style: TextStyle(
                                         color: Colors.black,
-                                        fontSize: 18,
+                                        fontSize: 32,
+                                        fontFamily: 'BebasNeue',
                                         fontWeight: FontWeight.bold),
                                   ),
                                 ),
                                 SizedBox(height: 10),
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
                                       'Rating',
-                                      style: TextStyle(color: Colors.black),
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 24,
+                                          fontFamily: 'BebasNeue'),
                                     ),
                                     // Replace with your own rating widget
                                     Row(
@@ -406,7 +544,10 @@ class DaftarAkunScreen extends StatelessWidget {
                                 SizedBox(height: 10),
                                 Text(
                                   'Review',
-                                  style: TextStyle(color: Colors.black),
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 24,
+                                      fontFamily: 'BebasNeue'),
                                 ),
                                 SizedBox(height: 5),
                                 TextField(
@@ -423,14 +564,22 @@ class DaftarAkunScreen extends StatelessWidget {
                                 Center(
                                   child: ElevatedButton(
                                     style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFFFFC639),
-                                  foregroundColor: Colors.black,
-                                ),
+                                      shape: const RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.zero,
+                                      ),
+                                      backgroundColor: const Color(0xFFFFC639),
+                                      foregroundColor: Colors.black,
+                                    ),
                                     onPressed: () {
                                       // Handle the submit action
                                       Navigator.of(context).pop();
                                     },
-                                    child: Text('KEMBALI'),
+                                    child: Text(
+                                      'KEMBALI',
+                                      style: TextStyle(
+                                          fontFamily: 'BebasNeue',
+                                          fontSize: 18),
+                                    ),
                                   ),
                                 ),
                               ],
@@ -439,7 +588,10 @@ class DaftarAkunScreen extends StatelessWidget {
                         },
                       );
                     },
-                    child: Text('LIHAT NILAI'),
+                    child: Text(
+                      'LIHAT NILAI',
+                      style: TextStyle(fontFamily: 'BebasNeue', fontSize: 24),
+                    ),
                   ),
                 ],
               ),
@@ -505,12 +657,14 @@ class _AkunDetailScreenState extends State<AkunDetailScreen> {
             children: [
               Text(
                 widget.akunName,
-                style: TextStyle(color: Colors.white, fontSize: 24),
+                style: TextStyle(
+                    color: Colors.white, fontSize: 32, fontFamily: 'BebasNeue'),
               ),
               SizedBox(height: 10),
               Text(
                 'Penjual',
-                style: TextStyle(color: Colors.grey, fontSize: 16),
+                style: TextStyle(
+                    color: Colors.grey, fontSize: 20, fontFamily: 'BebasNeue'),
               ),
               SizedBox(height: 10),
               Container(
@@ -527,7 +681,8 @@ class _AkunDetailScreenState extends State<AkunDetailScreen> {
               SizedBox(height: 10),
               Text(
                 'Deskripsi Akun',
-                style: TextStyle(color: Colors.grey, fontSize: 16),
+                style: TextStyle(
+                    color: Colors.grey, fontSize: 20, fontFamily: 'BebasNeue'),
               ),
               SizedBox(height: 10),
               Container(
@@ -569,6 +724,9 @@ class _AkunDetailScreenState extends State<AkunDetailScreen> {
                       // Implement your edit functionality here
                     },
                     style: ElevatedButton.styleFrom(
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.zero,
+                      ),
                       backgroundColor: const Color(0xFFFFC639),
                       foregroundColor: const Color(0xFF131A2A),
                     ),
@@ -576,7 +734,10 @@ class _AkunDetailScreenState extends State<AkunDetailScreen> {
                       children: [
                         Icon(Icons.edit),
                         SizedBox(width: 5),
-                        Text('Edit'),
+                        Text(
+                          'Edit',
+                          style: TextStyle(fontFamily: 'BebasNeue'),
+                        ),
                       ],
                     ),
                   ),
@@ -585,6 +746,9 @@ class _AkunDetailScreenState extends State<AkunDetailScreen> {
                       // Implement your delete functionality here
                     },
                     style: ElevatedButton.styleFrom(
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.zero,
+                      ),
                       backgroundColor: Colors.red,
                       foregroundColor: Colors.white,
                     ),
@@ -592,7 +756,8 @@ class _AkunDetailScreenState extends State<AkunDetailScreen> {
                       children: [
                         Icon(Icons.delete),
                         SizedBox(width: 5),
-                        Text('Hapus'),
+                        Text('Hapus',
+                            style: TextStyle(fontFamily: 'BebasNeue')),
                       ],
                     ),
                   ),
@@ -641,27 +806,33 @@ class PendingDetailScreen extends StatelessWidget {
             children: [
               Text(
                 'Detail Akun Pending',
-                style: TextStyle(color: Colors.white, fontSize: 24),
+                style: TextStyle(
+                    color: Colors.white, fontSize: 32, fontFamily: 'BebasNeue'),
               ),
               SizedBox(height: 10),
               Text(
                 'Email Pembeli',
-                style: TextStyle(color: Colors.grey, fontSize: 16),
+                style: TextStyle(
+                    color: Colors.grey, fontSize: 20, fontFamily: 'BebasNeue'),
               ),
               SizedBox(height: 10),
               Container(
                 width: double.infinity,
                 padding: EdgeInsets.all(16.0),
-                color: Colors.grey[800],
+                color: const Color(0xFFFFC639),
                 child: Text(
                   email,
-                  style: TextStyle(color: Colors.white, fontSize: 18),
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 24,
+                      fontFamily: 'BebasNeue'),
                 ),
               ),
               SizedBox(height: 10),
               Text(
                 'Detail Akun',
-                style: TextStyle(color: Colors.grey, fontSize: 16),
+                style: TextStyle(
+                    color: Colors.grey, fontSize: 20, fontFamily: 'BebasNeue'),
               ),
               SizedBox(height: 10),
               Container(
@@ -671,53 +842,71 @@ class PendingDetailScreen extends StatelessWidget {
                 color: Colors.grey[800],
                 child: Text(
                   detail,
-                  style: TextStyle(color: Colors.white, fontSize: 18),
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontFamily: 'BebasNeue'),
                 ),
               ),
               SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
                   showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          backgroundColor: const Color(0xFFECE8E1),
-                          content: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                'PEMBERITAHUAN',
-                                style: TextStyle(
-                                    color: Colors.black, fontSize: 24),
-                              ),
-                              SizedBox(height: 20),
-                              Text(
-                                'AKUN TELAH TERJUAL',
-                                style: TextStyle(
-                                    color: Colors.black, fontSize: 20),
-                              ),
-                              SizedBox(height: 20),
-                              ElevatedButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFFFFC639),
-                                  foregroundColor: Colors.black,
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        backgroundColor: const Color(0xFFECE8E1),
+                        content: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              'PEMBERITAHUAN',
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 24,
+                                  fontFamily: 'BebasNeue'),
+                            ),
+                            SizedBox(height: 20),
+                            Text(
+                              'AKUN TELAH TERJUAL',
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 20,
+                                  fontFamily: 'BebasNeue'),
+                            ),
+                            SizedBox(height: 20),
+                            ElevatedButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFFFFC639),
+                                foregroundColor: Colors.black,
+                                shape: const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.zero,
                                 ),
-                                child: Text('KEMBALI'),
                               ),
-                            ],
-                          ),
-                        );
-                      },
-                    );
+                              child: Text(
+                                'KEMBALI',
+                                style: TextStyle(
+                                    fontFamily: 'BebasNeue', fontSize: 20),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFFFFC639),
                   foregroundColor: Colors.black,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.zero,
+                  ),
                 ),
-                child: Text('KIRIM'),
+                child: Text('KIRIM',
+                    style: TextStyle(fontFamily: 'BebasNeue', fontSize: 20)),
               ),
             ],
           ),
