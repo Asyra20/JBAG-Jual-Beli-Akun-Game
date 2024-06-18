@@ -1,95 +1,196 @@
 import 'package:flutter/material.dart';
 import 'package:jbag/src/constants/colors.dart';
+import 'package:jbag/src/features/auth/login_screen.dart';
+import 'package:jbag/src/features/cart/keranjang_screen.dart';
+import 'package:jbag/src/features/profile/pembeli/profil_pembeli_screen.dart';
 
-class DaftarAkunGamesLayar extends StatelessWidget {
+class DaftarAkunGamesLayar extends StatefulWidget {
   const DaftarAkunGamesLayar({Key? key}) : super(key: key);
+
+  @override
+  _DaftarAkunGamesLayarState createState() => _DaftarAkunGamesLayarState();
+}
+
+class _DaftarAkunGamesLayarState extends State<DaftarAkunGamesLayar> {
+  int _selectedIndex = 0;
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+void _showLogoutConfirmationDialog() {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return Dialog(
+        backgroundColor: Colors.transparent,
+        child: Container(
+          padding: EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Color(0xFFECE8E1),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "PEMBERITAHUAN",
+                style: TextStyle(
+                  fontFamily: 'BebasNeue',
+                  fontSize: 24,
+                  color: Color(0xFF131A2A),
+                ),
+              ),
+              SizedBox(height: 16),
+              Text(
+                "APAKAH ANDA INGIN LOGOUT?",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontFamily: 'BebasNeue',
+                  fontSize: 18,
+                  color: Color(0xFF131A2A),
+                ),
+              ),
+              SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xFFFFC639),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.zero,
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginScreen()),
+                      );
+                    },
+                    child: Text(
+                      "YES SIR!",
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontFamily: 'BebasNeue',
+                        fontSize: 20,
+                      ),
+                    ),
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xFFF9564F),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.zero,
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text(
+                      "NAH!",
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontFamily: 'BebasNeue',
+                        fontSize: 20,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        iconTheme: IconThemeData(color: Colors.white), // Mengubah warna ikon garis tiga menjadi putih
+        iconTheme: IconThemeData(color: Color(0xFFFFFAFF)),
         title: Text(
           'Daftar Akun Games',
-          style: TextStyle(color: Colors.white), // Mengubah warna teks menjadi putih
+          style: TextStyle(color: Color(0xFFFFFAFF)),
         ),
-        backgroundColor: MyColors.dark, // Mengubah latar belakang menjadi biru gelap
+        backgroundColor: Color(0xFF131A2A),
       ),
       drawer: Drawer(
         child: Container(
-          color: MyColors.dark, // Mengubah latar belakang sidebar menjadi biru gelap
-          child: ListView(
-            padding: EdgeInsets.zero,
+          color: Color(0xFF131A2A),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              DrawerHeader(
-                decoration: BoxDecoration(
-                  color: MyColors.dark,
-                ),
-                child: Text(
-                  'Menu',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 24,
+              SizedBox(height: 35),
+              Container(
+                color: Color(0xFF131A2A),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Align(
+                    alignment: Alignment.topLeft,
+                    child: IconButton(
+                      icon: Icon(Icons.close, color: Color(0xFFFFFAFF)),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
                   ),
                 ),
               ),
               ListTile(
-                leading: Icon(Icons.account_circle, color: Colors.white),
-                title: Text(
-                  'Profil',
-                  style: TextStyle(color: Colors.white), // Mengubah warna teks menjadi putih
-                ),
+                title: const Text('Profil', style: TextStyle(color: Color(0xFFFFFAFF))),
+                selected: _selectedIndex == 0,
                 onTap: () {
-                  // Handle the tap
+                  _onItemTapped(0);
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ProfilPembeli()),
+                  );
                 },
               ),
               ListTile(
-                leading: Icon(Icons.games, color: Colors.white),
-                title: Text(
-                  'Daftar Akun Games',
-                  style: TextStyle(color: Colors.white), // Mengubah warna teks menjadi putih
-                ),
+                title: const Text('Daftar Akun Games', style: TextStyle(color: Color(0xFFFFFAFF))),
+                selected: _selectedIndex == 1,
                 onTap: () {
-                  // Handle the tap
+                  _onItemTapped(1);
+                  Navigator.pop(context);
                 },
               ),
               ListTile(
-                leading: Icon(Icons.shopping_cart, color: Colors.white),
-                title: Text(
-                  'Keranjang',
-                  style: TextStyle(color: Colors.white), // Mengubah warna teks menjadi putih
-                ),
+                title: const Text('Keranjang', style: TextStyle(color: Color(0xFFFFFAFF))),
+                selected: _selectedIndex == 2,
                 onTap: () {
-                  // Handle the tap
+                  _onItemTapped(2);
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => KeranjangScreen()),
+                  );
                 },
               ),
               ListTile(
-                leading: Icon(Icons.history, color: Colors.white),
-                title: Text(
-                  'Riwayat',
-                  style: TextStyle(color: Colors.white), // Mengubah warna teks menjadi putih
-                ),
+                title: const Text('Riwayat', style: TextStyle(color: Color(0xFFFFFAFF))),
+                selected: _selectedIndex == 3,
                 onTap: () {
-                  // Handle the tap
+                  _onItemTapped(3);
+                  Navigator.pop(context);
                 },
               ),
-              Divider(color: Colors.white), // Menambahkan garis pemisah
+              Spacer(),
               ListTile(
-                title: Text(
-                  'Report',
-                  style: TextStyle(color: Colors.white), // Mengubah warna teks menjadi putih
-                ),
-                onTap: () {
-                  // Handle the tap
-                },
+                title: const Text('Report', style: TextStyle(color: Color(0xFFFFFAFF))),
+                onTap: () {},
               ),
               ListTile(
-                title: Text(
-                  'Logout',
-                  style: TextStyle(color: Colors.white), // Mengubah warna teks menjadi putih
-                ),
+                title: const Text('Logout', style: TextStyle(color: Color(0xFFFFFAFF))),
                 onTap: () {
-                  // Handle the tap
+                  _showLogoutConfirmationDialog();
                 },
               ),
             ],
@@ -105,38 +206,39 @@ class DaftarAkunGamesLayar extends StatelessWidget {
               DropdownButtonFormField(
                 decoration: InputDecoration(
                   filled: true,
-                  fillColor: MyColors.dark, // Mengubah latar belakang menjadi biru gelap
+                  fillColor: Color(0xFF131A2A),
                   border: OutlineInputBorder(),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.yellow),
+                    borderSide: BorderSide(color: Color(0xFFFFC639)),
                   ),
                   contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 ),
-                dropdownColor: MyColors.dark,
+                dropdownColor: Color(0xFF131A2A),
                 value: 'Mobile Legends',
                 items: [
-                  DropdownMenuItem(child: Text('Mobile Legends', style: TextStyle(color: Colors.white)), value: 'Mobile Legends'),
-                  DropdownMenuItem(child: Text('Free Fire', style: TextStyle(color: Colors.white)), value: 'Free Fire'),
+                  DropdownMenuItem(child: Text('Mobile Legends', style: TextStyle(color: Color(0xFFFFFAFF))), value: 'Mobile Legends'),
+                  DropdownMenuItem(child: Text('Free Fire', style: TextStyle(color: Color(0xFFFFFAFF))), value: 'Free Fire'),
                 ],
                 onChanged: (value) {},
-                iconEnabledColor: MyColors.white, // Mengubah ikon menjadi kuning
+                iconEnabledColor: Color(0xFFFFFAFF),
               ),
               SizedBox(height: 16),
               TextField(
                 decoration: InputDecoration(
                   filled: true,
-                  fillColor: MyColors.dark, // Mengubah latar belakang menjadi biru gelap
+                  fillColor: Color(0xFF131A2A),
                   border: OutlineInputBorder(),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.yellow),
+                    borderSide: BorderSide(color: Color(0xFFFFC639)),
                   ),
                   contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   suffixIcon: IconButton(
-                    icon: Icon(Icons.search, color:MyColors.white), // Mengubah ikon menjadi kuning
+                    icon: Icon(Icons.search, color: Color(0xFFFFFAFF)),
                     onPressed: () {},
                   ),
                 ),
-                style: TextStyle(color: Colors.white), // Mengubah warna teks menjadi putih
+                style: TextStyle(color: Color(0xFFFFFAFF)),
+                cursorColor: MyColors.white,
               ),
               SizedBox(height: 16),
               Center(
@@ -162,7 +264,7 @@ class DaftarAkunGamesLayar extends StatelessWidget {
           ),
         ),
       ),
-      backgroundColor: MyColors.dark, // Mengubah latar belakang menjadi biru gelap
+      backgroundColor: Color(0xFF131A2A),
     );
   }
 }
@@ -183,8 +285,8 @@ class KartuAkunGame extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: double.infinity,  // Memberikan lebar penuh ke container
-      color: Colors.yellow[500], // Mengubah latar belakang menjadi biru gelap
+      width: double.infinity,
+      color: Color(0xFFFFC639),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -192,19 +294,19 @@ class KartuAkunGame extends StatelessWidget {
             children: [
               Image.network(
                 imageUrl,
-                width: double.infinity,  // Memastikan gambar mengambil lebar penuh
-                fit: BoxFit.cover,  // Menjaga proporsi gambar
+                width: double.infinity,
+                fit: BoxFit.cover,
               ),
               Positioned(
                 top: 8,
                 right: 8,
                 child: Container(
                   padding: EdgeInsets.all(4),
-                  color: Colors.black54,
+                  color: Color(0xFF131A2A),
                   child: Text(
                     price,
                     style: TextStyle(
-                      color: Colors.white,
+                      color: Color(0xFFFFFAFF),
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -226,7 +328,7 @@ class KartuAkunGame extends StatelessWidget {
                   child: Text(
                     title,
                     style: TextStyle(
-                      color: Colors.black, // Mengubah warna teks menjadi kuning
+                      color: Color(0xFF131A2A),
                       fontWeight: FontWeight.bold,
                     ),
                   ),
