@@ -13,17 +13,17 @@ class DaftarAkunGamesLayar extends StatelessWidget {
           'Daftar Akun Games',
           style: TextStyle(color: Colors.white), // Mengubah warna teks menjadi putih
         ),
-        backgroundColor: Colors.blueGrey[900], // Mengubah latar belakang menjadi biru gelap
+        backgroundColor: MyColors.dark, // Mengubah latar belakang menjadi biru gelap
       ),
       drawer: Drawer(
         child: Container(
-          color: Colors.blueGrey[900], // Mengubah latar belakang sidebar menjadi biru gelap
+          color: MyColors.dark, // Mengubah latar belakang sidebar menjadi biru gelap
           child: ListView(
             padding: EdgeInsets.zero,
             children: [
               DrawerHeader(
                 decoration: BoxDecoration(
-                  color: Colors.blueGrey[900],
+                  color: MyColors.dark,
                 ),
                 child: Text(
                   'Menu',
@@ -105,34 +105,34 @@ class DaftarAkunGamesLayar extends StatelessWidget {
               DropdownButtonFormField(
                 decoration: InputDecoration(
                   filled: true,
-                  fillColor: Colors.blueGrey[900], // Mengubah latar belakang menjadi biru gelap
+                  fillColor: MyColors.dark, // Mengubah latar belakang menjadi biru gelap
                   border: OutlineInputBorder(),
                   focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.yellow),
                   ),
                   contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 ),
-                dropdownColor: Colors.blueGrey[900],
+                dropdownColor: MyColors.dark,
                 value: 'Mobile Legends',
                 items: [
                   DropdownMenuItem(child: Text('Mobile Legends', style: TextStyle(color: Colors.white)), value: 'Mobile Legends'),
                   DropdownMenuItem(child: Text('Free Fire', style: TextStyle(color: Colors.white)), value: 'Free Fire'),
                 ],
                 onChanged: (value) {},
-                iconEnabledColor: MyColors.accent, // Mengubah ikon menjadi kuning
+                iconEnabledColor: MyColors.white, // Mengubah ikon menjadi kuning
               ),
               SizedBox(height: 16),
               TextField(
                 decoration: InputDecoration(
                   filled: true,
-                  fillColor: Colors.blueGrey[900], // Mengubah latar belakang menjadi biru gelap
+                  fillColor: MyColors.dark, // Mengubah latar belakang menjadi biru gelap
                   border: OutlineInputBorder(),
                   focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.yellow),
                   ),
                   contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   suffixIcon: IconButton(
-                    icon: Icon(Icons.search, color: Colors.white), // Mengubah ikon menjadi kuning
+                    icon: Icon(Icons.search, color:MyColors.white), // Mengubah ikon menjadi kuning
                     onPressed: () {},
                   ),
                 ),
@@ -162,7 +162,7 @@ class DaftarAkunGamesLayar extends StatelessWidget {
           ),
         ),
       ),
-      backgroundColor: Colors.blueGrey[900], // Mengubah latar belakang menjadi biru gelap
+      backgroundColor: MyColors.dark, // Mengubah latar belakang menjadi biru gelap
     );
   }
 }
