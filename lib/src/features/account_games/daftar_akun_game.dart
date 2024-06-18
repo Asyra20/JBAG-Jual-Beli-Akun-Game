@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:jbag/src/constants/colors.dart';
+import 'package:jbag/src/features/account_games/riwayat.dart';
 import 'package:jbag/src/features/auth/login_screen.dart';
 import 'package:jbag/src/features/cart/keranjang_screen.dart';
 import 'package:jbag/src/features/profile/pembeli/profil_pembeli_screen.dart';
 
-class DaftarAkunGamesLayar extends StatefulWidget {
-  const DaftarAkunGamesLayar({Key? key}) : super(key: key);
+class DaftarAkunGame extends StatefulWidget {
+  const DaftarAkunGame({Key? key}) : super(key: key);
 
   @override
-  _DaftarAkunGamesLayarState createState() => _DaftarAkunGamesLayarState();
+  _DaftarAkunGameState createState() => _DaftarAkunGameState();
 }
 
-class _DaftarAkunGamesLayarState extends State<DaftarAkunGamesLayar> {
+class _DaftarAkunGameState extends State<DaftarAkunGame> {
   int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
@@ -114,17 +115,23 @@ class _DaftarAkunGamesLayarState extends State<DaftarAkunGamesLayar> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        iconTheme: IconThemeData(color: Color(0xFFFFFAFF)),
-        title: Text(
+    iconTheme: IconThemeData(color: Color(0xFFFFFAFF), size: 35),
+    backgroundColor: Color(0xFF131A2A),
+    bottom: PreferredSize(
+      preferredSize: Size.fromHeight(70), // Tinggi teks "Daftar Akun Games"
+      child: Align(
+        alignment: Alignment.center,
+        child: Text(
           'Daftar Akun Games',
           style: TextStyle(
             fontFamily: 'LeagueGothic',
             color: Color(0xFFFFFAFF),
-            fontSize: 35, // Perbesar ukuran font
+            fontSize: 50,
           ),
         ),
-        backgroundColor: Color(0xFF131A2A),
       ),
+    ),
+  ),
       drawer: Drawer(
         child: Container(
           color: Color(0xFF131A2A),
@@ -157,7 +164,7 @@ class _DaftarAkunGamesLayarState extends State<DaftarAkunGamesLayar> {
                   style: TextStyle(
                     color: Color(0xFFFFFAFF),
                     fontFamily: 'LeagueGothic',
-                    fontSize: 35, // Menggunakan font League Gothic
+                    fontSize: 35,
                   ),
                 ),
                 selected: _selectedIndex == 0,
@@ -176,7 +183,7 @@ class _DaftarAkunGamesLayarState extends State<DaftarAkunGamesLayar> {
                   style: TextStyle(
                     color: Color(0xFFFFFAFF),
                     fontFamily: 'LeagueGothic',
-                    fontSize: 35, // Menggunakan font League Gothic
+                    fontSize: 35,
                   ),
                 ),
                 selected: _selectedIndex == 1,
@@ -191,7 +198,7 @@ class _DaftarAkunGamesLayarState extends State<DaftarAkunGamesLayar> {
                   style: TextStyle(
                     color: Color(0xFFFFFAFF),
                     fontFamily: 'LeagueGothic',
-                    fontSize: 35, // Menggunakan font League Gothic
+                    fontSize: 35,
                   ),
                 ),
                 selected: _selectedIndex == 2,
@@ -210,13 +217,17 @@ class _DaftarAkunGamesLayarState extends State<DaftarAkunGamesLayar> {
                   style: TextStyle(
                     color: Color(0xFFFFFAFF),
                     fontFamily: 'LeagueGothic',
-                    fontSize: 35, // Menggunakan font League Gothic
+                    fontSize: 35,
                   ),
                 ),
                 selected: _selectedIndex == 3,
                 onTap: () {
                   _onItemTapped(3);
                   Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => RiwayatScreen()),
+                  );
                 },
               ),
               Spacer(),
@@ -226,7 +237,7 @@ class _DaftarAkunGamesLayarState extends State<DaftarAkunGamesLayar> {
                   style: TextStyle(
                     color: Color(0xFFFFFAFF),
                     fontFamily: 'LeagueGothic',
-                    fontSize: 35, // Menggunakan font League Gothic
+                    fontSize: 35,
                   ),
                 ),
                 onTap: () {},
@@ -237,7 +248,7 @@ class _DaftarAkunGamesLayarState extends State<DaftarAkunGamesLayar> {
                   style: TextStyle(
                     color: Color(0xFFFFFAFF),
                     fontFamily: 'LeagueGothic',
-                    fontSize: 35, // Menggunakan font League Gothic
+                    fontSize: 35,
                   ),
                 ),
                 onTap: () {
@@ -316,12 +327,13 @@ class _DaftarAkunGamesLayarState extends State<DaftarAkunGamesLayar> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => DetailAkunScreen(
-                                    imageUrl:
-                                        'https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSpSxJS6iDjzpWTViuc1VovCyBT8tCz7Q7FBhGDhP5O-FMXMcK5',
-                                    title: 'AKUN RAWAT PRIBADI SULTAN',
-                                    price: 'Rp 5.000.000',
-                                  )),
+                            builder: (context) => DetailAkunScreen(
+                              imageUrl:
+                                  'https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSpSxJS6iDjzpWTViuc1VovCyBT8tCz7Q7FBhGDhP5O-FMXMcK5',
+                              title: 'AKUN RAWAT PRIBADI SULTAN',
+                              price: 'Rp 5.000.000',
+                            ),
+                          ),
                         );
                       },
                     ),
@@ -337,12 +349,13 @@ class _DaftarAkunGamesLayarState extends State<DaftarAkunGamesLayar> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => DetailAkunScreen(
-                                    imageUrl:
-                                        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQQSfrZ5oLUBB1CkW-IAxwa8oQJECoYK-JMNk-US5AgsG9ZXMM4',
-                                    title: 'AKUN PRO PLAYER SULTAN',
-                                    price: 'Rp 2.000.000',
-                                  )),
+                            builder: (context) => DetailAkunScreen(
+                              imageUrl:
+                                  'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQQSfrZ5oLUBB1CkW-IAxwa8oQJECoYK-JMNk-US5AgsG9ZXMM4',
+                              title: 'AKUN PRO PLAYER SULTAN',
+                              price: 'Rp 2.000.000',
+                            ),
+                          ),
                         );
                       },
                     ),
@@ -421,7 +434,7 @@ class KartuAkunGame extends StatelessWidget {
                     child: Text(
                       title,
                       style: TextStyle(
-                        fontFamily: 'Poppins', // Menggunakan font Poppins
+                        fontFamily: 'Poppins',
                         color: Color(0xFF131A2A),
                         fontWeight: FontWeight.bold,
                       ),
@@ -505,8 +518,6 @@ class DetailAkunScreen extends StatelessWidget {
                             fontSize: 15,
                             fontWeight: FontWeight.bold,
                             color: Color(0xFFFFFAFF),
-                            decoration: TextDecoration
-                                .underline, // Tambahkan underline agar terlihat seperti link
                           ),
                         ),
                       ),
@@ -566,7 +577,13 @@ class DetailAkunScreen extends StatelessWidget {
                 children: [
                   ElevatedButton(
                     onPressed: () {
-                      // Tambahkan aksi untuk tombol keranjang
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => KeranjangScreen(),
+                        ),
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.black,
@@ -583,6 +600,13 @@ class DetailAkunScreen extends StatelessWidget {
                   ),
                   ElevatedButton(
                     onPressed: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => KeranjangScreen(),
+                        ),
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.black,
@@ -758,12 +782,13 @@ class ProfilPenjualScreen extends StatelessWidget {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => DetailAkunScreen(
-                                          imageUrl:
-                                              'https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSpSxJS6iDjzpWTViuc1VovCyBT8tCz7Q7FBhGDhP5O-FMXMcK5',
-                                          title: 'AKUN RAWAT PRIBADI SULTAN',
-                                          price: 'Rp 5.000.000',
-                                        )),
+                                  builder: (context) => DetailAkunScreen(
+                                    imageUrl:
+                                        'https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSpSxJS6iDjzpWTViuc1VovCyBT8tCz7Q7FBhGDhP5O-FMXMcK5',
+                                    title: 'AKUN RAWAT PRIBADI SULTAN',
+                                    price: 'Rp 5.000.000',
+                                  ),
+                                ),
                               );
                             },
                           ),
@@ -779,12 +804,13 @@ class ProfilPenjualScreen extends StatelessWidget {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => DetailAkunScreen(
-                                          imageUrl:
-                                              'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQQSfrZ5oLUBB1CkW-IAxwa8oQJECoYK-JMNk-US5AgsG9ZXMM4',
-                                          title: 'AKUN PRO PLAYER SULTAN',
-                                          price: 'Rp 2.000.000',
-                                        )),
+                                  builder: (context) => DetailAkunScreen(
+                                    imageUrl:
+                                        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQQSfrZ5oLUBB1CkW-IAxwa8oQJECoYK-JMNk-US5AgsG9ZXMM4',
+                                    title: 'AKUN PRO PLAYER SULTAN',
+                                    price: 'Rp 2.000.000',
+                                  ),
+                                ),
                               );
                             },
                           ),
