@@ -385,8 +385,7 @@ class DaftarAkunScreen extends StatelessWidget {
             builder: (context) => PendingDetailScreen(
               imageUrl: imageUrl,
               email: 'NopalGaming@gmail.com',
-              detail:
-                  'Email Akun ML via Moonton:\nDzakyGG@gmail.com\n\nPassword Akun:\nDzakyTampan123\n\nTerima Kasih telah membeli di toko kami, jangan lupa bintang 5 :D',
+              detail: 'Email Akun ML via Moonton:\nDzakyGG@gmail.com\n\nPassword Akun:\nDzakyTampan123\n\nTerima Kasih telah membeli di toko kami, jangan lupa bintang 5 :D',
             ),
           ),
         );
