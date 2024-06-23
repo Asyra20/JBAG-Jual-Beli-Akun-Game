@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:jbag/src/features/account_games/penjual_crud/penjual_crud_screen.dart';
+import 'package:jbag/src/features/auth/login_screen.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -8,7 +8,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home:TambahAkunGame(),
+      home:LoginScreen(),
     );
   }
 }
