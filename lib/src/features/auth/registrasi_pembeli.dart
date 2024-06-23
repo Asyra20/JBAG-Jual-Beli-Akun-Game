@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:jbag/src/features/auth/login_screen.dart';
 
 class RegistrasiPembeli extends StatelessWidget {
   const RegistrasiPembeli({super.key});
@@ -58,6 +59,94 @@ class _RegistrasiPembeliBodyState extends State<RegistrasiPembeliBody> {
     _passwordController.dispose();
     _noTelpController.dispose();
     super.dispose();
+  }
+
+  void _showLoginConfirmationDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          child: Container(
+            padding: EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Color(0xFFECE8E1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  "PEMBERITAHUAN",
+                  style: TextStyle(
+                    fontFamily: 'BebasNeue',
+                    fontSize: 24,
+                    color: Color(0xFF131A2A),
+                  ),
+                ),
+                SizedBox(height: 16),
+                Text(
+                  "REGISTRASI BERHASIL!",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: 'BebasNeue',
+                    fontSize: 18,
+                    color: Color(0xFF131A2A),
+                  ),
+                ),
+                SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xFFFFC639),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.zero,
+                        ),
+                      ),
+                      onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginScreen()),
+                );
+                      },
+                      child: Text(
+                        "LOGIN!",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontFamily: 'BebasNeue',
+                          fontSize: 20,
+                        ),
+                      ),
+                    ),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xFFF9564F),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.zero,
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text(
+                        "NAH!",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontFamily: 'BebasNeue',
+                          fontSize: 20,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -121,11 +210,7 @@ class _RegistrasiPembeliBodyState extends State<RegistrasiPembeliBody> {
                           color: const Color(0xFFFFC639),
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text("Registration Submitted"),
-                                ),
-                              );
+                              _showLoginConfirmationDialog(context);
                             }
                           },
                         ),
