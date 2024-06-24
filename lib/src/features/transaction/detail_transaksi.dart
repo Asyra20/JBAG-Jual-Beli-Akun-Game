@@ -4,9 +4,11 @@ import 'package:http/http.dart' as http;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:jbag/src/constants/api_constants.dart';
 import 'package:jbag/src/constants/colors.dart';
+import 'package:jbag/src/features/account_games/riwayat.dart';
 import 'package:jbag/src/features/transaction/bukti_pembayaran_screen.dart';
 import 'package:jbag/src/features/transaction/model/detail_transaksi_model.dart';
 import 'package:jbag/src/utils/format/currency_format.dart';
+import 'package:jbag/src/utils/json_printer.dart';
 
 class DetailTransaksi extends StatelessWidget {
   final int _transaksiId;
@@ -18,6 +20,8 @@ class DetailTransaksi extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    DetailTransaksiModel? detailTransaksi;
+
     Future<DetailTransaksiModel> fetchDetailTransaksi(int transaksiId) async {
       final response =
           await http.get(Uri.parse('$baseUrl/api/transaksi/$transaksiId'));
@@ -25,6 +29,8 @@ class DetailTransaksi extends StatelessWidget {
       if (response.statusCode == 200) {
         final responseBody = json.decode(response.body);
         if (responseBody['success'] == true) {
+          print("DetailTransaksiModel");
+          print(JsonPrinter.prettyPrint(responseBody['data']));
           return DetailTransaksiModel.fromJson(responseBody['data']);
         } else {
           throw Exception(
@@ -36,12 +42,32 @@ class DetailTransaksi extends StatelessWidget {
       }
     }
 
+    Future<bool> deleteTransaksi(int transaksiId) async {
+      final url = Uri.parse('$baseUrl/api/transaksi/$transaksiId');
+      final response = await http.delete(url);
+
+      if (response.statusCode == 200) {
+        final responseBody = json.decode(response.body);
+        if (responseBody['success'] == true) {
+          return true;
+        }
+        return false;
+      } else {
+        return false;
+      }
+    }
+
     return Scaffold(
       backgroundColor: const Color(0xFF131A2A),
       appBar: AppBar(
         backgroundColor: const Color(0xFF131A2A),
         leading: IconButton(
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const RiwayatScreen(),
+            ),
+          ),
           icon: const FaIcon(
             FontAwesomeIcons.chevronLeft,
             color: Color(0xFFFFFAFF),
@@ -53,6 +79,7 @@ class DetailTransaksi extends StatelessWidget {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.max,
             children: [
               const Row(
                 mainAxisSize: MainAxisSize.max,
@@ -76,8 +103,8 @@ class DetailTransaksi extends StatelessWidget {
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(
-                        child:
-                            CircularProgressIndicator(color: MyColors.white));
+                      child: CircularProgressIndicator(color: MyColors.white),
+                    );
                   }
 
                   if (snapshot.hasError) {
@@ -93,26 +120,88 @@ class DetailTransaksi extends StatelessWidget {
                     );
                   }
 
-                  var data = snapshot.data!;
+                  if (!snapshot.hasData) {
+                    return Center(
+                      child: Text(
+                        'Error: ${snapshot.error}',
+                        style: const TextStyle(
+                          fontFamily: 'LeagueGothic',
+                          fontSize: 18,
+                          color: Color(0xFFFFFAFF),
+                        ),
+                      ),
+                    );
+                  }
 
-                  return Expanded(
-                      child: Column(
+                  detailTransaksi = snapshot.data!;
+
+                  return Column(
+                    mainAxisSize: MainAxisSize.max,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      Row(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            "Invoice",
+                            style: TextStyle(
+                              fontFamily: 'BebasNeue',
+                              fontSize: 32,
+                              color: Color(0xFFFFFAFF),
+                            ),
+                          ),
+                          Text(
+                            detailTransaksi!.invoice!,
+                            overflow: TextOverflow.clip,
+                            style: const TextStyle(
+                              fontFamily: 'BebasNeue',
+                              fontSize: 32,
+                              color: Color(0xFFFFFAFF),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            "Tangal Waktu",
+                            style: TextStyle(
+                              fontFamily: 'BebasNeue',
+                              fontSize: 32,
+                              color: Color(0xFFFFFAFF),
+                            ),
+                          ),
+                          Text(
+                            detailTransaksi!.tanggalWaktu!,
+                            overflow: TextOverflow.clip,
+                            style: const TextStyle(
+                              fontFamily: 'BebasNeue',
+                              fontSize: 32,
+                              color: Color(0xFFFFFAFF),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const Divider(),
                       Text(
-                        data.penjual!,
+                        detailTransaksi!.penjual!,
+                        textAlign: TextAlign.start,
                         style: const TextStyle(
                           fontFamily: 'LeagueGothic',
                           fontSize: 42,
                           color: Color(0xFFECE8E1),
                         ),
                       ),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 10),
                       ListView.builder(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
-                        itemCount: data.akun!.length,
+                        itemCount: detailTransaksi!.akun!.length,
                         itemBuilder: (context, index) {
-                          final item = data.akun![index];
+                          final item = detailTransaksi!.akun![index];
 
                           return Container(
                             margin: const EdgeInsets.symmetric(vertical: 4.0),
@@ -178,7 +267,7 @@ class DetailTransaksi extends StatelessWidget {
                                     ),
                                   ),
                                   Image.network(
-                                    "$baseUrl${data.paymentMethod!.icon!}",
+                                    "$baseUrl${detailTransaksi!.paymentMethod!.icon!}",
                                     height: 30,
                                   ),
                                 ],
@@ -196,7 +285,7 @@ class DetailTransaksi extends StatelessWidget {
                               padding: const EdgeInsets.all(8.0),
                               color: const Color(0xFFECE8E1),
                               child: Text(
-                                data.namaProfilEwallet!,
+                                detailTransaksi!.namaProfilEwallet!,
                                 style: const TextStyle(
                                   color: Color(0xFF131A2A),
                                   fontSize: 32,
@@ -216,7 +305,7 @@ class DetailTransaksi extends StatelessWidget {
                               padding: const EdgeInsets.all(8.0),
                               color: const Color(0xFFECE8E1),
                               child: Text(
-                                data.nomorEwallet!,
+                                detailTransaksi!.nomorEwallet!,
                                 style: const TextStyle(
                                   color: Color(0xFF131A2A),
                                   fontSize: 32,
@@ -239,7 +328,7 @@ class DetailTransaksi extends StatelessWidget {
                           children: [
                             HargaRow(
                               text: "Harga Total",
-                              harga: data.hargaTotal!,
+                              harga: detailTransaksi!.hargaTotal!,
                             ),
                           ],
                         ),
@@ -256,7 +345,7 @@ class DetailTransaksi extends StatelessWidget {
                         ),
                       ),
                     ],
-                  ));
+                  );
                 },
               )
             ],
@@ -269,76 +358,102 @@ class DetailTransaksi extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Expanded(
-              child: MyButton(
-                text: "Batal",
-                color: const Color(0xFFF9564F),
-                onPressed: () {
-                  BuildContext dialogContext;
-                  showDialog(
-                    barrierDismissible: false,
-                    context: context,
-                    builder: (context) {
-                      dialogContext = context;
-                      return Dialog(
-                        backgroundColor: const Color(0xFFECE8E1),
-                        shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.zero),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 20, horizontal: 16),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Text(
-                                "Pemberitahuan",
-                                style: TextStyle(
-                                  fontFamily: 'BebasNeue',
-                                  fontSize: 38,
-                                  color: Color(0xFF131A2A),
+            detailTransaksi?.statusPembayaran == "belum_bayar"
+                ? Expanded(
+                    child: MyButton(
+                      text: "Batal",
+                      color: const Color(0xFFF9564F),
+                      onPressed: () {
+                        BuildContext dialogContext;
+                        showDialog(
+                          barrierDismissible: false,
+                          context: context,
+                          builder: (context) {
+                            dialogContext = context;
+                            return Dialog(
+                              backgroundColor: const Color(0xFFECE8E1),
+                              shape: const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.zero),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 20, horizontal: 16),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const Text(
+                                      "Pemberitahuan",
+                                      style: TextStyle(
+                                        fontFamily: 'BebasNeue',
+                                        fontSize: 38,
+                                        color: Color(0xFF131A2A),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 10),
+                                    const Text(
+                                      "Apakah Ingin Membatalkan Transaksi?",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontFamily: 'BebasNeue',
+                                        fontSize: 28,
+                                        color: Color(0xFF131A2A),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 25),
+                                    MyButton(
+                                      text: "Batal",
+                                      onPressed: () async {
+                                        bool isDeleted =
+                                            await deleteTransaksi(_transaksiId);
+
+                                        if (dialogContext.mounted) {
+                                          if (isDeleted) {
+                                            Navigator.push(
+                                              dialogContext,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const RiwayatScreen(),
+                                              ),
+                                            );
+                                          } else {
+                                            Navigator.of(
+                                              dialogContext,
+                                              rootNavigator: true,
+                                            ).pop();
+                                          }
+                                        }
+                                      },
+                                      color: const Color(0xFFF9564F),
+                                    ),
+                                  ],
                                 ),
                               ),
-                              const SizedBox(height: 10),
-                              const Text(
-                                "Apakah Ingin Membatalkan Transaksi?",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontFamily: 'BebasNeue',
-                                  fontSize: 28,
-                                  color: Color(0xFF131A2A),
-                                ),
-                              ),
-                              const SizedBox(height: 25),
-                              MyButton(
-                                text: "Batal",
-                                onPressed: () {
-                                  Navigator.of(
-                                    dialogContext,
-                                    rootNavigator: true,
-                                  ).pop();
-                                },
-                                color: const Color(0xFFF9564F),
-                              )
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  );
-                },
-              ),
-            ),
-            const SizedBox(width: 30),
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  )
+                : const SizedBox(),
+            SizedBox(
+                width: detailTransaksi?.statusPembayaran == "belum_bayar"
+                    ? 30
+                    : 0),
             Expanded(
               child: MyButton(
-                text: "Selanjutnya",
+                text: detailTransaksi?.statusPembayaran == "belum_bayar"
+                    ? "Selanjutnya"
+                    : "Lihat Bukti Pembayaran",
                 color: const Color(0xFFFFC639),
                 onPressed: () => Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) {
-                      return const BuktiPembayaranScreen();
+                      return BuktiPembayaranScreen(
+                        transaksiId: _transaksiId,
+                        isPaid:
+                            detailTransaksi?.statusPembayaran != "belum_bayar",
+                      );
                     },
                   ),
                 ),
@@ -362,7 +477,7 @@ class MyButton extends StatelessWidget {
 
   final String text;
   final Color color;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
   final double padding;
 
   @override

@@ -1,5 +1,6 @@
 class DetailTransaksiModel {
   String? invoice;
+  String? tanggalWaktu;
   String? penjual;
   String? statusPembayaran;
   List<Akun>? akun;
@@ -10,6 +11,7 @@ class DetailTransaksiModel {
 
   DetailTransaksiModel({
     this.invoice,
+    this.tanggalWaktu,
     this.penjual,
     this.statusPembayaran,
     this.akun,
@@ -21,6 +23,7 @@ class DetailTransaksiModel {
 
   DetailTransaksiModel.fromJson(Map<String, dynamic> json) {
     invoice = json['invoice'];
+    tanggalWaktu = json['tanggal_waktu'];
     penjual = json['penjual']['user']['nama'];
     statusPembayaran = json['status_pembayaran'];
     if (json['detail_transaksi'] != null) {
@@ -58,6 +61,6 @@ class PaymentMethod {
 
   PaymentMethod.fromJson(Map<String, dynamic> json) {
     nama = json['nama'];
-    icon = json['image'];
+    icon = json['icon'];
   }
 }
