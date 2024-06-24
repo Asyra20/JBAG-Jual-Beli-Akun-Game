@@ -8,7 +8,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:jbag/src/constants/api_constants.dart';
 import 'package:jbag/src/constants/colors.dart';
-import 'package:jbag/src/features/account_games/riwayat.dart';
+import 'package:jbag/src/features/account_games/riwayat/daftar_akun_riwayat.dart';
 import 'package:jbag/src/utils/json_printer.dart';
 
 class BuktiPembayaranScreen extends StatefulWidget {
@@ -32,7 +32,8 @@ class _BuktiPembayaranScreenState extends State<BuktiPembayaranScreen> {
 
   Future<String> getImageNetwork(BuildContext context, int id) async {
     try {
-      final response = await http.get(Uri.parse('$baseUrl/api/transaksi/$id/bukti-pembayaran'));
+      final response = await http
+          .get(Uri.parse('$baseUrl/api/transaksi/$id/bukti-pembayaran'));
 
       if (response.statusCode == 200) {
         final responseBody = json.decode(response.body);
@@ -315,7 +316,7 @@ class _BuktiPembayaranScreenState extends State<BuktiPembayaranScreen> {
               onPressed: () {
                 if (isUploaded) {
                   Navigator.of(dialogContext).push(MaterialPageRoute(
-                    builder: (context) => const RiwayatScreen(),
+                    builder: (context) => const DaftarAkunScreen(),
                   ));
                 } else {
                   Navigator.of(

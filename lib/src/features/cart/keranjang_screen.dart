@@ -75,10 +75,11 @@ class _KeranjangScreenState extends State<KeranjangScreen> {
                 }
 
                 if (snapshot.hasError) {
-                  return Center(
+                  return const Center(
                     child: Text(
-                      'Error: ${snapshot.error}',
-                      style: const TextStyle(
+                      '!Error',
+                      // 'Error: ${snapshot.error}',
+                      style: TextStyle(
                         fontFamily: 'LeagueGothic',
                         fontSize: 18,
                         color: Color(0xFFFFFAFF),

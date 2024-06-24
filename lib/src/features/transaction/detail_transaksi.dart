@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:jbag/src/constants/api_constants.dart';
 import 'package:jbag/src/constants/colors.dart';
-import 'package:jbag/src/features/account_games/riwayat.dart';
+import 'package:jbag/src/features/account_games/riwayat/daftar_akun_riwayat.dart';
 import 'package:jbag/src/features/transaction/bukti_pembayaran_screen.dart';
 import 'package:jbag/src/features/transaction/model/detail_transaksi_model.dart';
 import 'package:jbag/src/utils/format/currency_format.dart';
@@ -65,7 +65,7 @@ class DetailTransaksi extends StatelessWidget {
           onPressed: () => Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => const RiwayatScreen(),
+              builder: (context) => const DaftarAkunScreen(),
             ),
           ),
           icon: const FaIcon(
@@ -412,7 +412,7 @@ class DetailTransaksi extends StatelessWidget {
                                               dialogContext,
                                               MaterialPageRoute(
                                                 builder: (context) =>
-                                                    const RiwayatScreen(),
+                                                    const DaftarAkunScreen(),
                                               ),
                                             );
                                           } else {
