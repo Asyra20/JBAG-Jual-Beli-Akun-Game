@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:jbag/src/features/account_games/daftar_akun_game.dart';
+import 'package:jbag/src/features/auth/login_screen.dart';
+import 'package:jbag/src/features/profile/penjual/profil_penjual_screen.dart';
 
 class CustomDrawer extends StatelessWidget {
   
@@ -39,7 +42,10 @@ class CustomDrawer extends StatelessWidget {
                       ),
                     ),
                     onTap: () {
-                      // Navigate to Profile page
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ProfilPenjual()),
+                );
                     },
                   ),
                   ListTile(
@@ -52,7 +58,10 @@ class CustomDrawer extends StatelessWidget {
                       ),
                     ),
                     onTap: () {
-                      // Navigate to Daftar akun page
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const DaftarAkunGame()),
+                );
                     },
                   ),
                   ListTile(
@@ -65,7 +74,10 @@ class CustomDrawer extends StatelessWidget {
                       ),
                     ),
                     onTap: () {
-                      // Navigate to Tambah akun page
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const TambahAkunGame()),
+                );
                     },
                   ),
                 ],
@@ -96,7 +108,7 @@ class CustomDrawer extends StatelessWidget {
                     ),
                   ),
                   onTap: () {
-                    // Handle Logout
+                    _showLogoutConfirmationDialog(context);
                   },
                 ),
               ],
@@ -104,6 +116,96 @@ class CustomDrawer extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  void _showLogoutConfirmationDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          child: Container(
+            padding: EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Color(0xFFECE8E1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  "PEMBERITAHUAN",
+                  style: TextStyle(
+                    fontFamily: 'BebasNeue',
+                    fontSize: 24,
+                    color: Color(0xFF131A2A),
+                  ),
+                ),
+                SizedBox(height: 16),
+                Text(
+                  "APAKAH ANDA INGIN LOGOUT?",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: 'BebasNeue',
+                    fontSize: 18,
+                    color: Color(0xFF131A2A),
+                  ),
+                ),
+                SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xFFFFC639),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.zero,
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => LoginScreen()),
+                        );
+                      },
+                      child: Text(
+                        "YES SIR!",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontFamily: 'BebasNeue',
+                          fontSize: 20,
+                        ),
+                      ),
+                    ),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xFFF9564F),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.zero,
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text(
+                        "NAH!",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontFamily: 'BebasNeue',
+                          fontSize: 20,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }
@@ -436,7 +538,6 @@ class MyTextField extends StatelessWidget {
           return null;
         },
       ),
-      
     );
   }
 }
