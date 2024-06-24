@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:jbag/src/features/account_games/daftar_akun_penjual/sidebar_game_penjual.dart';
 
 class ProfilPenjual extends StatelessWidget {
   const ProfilPenjual({super.key});
@@ -7,16 +8,23 @@ class ProfilPenjual extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // resizeToAvoidBottomInset: false,
-      backgroundColor: Color(0xFF131A2A),
+      drawer: CustomDrawer(),
+      resizeToAvoidBottomInset: false,
+      backgroundColor: const Color(0xFF131A2A),
       appBar: AppBar(
-        backgroundColor: Color(0xFF131A2A),
-        leading: IconButton(
-          onPressed: () {},
-          icon: const FaIcon(
-            FontAwesomeIcons.bars,
-            color: Color(0xFFFFFAFF),
-          ),
+        backgroundColor: const Color(0xFF131A2A),
+        leading: Builder(
+          builder: (context) {
+            return IconButton(
+              icon: const FaIcon(
+                FontAwesomeIcons.bars,
+                color: Color(0xFFFFFAFF),
+              ),
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
+            );
+          },
         ),
       ),
       body: ProfilPenjualBody(),
