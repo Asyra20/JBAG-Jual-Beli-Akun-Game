@@ -244,7 +244,7 @@ class CheckoutScreen extends StatelessWidget {
               color: const Color(0xFFFFC639),
               padding: 40,
               onPressed: () async {
-                bool post = await buatTransaksi(grupPenjual);
+                bool post = await buatTransaksi(context, grupPenjual);
                 if (post == true) {
                   if (!context.mounted) {
                     return;
@@ -253,7 +253,8 @@ class CheckoutScreen extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const DetailTransaksi(),
+                      builder: (context) =>
+                          const DetailTransaksi(transaksiId: 10),
                     ),
                   );
                 }
@@ -282,6 +283,7 @@ class CheckoutScreen extends StatelessWidget {
   }
 
   Future<bool> buatTransaksi(
+    BuildContext context,
     Map<String, Map<String, dynamic>> grupPenjual,
   ) async {
     int userId = 2;
@@ -307,7 +309,8 @@ class CheckoutScreen extends StatelessWidget {
         };
 
         dataPenjual['items'].forEach((item) {
-          jsonDataTransaksi["detail_transaksis"].add({"akun_game_id": item.idAkunGame});
+          jsonDataTransaksi["detail_transaksis"]
+              .add({"akun_game_id": item.idAkunGame});
         });
 
         print(JsonPrinter.prettyPrint(jsonDataTransaksi));
@@ -321,8 +324,16 @@ class CheckoutScreen extends StatelessWidget {
         );
 
         final responseBody = json.decode(response.body);
-        if ((response.statusCode == 200 || response.statusCode == 201) && responseBody['success'] == true) {
+        if ((response.statusCode == 200 || response.statusCode == 201) &&
+            responseBody['success'] == true) {
           if (responseBody['success'] == false) {
+            if (!context.mounted) {
+              return false;
+            }
+
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(responseBody['message'])),
+            );
             throw Exception([responseBody['message'], responseBody['data']]);
           }
         } else {

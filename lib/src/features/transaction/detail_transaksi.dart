@@ -9,9 +9,12 @@ import 'package:jbag/src/features/transaction/model/detail_transaksi_model.dart'
 import 'package:jbag/src/utils/format/currency_format.dart';
 
 class DetailTransaksi extends StatelessWidget {
+  final int _transaksiId;
+
   const DetailTransaksi({
     super.key,
-  });
+    required int transaksiId,
+  }) : _transaksiId = transaksiId;
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +72,7 @@ class DetailTransaksi extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               FutureBuilder(
-                future: fetchDetailTransaksi(10),
+                future: fetchDetailTransaksi(_transaksiId),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(

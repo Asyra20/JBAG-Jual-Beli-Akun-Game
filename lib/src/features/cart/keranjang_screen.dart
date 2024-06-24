@@ -139,7 +139,6 @@ class _KeranjangScreenState extends State<KeranjangScreen> {
                         }
                       });
                     } catch (e) {
-                      // Handling response success: false
                       final errorMessage =
                           e is Exception ? e.toString() : 'Error: $e';
 
@@ -327,7 +326,7 @@ class KeranjangBody extends StatelessWidget {
                   final globalIndex = itemKeranjang
                       .indexWhere((element) => element.id == item.id);
 
-                  return KeranjangItemWidget(
+                  return KeranjangItemCard(
                     item: item,
                     onItemSelected: () => onItemSelected(globalIndex),
                     onItemRemoved: () => onItemRemoved(globalIndex),
@@ -343,8 +342,8 @@ class KeranjangBody extends StatelessWidget {
   }
 }
 
-class KeranjangItemWidget extends StatefulWidget {
-  const KeranjangItemWidget({
+class KeranjangItemCard extends StatefulWidget {
+  const KeranjangItemCard({
     super.key,
     required this.item,
     required this.onItemSelected,
@@ -356,10 +355,10 @@ class KeranjangItemWidget extends StatefulWidget {
   final VoidCallback onItemRemoved;
 
   @override
-  State<KeranjangItemWidget> createState() => _KeranjangItemWidgetState();
+  State<KeranjangItemCard> createState() => _KeranjangItemCardState();
 }
 
-class _KeranjangItemWidgetState extends State<KeranjangItemWidget> {
+class _KeranjangItemCardState extends State<KeranjangItemCard> {
   @override
   Widget build(BuildContext context) {
     return Padding(
