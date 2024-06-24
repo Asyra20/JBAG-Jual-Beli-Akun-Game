@@ -244,20 +244,7 @@ class CheckoutScreen extends StatelessWidget {
               color: const Color(0xFFFFC639),
               padding: 40,
               onPressed: () async {
-                bool post = await buatTransaksi(context, grupPenjual);
-                if (post == true) {
-                  if (!context.mounted) {
-                    return;
-                  }
-
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          const DetailTransaksi(transaksiId: 10),
-                    ),
-                  );
-                }
+                await buatTransaksi(context, grupPenjual);
               },
             ),
           ],
@@ -282,7 +269,7 @@ class CheckoutScreen extends StatelessWidget {
     }
   }
 
-  Future<bool> buatTransaksi(
+  Future<void> buatTransaksi(
     BuildContext context,
     Map<String, Map<String, dynamic>> grupPenjual,
   ) async {
@@ -327,24 +314,32 @@ class CheckoutScreen extends StatelessWidget {
         if ((response.statusCode == 200 || response.statusCode == 201) &&
             responseBody['success'] == true) {
           if (responseBody['success'] == false) {
-            if (!context.mounted) {
-              return false;
-            }
-
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(responseBody['message'])),
-            );
             throw Exception([responseBody['message'], responseBody['data']]);
           }
         } else {
           throw Exception([responseBody['message'], responseBody['data']]);
         }
-      }
 
-      return true;
+        if (!context.mounted) {
+          return;
+        }
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => DetailTransaksi(
+              transaksiId: responseBody['data']['transaksi_id'],
+            ),
+          ),
+        );
+      }
     } catch (e) {
-      print('Error: $e');
-      return false;
+      if (!context.mounted) {
+        return;
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString())),
+      );
     }
   }
 }
