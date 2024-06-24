@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:jbag/src/constants/colors.dart';
+import 'package:jbag/src/features/cart/controller/keranjang_controller.dart';
 import 'package:jbag/src/features/cart/model/keranjang_item.dart';
 import 'package:jbag/src/features/checkout/checkout_screen.dart';
 import 'package:jbag/src/utils/format/currency_format.dart';
@@ -12,29 +14,28 @@ class KeranjangScreen extends StatefulWidget {
 }
 
 class _KeranjangScreenState extends State<KeranjangScreen> {
-  List<KeranjangItem> itemKeranjang = [
-    KeranjangItem(
-        judul: 'AKUN RAWAT PRIBADI SULTAN',
-        harga: 5000000,
-        usernamePenjual: "NOP Gaming Store"),
-    KeranjangItem(
-        judul: 'AKUN PRO PLAYER SULTAN',
-        harga: 2000000,
-        usernamePenjual: "NOP Gaming Store"),
-    KeranjangItem(
-        judul: 'AKUN PRO PLAYER GG',
-        harga: 1500000,
-        usernamePenjual: "Dzzzzzz Store"),
-  ];
+  final KeranjangController _keranjangController = KeranjangController();
+  List<KeranjangItem> itemKeranjang = [];
+  int userId = 2;
 
   int _selectedCount = 0;
   double _totalHarga = 0;
 
+  late Future<void> _futureKeranjang;
+
   @override
   void initState() {
     super.initState();
-    _selectedCount = itemKeranjang.length;
-    _totalHarga = hitungHarga();
+    _futureKeranjang = _fetchKeranjang();
+  }
+
+  Future<void> _fetchKeranjang() async {
+    final items = await _keranjangController.fetchKeranjang(userId);
+    setState(() {
+      itemKeranjang = items;
+      _selectedCount = itemKeranjang.where((item) => item.isSelected!).length;
+      _totalHarga = hitungHarga();
+    });
   }
 
   @override
@@ -52,30 +53,108 @@ class _KeranjangScreenState extends State<KeranjangScreen> {
           ),
         ),
       ),
-      body: KeranjangBody(
-        itemKeranjang: itemKeranjang,
-        selectedCount: _selectedCount,
-        onItemSelected: (int index) {
-          setState(() {
-            itemKeranjang[index].isSelected = !itemKeranjang[index].isSelected!;
-            if (itemKeranjang[index].isSelected!) {
-              _selectedCount++;
-            } else {
-              _selectedCount--;
-            }
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            const Text(
+              'Keranjang',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontFamily: 'BebasNeue',
+                fontSize: 48,
+                color: Color(0xFFFFFAFF),
+              ),
+            ),
+            const SizedBox(height: 20),
+            FutureBuilder(
+              future: _futureKeranjang,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                      child: CircularProgressIndicator(color: MyColors.white));
+                }
 
-            _totalHarga = hitungHarga();
-          });
-        },
-        onItemRemoved: (int index) {
-          setState(() {
-            if (itemKeranjang[index].isSelected!) {
-              _selectedCount--;
-            }
-            itemKeranjang.removeAt(index);
-            _totalHarga = hitungHarga();
-          });
-        },
+                if (snapshot.hasError) {
+                  return Center(
+                    child: Text(
+                      'Error: ${snapshot.error}',
+                      style: const TextStyle(
+                        fontFamily: 'LeagueGothic',
+                        fontSize: 18,
+                        color: Color(0xFFFFFAFF),
+                      ),
+                    ),
+                  );
+                }
+
+                if (itemKeranjang.isEmpty) {
+                  return const Center(
+                    child: Text(
+                      'Keranjang kosong',
+                      style: TextStyle(
+                        fontFamily: 'LeagueGothic',
+                        fontSize: 18,
+                        color: Color(0xFFFFFAFF),
+                      ),
+                    ),
+                  );
+                }
+
+                return KeranjangBody(
+                  itemKeranjang: itemKeranjang,
+                  selectedCount: _selectedCount,
+                  onItemSelected: (int index) {
+                    setState(() {
+                      itemKeranjang[index].isSelected =
+                          !itemKeranjang[index].isSelected!;
+                      if (itemKeranjang[index].isSelected!) {
+                        _selectedCount++;
+                      } else {
+                        _selectedCount--;
+                      }
+
+                      _totalHarga = hitungHarga();
+                    });
+                  },
+                  onItemRemoved: (int index) async {
+                    try {
+                      String delete = await _keranjangController
+                          .deleteKeranjang(itemKeranjang[index].id!);
+
+                      if (!context.mounted) {
+                        return;
+                      }
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(delete)),
+                      );
+                      setState(() {
+                        if (itemKeranjang[index].isSelected!) {
+                          _selectedCount--;
+                        }
+                        itemKeranjang.removeAt(index);
+                        _totalHarga = hitungHarga();
+
+                        if (itemKeranjang.isEmpty) {
+                          _futureKeranjang = Future.value();
+                        }
+                      });
+                    } catch (e) {
+                      final errorMessage =
+                          e is Exception ? e.toString() : 'Error: $e';
+
+                      if (!context.mounted) {
+                        return;
+                      }
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(errorMessage)),
+                      );
+                    }
+                  },
+                );
+              },
+            ),
+          ],
+        ),
       ),
       bottomNavigationBar: KeranjangBottomNavigationBar(
         selectedCount: _selectedCount,
@@ -85,11 +164,17 @@ class _KeranjangScreenState extends State<KeranjangScreen> {
             List<KeranjangItem> selectedItems =
                 itemKeranjang.where((item) => item.isSelected!).toList();
 
+            Set<int> uniqueIds =
+                selectedItems.map((item) => item.idPenjual!).toSet();
+            String groupedIdPenjual = uniqueIds.join(',');
+
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) =>
-                    CheckoutScreen(itemKeranjang: selectedItems),
+                builder: (context) => CheckoutScreen(
+                  groupedIdPenjual: groupedIdPenjual,
+                  itemKeranjang: selectedItems,
+                ),
               ),
             );
           }
@@ -159,6 +244,9 @@ class KeranjangBottomNavigationBar extends StatelessWidget {
             padding: const EdgeInsets.only(top: 8.0),
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
+                disabledBackgroundColor:
+                    const Color.fromARGB(255, 178, 139, 39),
+                disabledForegroundColor: const Color(0xFF131A2A),
                 backgroundColor: const Color(0xFFFFC639),
                 foregroundColor: const Color(0xFF131A2A),
                 elevation: 5,
@@ -172,7 +260,7 @@ class KeranjangBottomNavigationBar extends StatelessWidget {
                   color: Color(0xFF393E46),
                 ),
               ),
-              onPressed: onCheckout,
+              onPressed: _selectedCount >= 1 ? onCheckout : null,
               child: const Text("Checkout"),
             ),
           )
@@ -208,133 +296,142 @@ class KeranjangBody extends StatelessWidget {
       }
     }
 
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          const Text(
-            'Keranjang',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontFamily: 'BebasNeue',
-              fontSize: 48,
-              color: Color(0xFFFFFAFF),
-            ),
-          ),
-          const SizedBox(height: 20),
-          ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: grupPenjual.keys.length,
-            itemBuilder: (context, penjualIndex) {
-              final penjual = grupPenjual.keys.elementAt(penjualIndex);
-              final itemPenjual = grupPenjual[penjual]!;
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: grupPenjual.keys.length,
+      itemBuilder: (context, penjualIndex) {
+        final penjual = grupPenjual.keys.elementAt(penjualIndex);
+        final itemPenjual = grupPenjual[penjual]!;
 
-              return Container(
-                margin:
-                    const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      penjual,
-                      style: const TextStyle(
-                        fontFamily: 'BebasNeue',
-                        fontSize: 28,
-                        color: Color(0xFFFFFAFF),
+        return Container(
+          margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                penjual,
+                style: const TextStyle(
+                  fontFamily: 'BebasNeue',
+                  fontSize: 28,
+                  color: Color(0xFFFFFAFF),
+                ),
+              ),
+              ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: itemPenjual.length,
+                itemBuilder: (context, itemIndex) {
+                  final item = itemPenjual[itemIndex];
+                  final globalIndex = itemKeranjang
+                      .indexWhere((element) => element.id == item.id);
+
+                  return KeranjangItemCard(
+                    item: item,
+                    onItemSelected: () => onItemSelected(globalIndex),
+                    onItemRemoved: () => onItemRemoved(globalIndex),
+                  );
+                },
+              ),
+              const Divider(),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+class KeranjangItemCard extends StatefulWidget {
+  const KeranjangItemCard({
+    super.key,
+    required this.item,
+    required this.onItemSelected,
+    required this.onItemRemoved,
+  });
+
+  final KeranjangItem item;
+  final VoidCallback onItemSelected;
+  final VoidCallback onItemRemoved;
+
+  @override
+  State<KeranjangItemCard> createState() => _KeranjangItemCardState();
+}
+
+class _KeranjangItemCardState extends State<KeranjangItemCard> {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Container(
+        color: const Color(0xFFECE8E1),
+        child: Row(
+          children: [
+            IconButton(
+              iconSize: 32,
+              padding: const EdgeInsets.all(16.0),
+              icon: FaIcon(
+                widget.item.isSelected!
+                    ? FontAwesomeIcons.solidSquareCheck
+                    : FontAwesomeIcons.square,
+                color: const Color(0xFF131A2A),
+              ),
+              onPressed: widget.onItemSelected,
+            ),
+            Expanded(
+              flex: 7,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    maxLines: 1,
+                    widget.item.judul!,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontFamily: 'LeagueGothic',
+                      fontSize: 24,
+                      color: Color(0xFF393E46),
+                    ),
+                  ),
+                  Text(
+                    maxLines: 1,
+                    CurrencyFormat.convert2Idr(widget.item.harga, 2),
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontFamily: 'BebasNeue',
+                      fontSize: 32,
+                      color: Color(0xFF393E46),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              flex: 2,
+              child: Material(
+                child: Ink(
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFF9564F),
+                  ),
+                  child: InkWell(
+                    highlightColor: Colors.white,
+                    onTap: widget.onItemRemoved,
+                    child: const Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 16.0, vertical: 24),
+                      child: FaIcon(
+                        size: 32,
+                        FontAwesomeIcons.solidTrashCan,
+                        color: Color(0xFF131A2A),
                       ),
                     ),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: itemPenjual.length,
-                      itemBuilder: (context, itemIndex) {
-                        final item = itemPenjual[itemIndex];
-                        final globalIndex = itemKeranjang.indexOf(item);
-
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8.0),
-                          child: Container(
-                            color: const Color(0xFFECE8E1),
-                            child: Row(
-                              children: [
-                                IconButton(
-                                  iconSize: 32,
-                                  padding: const EdgeInsets.all(16.0),
-                                  icon: FaIcon(
-                                    item.isSelected!
-                                        ? FontAwesomeIcons.solidSquareCheck
-                                        : FontAwesomeIcons.square,
-                                    color: const Color(0xFF131A2A),
-                                  ),
-                                  onPressed: () => onItemSelected(globalIndex),
-                                ),
-                                Expanded(
-                                  flex: 7,
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        maxLines: 1,
-                                        item.judul!,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: const TextStyle(
-                                          fontFamily: 'LeagueGothic',
-                                          fontSize: 24,
-                                          color: Color(0xFF393E46),
-                                        ),
-                                      ),
-                                      Text(
-                                        maxLines: 1,
-                                        CurrencyFormat.convert2Idr(
-                                            item.harga, 2),
-                                        overflow: TextOverflow.ellipsis,
-                                        style: const TextStyle(
-                                          fontFamily: 'BebasNeue',
-                                          fontSize: 32,
-                                          color: Color(0xFF131A2A),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: 2,
-                                  child: Material(
-                                    child: Ink(
-                                      decoration: const BoxDecoration(
-                                        color: Color(0xFFF9564F),
-                                      ),
-                                      child: InkWell(
-                                        highlightColor: Colors.white,
-                                        onTap: () => onItemRemoved(globalIndex),
-                                        child: const Padding(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 16.0, vertical: 24),
-                                          child: FaIcon(
-                                            size: 32,
-                                            FontAwesomeIcons.solidTrashCan,
-                                            color: Color(0xFF131A2A),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                    const Divider(),
-                  ],
+                  ),
                 ),
-              );
-            },
-          )
-        ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

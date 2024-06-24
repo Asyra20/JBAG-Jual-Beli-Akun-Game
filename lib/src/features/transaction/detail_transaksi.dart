@@ -1,39 +1,40 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:jbag/src/constants/api_constants.dart';
+import 'package:jbag/src/constants/colors.dart';
 import 'package:jbag/src/features/transaction/bukti_pembayaran_screen.dart';
+import 'package:jbag/src/features/transaction/model/detail_transaksi_model.dart';
 import 'package:jbag/src/utils/format/currency_format.dart';
 
 class DetailTransaksi extends StatelessWidget {
+  final int _transaksiId;
+
   const DetailTransaksi({
     super.key,
-  });
+    required int transaksiId,
+  }) : _transaksiId = transaksiId;
 
   @override
   Widget build(BuildContext context) {
-    Map<String, dynamic> detailTransaksi = {
-      'invoice': "",
-      'penjual': 'NOP Gaming Store',
-      'status_pembayaran': 'belum_bayar',
-      'akun': [
-        {
-          'judul': 'AKUN RAWAT PRIBADI SULTAN',
-          'harga': 5000000,
-        },
-        {
-          'judul': 'AKUN PRO PLAYER SULTAN',
-          'harga': 2000000,
-        },
-      ],
-      'harga_total': 7000000,
-      'paymentMethod': {
-        'nama': "Dana",
-        'image': "assets/logo/logo-dana.png",
-      },
-      'namaProfilEwallet': "NOP NOP Gaming Store",
-      'nomorEwallet': "0852250411",
-    };
+    Future<DetailTransaksiModel> fetchDetailTransaksi(int transaksiId) async {
+      final response =
+          await http.get(Uri.parse('$baseUrl/api/transaksi/$transaksiId'));
 
-    final List akun = detailTransaksi['akun'];
+      if (response.statusCode == 200) {
+        final responseBody = json.decode(response.body);
+        if (responseBody['success'] == true) {
+          return DetailTransaksiModel.fromJson(responseBody['data']);
+        } else {
+          throw Exception(
+              'Failed to fetch detail transaksi: ${responseBody['message']}');
+        }
+      } else {
+        throw Exception(
+            'Failed to fetch detail transaksi: ${response.reasonPhrase}');
+      }
+    }
 
     return Scaffold(
       backgroundColor: const Color(0xFF131A2A),
@@ -58,7 +59,7 @@ class DetailTransaksi extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      'Transaksi',
+                      'Detail Transaksi',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontFamily: 'BebasNeue',
@@ -70,158 +71,194 @@ class DetailTransaksi extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 20),
-              Text(
-                detailTransaksi['penjual'],
-                style: const TextStyle(
-                  fontFamily: 'LeagueGothic',
-                  fontSize: 42,
-                  color: Color(0xFFECE8E1),
-                ),
-              ),
-              const SizedBox(height: 20),
-              ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: akun.length,
-                itemBuilder: (context, index) {
-                  final item = akun[index];
+              FutureBuilder(
+                future: fetchDetailTransaksi(_transaksiId),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                        child:
+                            CircularProgressIndicator(color: MyColors.white));
+                  }
 
-                  return Container(
-                    margin: const EdgeInsets.symmetric(vertical: 4.0),
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    color: const Color(0xFFECE8E1),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          flex: 7,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                maxLines: 1,
-                                item['judul'],
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  fontFamily: 'LeagueGothic',
-                                  fontSize: 24,
-                                  color: Color(0xFF393E46),
-                                ),
-                              ),
-                              Text(
-                                maxLines: 1,
-                                CurrencyFormat.convert2Idr(item['harga'], 2),
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  fontFamily: 'BebasNeue',
-                                  fontSize: 32,
-                                  color: Color(0xFF131A2A),
-                                ),
-                              ),
-                            ],
-                          ),
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: Text(
+                        'Error: ${snapshot.error}',
+                        style: const TextStyle(
+                          fontFamily: 'LeagueGothic',
+                          fontSize: 18,
+                          color: Color(0xFFFFFAFF),
                         ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-              const SizedBox(height: 30),
-              Row(
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.all(8.0),
-                      color: const Color(0xFFFFFAFF),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text(
-                            "Metode Pembayaran",
-                            style: TextStyle(
-                              fontFamily: 'LeagueGothic',
-                              fontSize: 28,
-                              color: Color(0xFF393E46),
+                      ),
+                    );
+                  }
+
+                  var data = snapshot.data!;
+
+                  return Expanded(
+                      child: Column(
+                    children: [
+                      Text(
+                        data.penjual!,
+                        style: const TextStyle(
+                          fontFamily: 'LeagueGothic',
+                          fontSize: 42,
+                          color: Color(0xFFECE8E1),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: data.akun!.length,
+                        itemBuilder: (context, index) {
+                          final item = data.akun![index];
+
+                          return Container(
+                            margin: const EdgeInsets.symmetric(vertical: 4.0),
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 16.0),
+                            color: const Color(0xFFECE8E1),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  flex: 7,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        maxLines: 1,
+                                        item.judul!,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                          fontFamily: 'LeagueGothic',
+                                          fontSize: 24,
+                                          color: Color(0xFF393E46),
+                                        ),
+                                      ),
+                                      Text(
+                                        maxLines: 1,
+                                        CurrencyFormat.convert2Idr(
+                                            item.harga, 2),
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                          fontFamily: 'BebasNeue',
+                                          fontSize: 32,
+                                          color: Color(0xFF131A2A),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                          Image.asset(
-                            detailTransaksi["paymentMethod"]["image"],
-                            height: 30,
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 30),
+                      Row(
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Expanded(
+                            child: Container(
+                              padding: const EdgeInsets.all(8.0),
+                              color: const Color(0xFFFFFAFF),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Text(
+                                    "Metode Pembayaran",
+                                    style: TextStyle(
+                                      fontFamily: 'LeagueGothic',
+                                      fontSize: 28,
+                                      color: Color(0xFF393E46),
+                                    ),
+                                  ),
+                                  Image.network(
+                                    "$baseUrl${data.paymentMethod!.icon!}",
+                                    height: 30,
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
                         ],
                       ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              Row(
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.all(8.0),
-                      color: const Color(0xFFECE8E1),
-                      child: Text(
-                        detailTransaksi["namaProfilEwallet"],
-                        style: const TextStyle(
-                          color: Color(0xFF131A2A),
-                          fontSize: 32,
-                          fontFamily: 'LeagueGothic',
+                      const SizedBox(height: 10),
+                      Row(
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Expanded(
+                            child: Container(
+                              padding: const EdgeInsets.all(8.0),
+                              color: const Color(0xFFECE8E1),
+                              child: Text(
+                                data.namaProfilEwallet!,
+                                style: const TextStyle(
+                                  color: Color(0xFF131A2A),
+                                  fontSize: 32,
+                                  fontFamily: 'LeagueGothic',
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Expanded(
+                            child: Container(
+                              padding: const EdgeInsets.all(8.0),
+                              color: const Color(0xFFECE8E1),
+                              child: Text(
+                                data.nomorEwallet!,
+                                style: const TextStyle(
+                                  color: Color(0xFF131A2A),
+                                  fontSize: 32,
+                                  fontFamily: 'LeagueGothic',
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 40),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 16, horizontal: 8),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                              color: const Color(0xFFFFC639), width: 2),
+                        ),
+                        child: Column(
+                          children: [
+                            HargaRow(
+                              text: "Harga Total",
+                              harga: data.hargaTotal!,
+                            ),
+                          ],
                         ),
                       ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              Row(
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.all(8.0),
-                      color: const Color(0xFFECE8E1),
-                      child: Text(
-                        detailTransaksi["nomorEwallet"],
-                        style: const TextStyle(
-                          color: Color(0xFF131A2A),
-                          fontSize: 32,
-                          fontFamily: 'LeagueGothic',
+                      const Padding(
+                        padding: EdgeInsets.only(top: 8.0),
+                        child: Text(
+                          "*Pastikan tidak salah input saat melakukan pembayaran",
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontSize: 12,
+                            color: Color(0xFFFFFAFF),
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 40),
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-                decoration: BoxDecoration(
-                  border: Border.all(color: const Color(0xFFFFC639), width: 2),
-                ),
-                child: Column(
-                  children: [
-                    HargaRow(
-                      text: "Harga Total",
-                      harga: detailTransaksi['harga_total'],
-                    ),
-                  ],
-                ),
-              ),
-              const Padding(
-                padding: EdgeInsets.only(top: 8.0),
-                child: Text(
-                  "*Pastikan tidak salah input saat melakukan pembayaran",
-                  style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize: 12,
-                    color: Color(0xFFFFFAFF),
-                  ),
-                ),
-              ),
+                    ],
+                  ));
+                },
+              )
             ],
           ),
         ),
