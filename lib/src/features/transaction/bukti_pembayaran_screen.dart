@@ -32,7 +32,8 @@ class _BuktiPembayaranScreenState extends State<BuktiPembayaranScreen> {
 
   Future<String> getImageNetwork(BuildContext context, int id) async {
     try {
-      final response = await http.get(Uri.parse('$baseUrl/api/transaksi/$id/bukti-pembayaran'));
+      final response = await http
+          .get(Uri.parse('$baseUrl/api/transaksi/$id/bukti-pembayaran'));
 
       if (response.statusCode == 200) {
         final responseBody = json.decode(response.body);

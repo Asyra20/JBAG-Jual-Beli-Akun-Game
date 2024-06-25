@@ -1,101 +1,89 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+
 import 'package:flutter/material.dart';
+import 'package:jbag/src/constants/api_constants.dart';
+import 'package:jbag/src/constants/colors.dart';
+import 'package:jbag/src/features/account_games/daftar_akun_penjual/daftar_akun_screen.dart';
+import 'package:jbag/src/features/account_games/model/akun_game_model.dart';
+import 'package:jbag/src/features/account_games/penjual_crud/edit_akun_game.dart';
 
 class AkunDetailScreen extends StatefulWidget {
-  final String price;
-  final String description;
-  final String akunName;
+  final AkunGameModel? akunGame;
 
-  AkunDetailScreen({
-    Key? key,
-    required this.price,
-    required this.description,
-    required this.akunName,
-  }) : super(key: key);
+  const AkunDetailScreen({
+    super.key,
+    this.akunGame,
+  });
 
   @override
-  _AkunDetailScreenState createState() => _AkunDetailScreenState();
+  State<AkunDetailScreen> createState() => _AkunDetailScreenState();
 }
 
 class _AkunDetailScreenState extends State<AkunDetailScreen> {
-  late TextEditingController _descriptionController;
-
-  @override
-  void initState() {
-    super.initState();
-    _descriptionController = TextEditingController(text: widget.description);
-  }
-
-  @override
-  void dispose() {
-    _descriptionController.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFF131A2A),
+        backgroundColor: MyColors.dark,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
+          icon: const Icon(Icons.arrow_back, color: MyColors.white),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
       ),
-      backgroundColor: const Color(0xFF131A2A),
+      backgroundColor: MyColors.dark,
       body: SingleChildScrollView(
         child: Container(
-          padding: EdgeInsets.all(16.0),
-          color: const Color(0xFF131A2A),
+          padding: const EdgeInsets.all(16.0),
+          color: MyColors.dark,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                widget.akunName,
-                style: TextStyle(
-                    color: Colors.white, fontSize: 32, fontFamily: 'BebasNeue'),
+                widget.akunGame!.judul!,
+                style: const TextStyle(
+                    color: MyColors.white,
+                    fontSize: 32,
+                    fontFamily: 'BebasNeue'),
               ),
-              SizedBox(height: 10),
-              Text(
-                'Penjual',
-                style: TextStyle(
-                    color: Colors.grey, fontSize: 20, fontFamily: 'BebasNeue'),
-              ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Container(
                 height: 160,
                 width: double.infinity,
                 color: Colors.grey[800],
                 child: Center(
                   child: Image.network(
-                    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQQSfrZ5oLUBB1CkW-IAxwa8oQJECoYK-JMNk-US5AgsG9ZXMM4',
+                    '$baseUrl/${widget.akunGame!.gambar!}',
                     fit: BoxFit.cover,
+                    errorBuilder: (BuildContext context, Object exception,
+                        StackTrace? stackTrace) {
+                      return Image.asset(
+                          'assets/logo/logo-splash.png'); // Ganti dengan path gambar default-mu
+                    },
                   ),
                 ),
               ),
-              SizedBox(height: 10),
-              Text(
+              const SizedBox(height: 10),
+              const Text(
                 'Deskripsi Akun',
                 style: TextStyle(
                     color: Colors.grey, fontSize: 20, fontFamily: 'BebasNeue'),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Container(
                 height: 320,
                 width: double.infinity,
-                padding: EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(16.0),
                 color: Colors.grey[800],
-                child: TextField(
-                  controller: _descriptionController,
-                  onChanged: (value) {
-                    // Implementasi yang sesuai saat teks berubah
-                  },
+                child: TextFormField(
+                  initialValue: widget.akunGame!.deskripsi!,
                   maxLines: null,
                   expands: true,
                   textAlignVertical: TextAlignVertical.top,
-                  style: TextStyle(color: Colors.white),
+                  style: const TextStyle(color: MyColors.white),
                   decoration: InputDecoration(
                     hintText: 'Masukkan deskripsi',
                     hintStyle: TextStyle(color: Colors.grey[400]),
@@ -107,27 +95,31 @@ class _AkunDetailScreenState extends State<AkunDetailScreen> {
                   ),
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Text(
-                widget.price,
-                style: TextStyle(color: Colors.white, fontSize: 24),
+                widget.akunGame!.harga!.toString(),
+                style: const TextStyle(color: MyColors.white, fontSize: 24),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   ElevatedButton(
                     onPressed: () {
-                      // Implement your edit functionality here
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                EditAkunGame(akunGame: widget.akunGame!)),
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.zero,
                       ),
                       backgroundColor: const Color(0xFFFFC639),
-                      foregroundColor: const Color(0xFF131A2A),
+                      foregroundColor: MyColors.dark,
                     ),
-                    child: Row(
+                    child: const Row(
                       children: [
                         Icon(Icons.edit),
                         SizedBox(width: 5),
@@ -139,17 +131,53 @@ class _AkunDetailScreenState extends State<AkunDetailScreen> {
                     ),
                   ),
                   ElevatedButton(
-                    onPressed: () {
-                      // Implement your delete functionality here
+                    onPressed: () async {
+                      try {
+                        final response = await http.delete(Uri.parse(
+                            '$baseUrl/api/akungame/${widget.akunGame!.id!}'));
+                        final responseBody = json.decode(response.body);
+                        if (response.statusCode == 200) {
+                          if (responseBody['success'] == false) {
+                            throw Exception(responseBody['message']);
+                          }
+
+                          if (!context.mounted) {
+                            return;
+                          }
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(responseBody['message'])),
+                          );
+
+                          Future.delayed(const Duration(seconds: 3), () {
+                            Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const DaftarAkunScreen()),
+                            );
+                          });
+                        } else {
+                          throw Exception('Failed to delete akun game');
+                        }
+                      } catch (e) {
+                        final errorMessage =
+                            e is Exception ? e.toString() : 'Error: $e';
+
+                        if (!context.mounted) {
+                          return;
+                        }
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(errorMessage)),
+                        );
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.zero,
                       ),
-                      backgroundColor: Colors.red,
-                      foregroundColor: Colors.white,
+                      backgroundColor: MyColors.tertiary,
+                      foregroundColor: MyColors.dark,
                     ),
-                    child: Row(
+                    child: const Row(
                       children: [
                         Icon(Icons.delete),
                         SizedBox(width: 5),
