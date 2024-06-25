@@ -5,7 +5,8 @@ import 'package:jbag/src/features/auth/login_screen.dart';
 import 'package:jbag/src/features/profile/penjual/profil_penjual_screen.dart';
 
 class CustomDrawer extends StatelessWidget {
-  
+  const CustomDrawer({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -39,10 +40,11 @@ class CustomDrawer extends StatelessWidget {
                       ),
                     ),
                     onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const ProfilPenjual()),
-                );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const ProfilPenjual()),
+                      );
                     },
                   ),
                   ListTile(
@@ -55,10 +57,11 @@ class CustomDrawer extends StatelessWidget {
                       ),
                     ),
                     onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const DaftarAkunScreen()),
-                );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const DaftarAkunScreen()),
+                      );
                     },
                   ),
                   ListTile(
@@ -71,10 +74,11 @@ class CustomDrawer extends StatelessWidget {
                       ),
                     ),
                     onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const TambahAkunGame()),
-                );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const TambahAkunGame()),
+                      );
                     },
                   ),
                 ],

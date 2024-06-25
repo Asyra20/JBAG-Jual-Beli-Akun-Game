@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jbag/src/features/account_games/daftar_akun_pembeli/profil_penjual_screen.dart';
 import 'package:jbag/src/features/cart/keranjang_screen.dart';
-import 'package:jbag/src/features/checkout/checkout_screen.dart';
-import 'package:jbag/src/features/cart/model/keranjang_item.dart';
 
 class DetailAkunScreen extends StatelessWidget {
   final String imageUrl;

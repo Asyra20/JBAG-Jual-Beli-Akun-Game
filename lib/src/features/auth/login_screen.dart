@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:jbag/src/constants/colors.dart';
+import 'package:jbag/src/features/auth/auth_controller.dart';
 import 'package:jbag/src/features/auth/registrasi_screen.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -8,9 +10,9 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      backgroundColor: const Color(0xFF131A2A),
+      backgroundColor: MyColors.dark,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF131A2A),
+        backgroundColor: MyColors.dark,
       ),
       body: const LoginScreenBody(),
     );
@@ -25,6 +27,8 @@ class LoginScreenBody extends StatefulWidget {
 }
 
 class _LoginScreenBodyState extends State<LoginScreenBody> {
+  final AuthController _authController = AuthController();
+
   final _formKey = GlobalKey<FormState>();
 
   final TextEditingController _usernameController = TextEditingController();
@@ -37,6 +41,17 @@ class _LoginScreenBodyState extends State<LoginScreenBody> {
     super.dispose();
   }
 
+  Future<void> _handleLogin() async {
+    try {
+      await _authController.login(context, _usernameController.text, _passwordController.text);
+    } catch (e) {
+      print(e.toString());
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString())),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -44,7 +59,6 @@ class _LoginScreenBodyState extends State<LoginScreenBody> {
       child: Column(
         children: [
           Expanded(
-
             child: Center(
               child: Padding(
                 padding: const EdgeInsets.all(25.0),
@@ -80,13 +94,9 @@ class _LoginScreenBodyState extends State<LoginScreenBody> {
                         MyButtonForm(
                           label: "LOGIN",
                           color: const Color(0xFFFFC639),
-                          onPressed: () {
+                          onPressed: () async {
                             if (_formKey.currentState!.validate()) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text("Login Successful"),
-                                ),
-                              );
+                              await _handleLogin();
                             }
                           },
                         ),
@@ -104,7 +114,9 @@ class _LoginScreenBodyState extends State<LoginScreenBody> {
                           onTap: () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => const RegistrasiScreen()),
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const RegistrasiScreen()),
                             );
                           },
                           child: const Text(
@@ -146,7 +158,7 @@ class MyButtonForm extends StatelessWidget {
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
         backgroundColor: color,
-        foregroundColor: const Color(0xFF131A2A),
+        foregroundColor: MyColors.dark,
         elevation: 5,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.zero,
@@ -185,7 +197,7 @@ class MyTextField extends StatelessWidget {
         readOnly: isReadOnly,
         controller: controller,
         obscureText: (label == "Password" ? true : false),
-        cursorColor: const Color(0xFF131A2A),
+        cursorColor: MyColors.dark,
         style: const TextStyle(
           fontSize: 32,
           fontFamily: 'LeagueGothic',
@@ -193,7 +205,8 @@ class MyTextField extends StatelessWidget {
         ),
         decoration: InputDecoration(
           isDense: true,
-          contentPadding: const EdgeInsets.symmetric(vertical: 6, horizontal: 6),
+          contentPadding:
+              const EdgeInsets.symmetric(vertical: 6, horizontal: 6),
           filled: true,
           fillColor: const Color(0xFFECE8E1),
           hintText: label,

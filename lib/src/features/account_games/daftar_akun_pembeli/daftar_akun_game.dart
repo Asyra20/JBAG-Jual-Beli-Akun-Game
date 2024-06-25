@@ -2,117 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:jbag/src/constants/colors.dart';
 import 'package:jbag/src/features/account_games/daftar_akun_pembeli/detail_akun_screen.dart';
 import 'package:jbag/src/features/account_games/daftar_akun_pembeli/kartu_akun_game.dart';
-import 'package:jbag/src/features/account_games/riwayat/daftar_akun_riwayat.dart';
-import 'package:jbag/src/features/auth/login_screen.dart';
-import 'package:jbag/src/features/cart/keranjang_screen.dart';
-import 'package:jbag/src/features/profile/pembeli/profil_pembeli_screen.dart';
+import 'package:jbag/src/features/account_games/daftar_akun_pembeli/sidebar_game_pembeli.dart';
 
 class DaftarAkunGame extends StatefulWidget {
   const DaftarAkunGame({super.key});
 
   @override
-  _DaftarAkunGameState createState() => _DaftarAkunGameState();
+  State<DaftarAkunGame> createState() => _DaftarAkunGameState();
 }
 
 class _DaftarAkunGameState extends State<DaftarAkunGame> {
-  int _selectedIndex = 0;
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
-  void _showLogoutConfirmationDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return Dialog(
-          backgroundColor: Colors.transparent,
-          child: Container(
-            padding: EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Color(0xFFECE8E1),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  "PEMBERITAHUAN",
-                  style: TextStyle(
-                    fontFamily: 'BebasNeue',
-                    fontSize: 24,
-                    color: Color(0xFF131A2A),
-                  ),
-                ),
-                SizedBox(height: 16),
-                Text(
-                  "APAKAH ANDA INGIN LOGOUT?",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontFamily: 'BebasNeue',
-                    fontSize: 18,
-                    color: Color(0xFF131A2A),
-                  ),
-                ),
-                SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFFFFC639),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.zero,
-                        ),
-                      ),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => LoginScreen()),
-                        );
-                      },
-                      child: Text(
-                        "YES SIR!",
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontFamily: 'BebasNeue',
-                          fontSize: 20,
-                        ),
-                      ),
-                    ),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFFF9564F),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.zero,
-                        ),
-                      ),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: Text(
-                        "NAH!",
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontFamily: 'BebasNeue',
-                          fontSize: 20,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -134,133 +33,7 @@ class _DaftarAkunGameState extends State<DaftarAkunGame> {
           ),
         ),
       ),
-      drawer: Drawer(
-        child: Container(
-          color: Color(0xFF131A2A),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: 45),
-              Container(
-                color: Color(0xFF131A2A),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Align(
-                    alignment: Alignment.topLeft,
-                    child: IconButton(
-                      icon: Icon(
-                        Icons.close,
-                        color: Color(0xFFFFFAFF),
-                        size: 45,
-                      ),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ),
-                ),
-              ),
-              ListTile(
-                title: Text(
-                  'Profil',
-                  style: TextStyle(
-                    color: Color(0xFFFFFAFF),
-                    fontFamily: 'LeagueGothic',
-                    fontSize: 35,
-                  ),
-                ),
-                selected: _selectedIndex == 0,
-                onTap: () {
-                  _onItemTapped(0);
-                  Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => ProfilPembeli()),
-                  );
-                },
-              ),
-              ListTile(
-                title: Text(
-                  'Daftar Akun Games',
-                  style: TextStyle(
-                    color: Color(0xFFFFFAFF),
-                    fontFamily: 'LeagueGothic',
-                    fontSize: 35,
-                  ),
-                ),
-                selected: _selectedIndex == 1,
-                onTap: () {
-                  _onItemTapped(1);
-                  Navigator.pop(context);
-                },
-              ),
-              ListTile(
-                title: Text(
-                  'Keranjang',
-                  style: TextStyle(
-                    color: Color(0xFFFFFAFF),
-                    fontFamily: 'LeagueGothic',
-                    fontSize: 35,
-                  ),
-                ),
-                selected: _selectedIndex == 2,
-                onTap: () {
-                  _onItemTapped(2);
-                  Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => KeranjangScreen()),
-                  );
-                },
-              ),
-              ListTile(
-                title: Text(
-                  'Riwayat',
-                  style: TextStyle(
-                    color: Color(0xFFFFFAFF),
-                    fontFamily: 'LeagueGothic',
-                    fontSize: 35,
-                  ),
-                ),
-                selected: _selectedIndex == 3,
-                onTap: () {
-                  _onItemTapped(3);
-                  Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => DaftarAkunScreen()),
-                  );
-                },
-              ),
-              Spacer(),
-              ListTile(
-                title: Text(
-                  'Report',
-                  style: TextStyle(
-                    color: Color(0xFFFFFAFF),
-                    fontFamily: 'LeagueGothic',
-                    fontSize: 35,
-                  ),
-                ),
-                onTap: () {},
-              ),
-              ListTile(
-                title: Text(
-                  'Logout',
-                  style: TextStyle(
-                    color: Color(0xFFFFFAFF),
-                    fontFamily: 'LeagueGothic',
-                    fontSize: 35,
-                  ),
-                ),
-                onTap: () {
-                  _showLogoutConfirmationDialog();
-                },
-              ),
-            ],
-          ),
-        ),
-      ),
+      drawer: SidebarGamePembeli(),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -273,7 +46,7 @@ class _DaftarAkunGameState extends State<DaftarAkunGame> {
                   fillColor: Color(0xFF131A2A),
                   border: OutlineInputBorder(),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Color(0xFFFFC639)),
+                    borderSide: BorderSide(color: MyColors.accent),
                   ),
                   contentPadding:
                       EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -302,7 +75,7 @@ class _DaftarAkunGameState extends State<DaftarAkunGame> {
                   fillColor: Color(0xFF131A2A),
                   border: OutlineInputBorder(),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Color(0xFFFFC639)),
+                    borderSide: BorderSide(color: MyColors.accent),
                   ),
                   contentPadding:
                       EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -394,7 +167,7 @@ class KartuAkunGame1 extends StatelessWidget {
       onTap: onTap,
       child: Container(
         width: double.infinity,
-        color: Color(0xFFFFC639),
+        color: MyColors.accent,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
