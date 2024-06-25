@@ -22,6 +22,7 @@ class KartuAkunGame extends StatelessWidget {
       child: Container(
         width: double.infinity,
         color: Color(0xFFFFC639),
+        margin: EdgeInsets.only(bottom: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

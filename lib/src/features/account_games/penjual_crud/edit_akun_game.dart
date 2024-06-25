@@ -7,10 +7,14 @@ import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:jbag/src/constants/api_constants.dart';
+import 'package:jbag/src/constants/colors.dart';
+import 'package:jbag/src/features/account_games/controller/game_controller.dart';
 import 'package:jbag/src/features/account_games/daftar_akun_penjual/daftar_akun_screen.dart';
 
 import 'package:jbag/src/features/account_games/daftar_akun_penjual/sidebar_game_penjual.dart';
 import 'package:jbag/src/features/account_games/model/akun_game_model.dart';
+import 'package:jbag/src/features/account_games/model/game_model.dart';
+import 'package:jbag/src/utils/get_sharedpreferences/get_data.dart';
 import 'package:jbag/src/utils/json_printer.dart';
 
 class EditAkunGame extends StatelessWidget {
@@ -55,7 +59,10 @@ class EdiitAkunGameBody extends StatefulWidget {
 }
 
 class _EdiitAkunGameBodyState extends State<EdiitAkunGameBody> {
-  int penjualId = 1;
+  final GameController _gameController = GameController();
+  late Future<void> _future;
+
+  Map<String, dynamic>? _penjual;
   int? id;
 
   final _formKey = GlobalKey<FormState>();
@@ -67,11 +74,20 @@ class _EdiitAkunGameBodyState extends State<EdiitAkunGameBody> {
 
   int? _selectedGameId;
 
-  final List<DaftarGame> _listGames = [
-    DaftarGame(id: 1, nama: "Honor of Kings"),
-    DaftarGame(id: 2, nama: "Free Fire"),
-    DaftarGame(id: 3, nama: "Mobile Legends"),
-  ];
+  List<GameModel> _listGames = [];
+  Future<void> _fetchGames() async {
+    final items = await _gameController.getGames();
+    setState(() {
+      _listGames = items;
+    });
+  }
+
+  Future<void> _loadUserData() async {
+    Map<String, dynamic>? user = await getPenjual();
+    setState(() {
+      _penjual = user;
+    });
+  }
 
   File? _image;
 
@@ -97,6 +113,8 @@ class _EdiitAkunGameBodyState extends State<EdiitAkunGameBody> {
   @override
   void initState() {
     super.initState();
+    _loadUserData();
+    _future = _fetchGames();
     id = widget.akunGame!.id!;
     _judulController.text = widget.akunGame!.judul!;
     _hargaController.text = widget.akunGame!.harga!.toString();
@@ -140,41 +158,46 @@ class _EdiitAkunGameBodyState extends State<EdiitAkunGameBody> {
                   border: Border.all(color: const Color(0xFFFFC639), width: 2),
                   borderRadius: BorderRadius.circular(4),
                 ),
-                child: DropdownButtonFormField<int>(
-                  value: _selectedGameId,
-                  dropdownColor: const Color(0xFF131A2A),
-                  onChanged: (newValue) {
-                    setState(() {
-                      _selectedGameId = newValue;
-                    });
-                  },
-                  decoration: const InputDecoration(
-                    filled: false,
-                    border: InputBorder.none,
-                  ),
-                  icon: const Icon(Icons.arrow_drop_down,
-                      color: Color(0xFFFFC639)),
-                  hint: const Text(
-                    "Pilih Game",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontFamily: 'LeagueGothic',
-                      color: Colors.white,
-                    ),
-                  ),
-                  items: _listGames.map((DaftarGame game) {
-                    return DropdownMenuItem<int>(
-                      value: game.id,
-                      child: Text(
-                        game.nama!,
-                        style: const TextStyle(
-                          fontSize: 20,
+                child: FutureBuilder(
+                  future: _future,
+                  builder: (context, snapshot) {
+                    return DropdownButtonFormField<int>(
+                      value: _selectedGameId,
+                      dropdownColor: MyColors.dark,
+                      onChanged: (newValue) {
+                        setState(() {
+                          _selectedGameId = newValue;
+                        });
+                      },
+                      decoration: const InputDecoration(
+                        filled: false,
+                        border: InputBorder.none,
+                      ),
+                      icon: const Icon(Icons.arrow_drop_down,
+                          color: MyColors.accent),
+                      hint: const Text(
+                        "Pilih Game",
+                        style: TextStyle(
+                          fontSize: 18,
                           fontFamily: 'LeagueGothic',
-                          color: Colors.white,
+                          color: MyColors.white,
                         ),
                       ),
+                      items: _listGames.map((GameModel game) {
+                        return DropdownMenuItem<int>(
+                          value: game.id,
+                          child: Text(
+                            game.nama!,
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontFamily: 'LeagueGothic',
+                              color: MyColors.white,
+                            ),
+                          ),
+                        );
+                      }).toList(),
                     );
-                  }).toList(),
+                  },
                 ),
               ),
               const SizedBox(height: 20),
@@ -219,7 +242,7 @@ class _EdiitAkunGameBodyState extends State<EdiitAkunGameBody> {
                     editAkunGame(
                       context,
                       id!,
-                      penjualId,
+                      _penjual!['id'],
                       _judulController.text,
                       _hargaController.text,
                       _image,
@@ -289,8 +312,7 @@ class _EdiitAkunGameBodyState extends State<EdiitAkunGameBody> {
       ..fields['judul'] = selectedGameId.toString()
       ..fields['deskripsi'] = deskripsi
       ..fields['harga'] = harga
-      ..files.add(await http.MultipartFile.fromPath(
-          'gambar', image.path));
+      ..files.add(await http.MultipartFile.fromPath('gambar', image.path));
 
     try {
       final response = await request.send();
