@@ -1,11 +1,87 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:jbag/src/constants/api_constants.dart';
+import 'package:jbag/src/constants/colors.dart';
 import 'package:jbag/src/features/account_games/daftar_akun_penjual/akun_detail_screen.dart';
+import 'package:jbag/src/features/account_games/daftar_akun_penjual/dialog_penilaian.dart';
 import 'package:jbag/src/features/account_games/daftar_akun_penjual/pending_detail_screen.dart';
 import 'package:jbag/src/features/account_games/daftar_akun_penjual/sidebar_game_penjual.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:jbag/src/features/account_games/model/akun_game_model.dart';
 
-class DaftarAkunScreen extends StatelessWidget {
-  const DaftarAkunScreen({Key? key}) : super(key: key);
+class DaftarAkunScreen extends StatefulWidget {
+  const DaftarAkunScreen({super.key});
+
+  @override
+  State<DaftarAkunScreen> createState() => _DaftarAkunScreenState();
+}
+
+class _DaftarAkunScreenState extends State<DaftarAkunScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+  int _activeTabIndex = 0;
+  late Future<List<AkunGameModel>> futureAkunGames;
+  List<AkunGameModel> listAkunGame = [];
+
+  final int idPenjual = 1;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+    _tabController.addListener(_handleTabSelection);
+    futureAkunGames = fetchAkunGames(getStatusFromIndex(_activeTabIndex));
+  }
+
+  void _handleTabSelection() {
+    if (_tabController.indexIsChanging) {
+      setState(() {
+        _activeTabIndex = _tabController.index;
+        futureAkunGames = fetchAkunGames(getStatusFromIndex(_activeTabIndex));
+      });
+    }
+  }
+
+  String getStatusFromIndex(int index) {
+    switch (index) {
+      case 0:
+        return 'tersedia';
+      case 1:
+        return 'pending';
+      case 2:
+        return 'terjual';
+      default:
+        return 'tersedia';
+    }
+  }
+
+  Future<List<AkunGameModel>> fetchAkunGames(String status) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/api/akungame/penjual/$idPenjual?status=$status'),
+    );
+    final responseBody = json.decode(response.body);
+
+    try {
+      if (response.statusCode == 200) {
+        if (responseBody['success'] == false) {
+          throw Exception('Failed to load akun games');
+        }
+
+        final data = responseBody['data'];
+        return AkunGameModel.fromApiResponseList(data);
+      } else {
+        throw Exception('Failed to load akun games');
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString())),
+      );
+
+      return [];
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,14 +118,15 @@ class DaftarAkunScreen extends StatelessWidget {
                 color: Color(0xFFFFFAFF),
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Container(
               color: const Color(0xFFFFC639),
               child: TabBar(
+                controller: _tabController,
                 indicatorColor: Colors.red,
                 labelColor: const Color(0xFF131A2A),
                 unselectedLabelColor: const Color(0xFF131A2A),
-                tabs: [
+                tabs: const [
                   Tab(text: 'Dijual'),
                   Tab(text: 'Pending'),
                   Tab(text: 'Terjual'),
@@ -58,55 +135,12 @@ class DaftarAkunScreen extends StatelessWidget {
             ),
             Expanded(
               child: TabBarView(
-                physics: NeverScrollableScrollPhysics(),
+                controller: _tabController,
+                physics: const NeverScrollableScrollPhysics(),
                 children: [
-                  ListView(
-                    shrinkWrap: true,
-                    children: [
-                      _buildAkunItem(
-                          context,
-                          'https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSpSxJS6iDjzpWTViuc1VovCyBT8tCz7Q7FBhGDhP5O-FMXMcK5',
-                          'Rp 5.000.000',
-                          'AKUN RAWAT PRIBADI SULTAN'),
-                      _buildAkunItem(
-                          context,
-                          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQQSfrZ5oLUBB1CkW-IAxwa8oQJECoYK-JMNk-US5AgsG9ZXMM4',
-                          'Rp 2.000.000',
-                          'AKUN PRO PLAYER SULTAN'),
-                    ],
-                  ),
-                  ListView(
-                    shrinkWrap: true,
-                    children: [
-                      _buildPendingAkunItem(
-                          context,
-                          'https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSpSxJS6iDjzpWTViuc1VovCyBT8tCz7Q7FBhGDhP5O-FMXMcK5',
-                          'Rp 5.000.000',
-                          'PENDING - AKUN RAWAT PRIBADI SULTAN'),
-                      _buildPendingAkunItem(
-                          context,
-                          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQQSfrZ5oLUBB1CkW-IAxwa8oQJECoYK-JMNk-US5AgsG9ZXMM4',
-                          'Rp 2.000.000',
-                          'PENDING - AKUN PRO PLAYER SULTAN'),
-                    ],
-                  ),
-                  ListView(
-                    shrinkWrap: true,
-                    children: [
-                      _buildTerjualAkunItem(
-                          context,
-                          'https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSpSxJS6iDjzpWTViuc1VovCyBT8tCz7Q7FBhGDhP5O-FMXMcK5',
-                          'Rp 5.000.000',
-                          'AKUN RAWAT PRIBADI SULTAN',
-                          '14 Mei 2024'),
-                      _buildTerjualAkunItem(
-                          context,
-                          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQQSfrZ5oLUBB1CkW-IAxwa8oQJECoYK-JMNk-US5AgsG9ZXMM4',
-                          'Rp 2.000.000',
-                          'AKUN PRO PLAYER SULTAN',
-                          '10 Juni 2024'),
-                    ],
-                  ),
+                  buildAkunGameList(futureAkunGames, 'tersedia'),
+                  buildAkunGameList(futureAkunGames, 'pending'),
+                  buildAkunGameList(futureAkunGames, 'terjual'),
                 ],
               ),
             ),
@@ -116,281 +150,152 @@ class DaftarAkunScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildAkunItem(
-      BuildContext context, String imageUrl, String price, String description) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => AkunDetailScreen(
-                price: price, description: description, akunName: description),
-          ),
-        );
-      },
-      child: Container(
-        margin: EdgeInsets.symmetric(vertical: 10),
-        padding: EdgeInsets.all(10),
-        color: Colors.grey[800],
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              width: double.infinity,
-              height: 200,
-              child: Image.network(
-                imageUrl,
-                fit: BoxFit.cover,
-              ),
-            ),
-            SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Text(
-                    description,
-                    style: TextStyle(
-                        color: const Color(0xFFFFC639),
-                        fontSize: 18,
-                        fontFamily: 'BebasNeue'),
-                  ),
-                ),
-                Text(
-                  price,
-                  style: TextStyle(color: Colors.white, fontSize: 16),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  Widget buildAkunGameList(
+      Future<List<AkunGameModel>> futureAkunGames, String status) {
+    return FutureBuilder<List<AkunGameModel>>(
+      future: futureAkunGames,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+              child: CircularProgressIndicator(color: MyColors.white));
+        } else if (snapshot.hasError) {
+          return Center(
+              child: Text('Error: ${snapshot.error}',
+                  style: const TextStyle(color: MyColors.white)));
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Center(
+              child: Text('No akun games found',
+                  style: TextStyle(color: MyColors.white)));
+        } else {
+          listAkunGame = snapshot.data!;
 
-  Widget _buildPendingAkunItem(
-      BuildContext context, String imageUrl, String price, String description) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => PendingDetailScreen(
-              imageUrl: imageUrl,
-              email: 'NopalGaming@gmail.com',
-              detail:
-                  'Email Akun ML via Moonton:\nDzakyGG@gmail.com\n\nPassword Akun:\nDzakyTampan123\n\nTerima Kasih telah membeli di toko kami, jangan lupa bintang 5 :D',
-            ),
-          ),
-        );
-      },
-      child: Container(
-        margin: EdgeInsets.symmetric(vertical: 10),
-        padding: EdgeInsets.all(10),
-        color: Colors.grey[800],
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              width: double.infinity,
-              height: 200,
-              child: Image.network(
-                imageUrl,
-                fit: BoxFit.cover,
-              ),
-            ),
-            SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Text(
-                    description,
-                    style: TextStyle(
-                        color: const Color(0xFFFFC639),
-                        fontSize: 18,
-                        fontFamily: 'BebasNeue'),
-                  ),
-                ),
-                Text(
-                  price,
-                  style: TextStyle(color: Colors.white, fontSize: 16),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+          return ListView.builder(
+            itemCount: listAkunGame.length,
+            itemBuilder: (context, index) {
+              AkunGameModel akunGame = listAkunGame[index];
 
-  Widget _buildTerjualAkunItem(BuildContext context, String imageUrl,
-      String price, String description, String soldDate) {
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-      padding: EdgeInsets.all(10),
-      color: Colors.grey[800],
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: double.infinity,
-            height: 200,
-            child: Image.network(
-              imageUrl,
-              fit: BoxFit.cover,
-            ),
-          ),
-          SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Text(
-                  description,
-                  style: TextStyle(
-                      color: const Color(0xFFFFC639),
-                      fontSize: 18,
-                      fontFamily: 'BebasNeue'),
-                ),
-              ),
-              Text(
-                price,
-                style: TextStyle(color: Colors.white, fontSize: 16),
-              ),
-            ],
-          ),
-          SizedBox(height: 10),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Terjual tanggal',
-                style: TextStyle(
-                    color: Colors.white, fontSize: 14, fontFamily: 'BebasNeue'),
-              ),
-              SizedBox(height: 4),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    soldDate,
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                        fontFamily: 'BebasNeue'),
-                  ),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.zero,
+              return GestureDetector(
+                onTap: () {
+                  if (status == "tersedia") {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AkunDetailScreen(
+                          akunGame: akunGame,
+                        ),
                       ),
-                      backgroundColor: const Color(0xFFFFC639),
-                      foregroundColor: Colors.black,
-                    ),
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            shape: const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.zero,
+                    );
+                  } else if (status == "pending") {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PendingDetailScreen(
+                          imageUrl: '$baseUrl/${akunGame.gambar!}',
+                          email: 'NopalGaming@gmail.com',
+                          detail:
+                              'Email Akun ML via Moonton:\nDzakyGG@gmail.com\n\nPassword Akun:\nDzakyTampan123\n\nTerima Kasih telah membeli di toko kami, jangan lupa bintang 5 :D',
+                        ),
+                      ),
+                    );
+                  } else if (status == "terjual") {}
+                },
+                child: Container(
+                  margin: const EdgeInsets.symmetric(vertical: 10),
+                  padding: const EdgeInsets.all(10),
+                  color: Colors.grey[800],
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        width: double.infinity,
+                        height: 200,
+                        child: Image.network(
+                          '$baseUrl/${akunGame.gambar!}',
+                          fit: BoxFit.cover,
+                          errorBuilder: (BuildContext context, Object exception,
+                              StackTrace? stackTrace) {
+                            return Image.asset(
+                                'assets/logo/logo-splash.png'); // Ganti dengan path gambar default-mu
+                          },
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              akunGame.judul!,
+                              style: const TextStyle(
+                                  color: MyColors.accent,
+                                  fontSize: 18,
+                                  fontFamily: 'BebasNeue'),
                             ),
-                            backgroundColor: const Color(0xFFECE8E1),
-                            content: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                          ),
+                          Text(
+                            akunGame.harga!.toString(),
+                            style: const TextStyle(
+                                color: MyColors.white, fontSize: 16),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      if (status == "terjual")
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Terjual tanggal',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 14,
+                                  fontFamily: 'BebasNeue'),
+                            ),
+                            const SizedBox(height: 4),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Center(
-                                  child: Text(
-                                    'PENILAIAN',
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 32,
-                                        fontFamily: 'BebasNeue',
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                                SizedBox(height: 10),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      'Rating',
-                                      style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 24,
-                                          fontFamily: 'BebasNeue'),
-                                    ),
-                                    Row(
-                                      children: List.generate(5, (index) {
-                                        return Icon(
-                                          Icons.star,
-                                          color: const Color(0xFFFFC639),
-                                        );
-                                      }),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: 10),
-                                Text(
-                                  'Review',
+                                const Text(
+                                  "soldDate",
                                   style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 24,
+                                      color: Colors.white,
+                                      fontSize: 14,
                                       fontFamily: 'BebasNeue'),
                                 ),
-                                SizedBox(height: 5),
-                                TextField(
-                                  maxLines: 4,
-                                  decoration: InputDecoration(
-                                    filled: true,
-                                    fillColor: Colors.white,
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10),
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.zero,
                                     ),
+                                    backgroundColor: const Color(0xFFFFC639),
+                                    foregroundColor: Colors.black,
                                   ),
-                                ),
-                                SizedBox(height: 10),
-                                Center(
-                                  child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      shape: const RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.zero,
-                                      ),
-                                      backgroundColor: const Color(0xFFFFC639),
-                                      foregroundColor: Colors.black,
-                                    ),
-                                    onPressed: () {
-                                      // Handle the submit action
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: Text(
-                                      'KEMBALI',
-                                      style: TextStyle(
-                                          fontFamily: 'BebasNeue',
-                                          fontSize: 18),
-                                    ),
+                                  onPressed: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return const DialogPenilaian();
+                                      },
+                                    );
+                                  },
+                                  child: const Text(
+                                    'LIHAT NILAI',
+                                    style: TextStyle(
+                                        fontFamily: 'BebasNeue', fontSize: 24),
                                   ),
                                 ),
                               ],
                             ),
-                          );
-                        },
-                      );
-                    },
-                    child: Text(
-                      'LIHAT NILAI',
-                      style: TextStyle(fontFamily: 'BebasNeue', fontSize: 24),
-                    ),
+                          ],
+                        ),
+                    ],
                   ),
-                ],
-              ),
-            ],
-          ),
-        ],
-      ),
+                ),
+              );
+            },
+          );
+        }
+      },
     );
   }
 }
