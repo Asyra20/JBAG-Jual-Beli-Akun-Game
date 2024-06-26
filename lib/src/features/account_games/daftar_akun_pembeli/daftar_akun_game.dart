@@ -40,15 +40,9 @@ class _DaftarAkunGameState extends State<DaftarAkunGame> {
 
   @override
   void initState() {
-<<<<<<< Updated upstream
-    super.initState();
-    _future = _fetchGames();
-    _futureSearch = cari(gameId: null, judul: null);
-=======
     _futureSearch = cari(gameId: null, judul: null);
     super.initState();
     _future = _fetchGames();
->>>>>>> Stashed changes
   }
 
   Future<List<AkunGameModel>> cari({
@@ -56,14 +50,6 @@ class _DaftarAkunGameState extends State<DaftarAkunGame> {
     String? judul,
   }) async {
     final queryParams = {
-<<<<<<< Updated upstream
-      'game_id': (gameId != null && gameId != 0) ? gameId.toString() : null,
-      'judul': (judul != null) ? judul : null,
-    };
-
-    final uri = Uri.parse('$apiEndPoint/akungame/search')
-        .replace(queryParameters: queryParams);
-=======
       // 'game_id': (gameId != null && gameId != 0) ? gameId.toString() : null,
       // 'judul': (judul != null) ? judul : null,
       if (gameId != null && gameId != 0) 'game_id': gameId.toString(),
@@ -71,26 +57,18 @@ class _DaftarAkunGameState extends State<DaftarAkunGame> {
     };
     
     final uri = Uri.parse('$apiEndPoint/akungame/search').replace(queryParameters: queryParams);
->>>>>>> Stashed changes
     final response = await http.get(uri);
     final responseBody = json.decode(response.body);
 
     try {
-<<<<<<< Updated upstream
-      print(JsonPrinter.prettyPrint(responseBody));
-=======
->>>>>>> Stashed changes
       if (response.statusCode == 200) {
         if (responseBody['success'] == false) {
           throw Exception('Failed to load akun games');
         }
 
         final data = responseBody['data'];
-<<<<<<< Updated upstream
-=======
         print("response nya");
         print(JsonPrinter.prettyPrint(responseBody));
->>>>>>> Stashed changes
 
         return AkunGameModel.fromApiResponseList(data);
       } else {
@@ -207,12 +185,6 @@ class _DaftarAkunGameState extends State<DaftarAkunGame> {
               child: FutureBuilder(
                 future: _futureSearch,
                 builder: (context, snapshot) {
-<<<<<<< Updated upstream
-                  print("Data snapshot");
-                  print(snapshot.data);
-
-=======
->>>>>>> Stashed changes
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(
                         child:
@@ -231,20 +203,12 @@ class _DaftarAkunGameState extends State<DaftarAkunGame> {
                     return ListView.builder(
                         itemCount: _akunGames.length,
                         itemBuilder: (context, index) {
-<<<<<<< Updated upstream
-                          return KartuAkunGame(
-                            imageUrl:
-                                'https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSpSxJS6iDjzpWTViuc1VovCyBT8tCz7Q7FBhGDhP5O-FMXMcK5',
-                            title: 'AKUN RAWAT PRIBADI SULTAN',
-                            price: 'Rp 5.000.000',
-=======
                           AkunGameModel akunGame = _akunGames[index];
 
                           return KartuAkunGame(
                             imageUrl: '$baseUrl/${akunGame.gambar!}',
                             title: akunGame.judul!,
                             price: akunGame.harga!.toString(),
->>>>>>> Stashed changes
                             logoUrl:
                                 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhoUjcDjDw_TMXthjcyBqcDzmvVEOFc1KZ3Zwuum3Bawyot5g8bXdILcAMF2Eb8MLYAJr1vscCS-fec8sIyqj_1tMTJ5KZjPwodKhXyqaEBcCNKwoUcpPNpM5wL68NXOHFto8cHaW3lrFBc/s2048/mlbb+old-01.png',
                             onTap: () {
