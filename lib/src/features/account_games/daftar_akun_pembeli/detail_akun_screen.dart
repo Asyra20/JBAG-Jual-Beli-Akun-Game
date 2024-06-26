@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:jbag/src/features/account_games/daftar_akun_pembeli/profil_penjual_screen.dart';
+import 'package:jbag/src/features/account_games/model/akun_game_model.dart';
 import 'package:jbag/src/features/cart/keranjang_screen.dart';
+import 'package:jbag/src/features/cart/model/keranjang_item.dart';
+import 'package:jbag/src/features/checkout/checkout_screen.dart';
 
 class DetailAkunScreen extends StatelessWidget {
   final String imageUrl;
@@ -16,6 +19,27 @@ class DetailAkunScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final AkunGameModel akunGame = AkunGameModel(
+      id: 1,
+      gameId: 1,
+      judul: "AKUN SKIN BLESSED CHARLOTTE HEXSWORD",
+      deskripsi: "disertai winrate 80%",
+      harga: 100000,
+      gambar: "images/",
+      penjualId: 1,
+      usernamePenjual: "NopStore",
+    );
+
+    final List<KeranjangItem> checkoutData = [
+      KeranjangItem(
+          id: akunGame.id,
+          idAkunGame: akunGame.id,
+          judul: akunGame.judul,
+          harga: akunGame.harga,
+          idPenjual: akunGame.penjualId,
+          usernamePenjual: akunGame.usernamePenjual),
+    ];
+
     return Scaffold(
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Color(0xFFFFFAFF)),
@@ -153,11 +177,13 @@ class DetailAkunScreen extends StatelessWidget {
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      Navigator.pop(context);
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => KeranjangScreen(),
+                          builder: (context) => CheckoutScreen(
+                            itemKeranjang: checkoutData,
+                            groupedIdPenjual: akunGame.penjualId.toString(),
+                          ),
                         ),
                       );
                     },

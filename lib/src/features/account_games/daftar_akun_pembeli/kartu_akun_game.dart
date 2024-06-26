@@ -30,8 +30,12 @@ class KartuAkunGame extends StatelessWidget {
               children: [
                 Image.network(
                   imageUrl,
-                  width: double.infinity,
                   fit: BoxFit.cover,
+                  errorBuilder: (BuildContext context, Object exception,
+                      StackTrace? stackTrace) {
+                    return Image.asset(
+                        'assets/logo/logo-splash.png'); // Ganti dengan path gambar default-mu
+                  },
                 ),
                 Positioned(
                   top: 8,
@@ -63,6 +67,8 @@ class KartuAkunGame extends StatelessWidget {
                   Expanded(
                     child: Text(
                       title,
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontFamily: 'Poppins',
                         color: Color(0xFF131A2A),
