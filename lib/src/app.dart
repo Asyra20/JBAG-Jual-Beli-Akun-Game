@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:jbag/src/features/auth/login_screen.dart';
+import 'package:jbag/src/features/account_games/daftar_akun_pembeli/daftar_akun_game.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -8,7 +8,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: LoginScreen(),
+      home: DaftarAkunGame(),
     );
   }
 }
+
+// jalanna langsung bae

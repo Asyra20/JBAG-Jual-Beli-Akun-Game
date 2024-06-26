@@ -7,9 +7,13 @@ import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:jbag/src/constants/api_constants.dart';
+import 'package:jbag/src/constants/colors.dart';
+import 'package:jbag/src/features/account_games/controller/game_controller.dart';
 import 'package:jbag/src/features/account_games/daftar_akun_penjual/daftar_akun_screen.dart';
 
 import 'package:jbag/src/features/account_games/daftar_akun_penjual/sidebar_game_penjual.dart';
+import 'package:jbag/src/features/account_games/model/game_model.dart';
+import 'package:jbag/src/utils/get_sharedpreferences/get_data.dart';
 
 class TambahAkunGame extends StatelessWidget {
   const TambahAkunGame({super.key});
@@ -17,17 +21,17 @@ class TambahAkunGame extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: CustomDrawer(),
+      drawer: const CustomDrawer(),
       resizeToAvoidBottomInset: false,
-      backgroundColor: const Color(0xFF131A2A),
+      backgroundColor: MyColors.dark,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF131A2A),
+        backgroundColor: MyColors.dark,
         leading: Builder(
           builder: (context) {
             return IconButton(
               icon: const FaIcon(
                 FontAwesomeIcons.bars,
-                color: Color(0xFFFFFAFF),
+                color: MyColors.white,
               ),
               onPressed: () {
                 Scaffold.of(context).openDrawer();
@@ -49,7 +53,10 @@ class TambahAkunGameBody extends StatefulWidget {
 }
 
 class _TambahAkunGameBodyState extends State<TambahAkunGameBody> {
-  int penjualId = 1;
+  final GameController _gameController = GameController();
+  late Future<void> _future;
+
+  Map<String, dynamic>? _penjual;
 
   final _formKey = GlobalKey<FormState>();
 
@@ -60,11 +67,27 @@ class _TambahAkunGameBodyState extends State<TambahAkunGameBody> {
 
   int? _selectedGameId;
 
-  final List<DaftarGame> _listGames = [
-    DaftarGame(id: 1, nama: "Honor of Kings"),
-    DaftarGame(id: 2, nama: "Free Fire"),
-    DaftarGame(id: 3, nama: "Mobile Legends"),
-  ];
+  List<GameModel> _listGames = [];
+  Future<void> _fetchGames() async {
+    final items = await _gameController.getGames();
+    setState(() {
+      _listGames = items;
+    });
+  }
+
+  Future<void> _loadUserData() async {
+    Map<String, dynamic>? user = await getPenjual();
+    setState(() {
+      _penjual = user;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+    _future = _fetchGames();
+  }
 
   File? _image;
 
@@ -119,51 +142,56 @@ class _TambahAkunGameBodyState extends State<TambahAkunGameBody> {
                 style: TextStyle(
                   fontFamily: 'BebasNeue',
                   fontSize: 50,
-                  color: Color(0xFFFFFAFF),
+                  color: MyColors.white,
                 ),
               ),
               const SizedBox(height: 32),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 decoration: BoxDecoration(
-                  border: Border.all(color: const Color(0xFFFFC639), width: 2),
+                  border: Border.all(color: MyColors.accent, width: 2),
                   borderRadius: BorderRadius.circular(4),
                 ),
-                child: DropdownButtonFormField<int>(
-                  value: _selectedGameId,
-                  dropdownColor: const Color(0xFF131A2A),
-                  onChanged: (newValue) {
-                    setState(() {
-                      _selectedGameId = newValue;
-                    });
-                  },
-                  decoration: const InputDecoration(
-                    filled: false,
-                    border: InputBorder.none,
-                  ),
-                  icon: const Icon(Icons.arrow_drop_down,
-                      color: Color(0xFFFFC639)),
-                  hint: const Text(
-                    "Pilih Game",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontFamily: 'LeagueGothic',
-                      color: Colors.white,
-                    ),
-                  ),
-                  items: _listGames.map((DaftarGame game) {
-                    return DropdownMenuItem<int>(
-                      value: game.id,
-                      child: Text(
-                        game.nama!,
-                        style: const TextStyle(
-                          fontSize: 20,
+                child: FutureBuilder(
+                  future: _future,
+                  builder: (context, snapshot) {
+                    return DropdownButtonFormField<int>(
+                      value: _selectedGameId,
+                      dropdownColor: MyColors.dark,
+                      onChanged: (newValue) {
+                        setState(() {
+                          _selectedGameId = newValue;
+                        });
+                      },
+                      decoration: const InputDecoration(
+                        filled: false,
+                        border: InputBorder.none,
+                      ),
+                      icon: const Icon(Icons.arrow_drop_down,
+                          color: MyColors.accent),
+                      hint: const Text(
+                        "Pilih Game",
+                        style: TextStyle(
+                          fontSize: 18,
                           fontFamily: 'LeagueGothic',
-                          color: Colors.white,
+                          color: MyColors.white,
                         ),
                       ),
+                      items: _listGames.map((GameModel game) {
+                        return DropdownMenuItem<int>(
+                          value: game.id,
+                          child: Text(
+                            game.nama!,
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontFamily: 'LeagueGothic',
+                              color: MyColors.white,
+                            ),
+                          ),
+                        );
+                      }).toList(),
                     );
-                  }).toList(),
+                  },
                 ),
               ),
               const SizedBox(height: 20),
@@ -210,12 +238,12 @@ class _TambahAkunGameBodyState extends State<TambahAkunGameBody> {
                   ),
                   MyButtonForm(
                     label: "TAMBAH",
-                    color: const Color(0xFFFFC639),
+                    color: MyColors.accent,
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
                         createAkunGame(
                           context,
-                          penjualId,
+                          _penjual!['id'],
                           _judulController.text,
                           _hargaController.text,
                           _image,
@@ -313,15 +341,6 @@ class _TambahAkunGameBodyState extends State<TambahAkunGameBody> {
   }
 }
 
-class DaftarGame {
-  int? id;
-  String? nama;
-  DaftarGame({
-    this.id,
-    this.nama,
-  });
-}
-
 class MyButtonForm extends StatelessWidget {
   final String label;
   final VoidCallback onPressed;
@@ -340,7 +359,7 @@ class MyButtonForm extends StatelessWidget {
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
         backgroundColor: color,
-        foregroundColor: const Color(0xFF131A2A),
+        foregroundColor: MyColors.dark,
         elevation: 5,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.zero,
@@ -383,7 +402,7 @@ class MyTextField extends StatelessWidget {
         readOnly: isReadOnly,
         controller: controller,
         obscureText: (label == "Password" ? true : false),
-        cursorColor: const Color(0xFF131A2A),
+        cursorColor: MyColors.dark,
         maxLines: maxLines ?? 1,
         style: const TextStyle(
           fontSize: 32,

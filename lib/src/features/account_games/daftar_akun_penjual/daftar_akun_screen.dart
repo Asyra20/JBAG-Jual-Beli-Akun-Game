@@ -88,7 +88,7 @@ class _DaftarAkunScreenState extends State<DaftarAkunScreen>
     return DefaultTabController(
       length: 3,
       child: Scaffold(
-        drawer: CustomDrawer(),
+        drawer: const CustomDrawer(),
         resizeToAvoidBottomInset: false,
         backgroundColor: const Color(0xFF131A2A),
         appBar: AppBar(
