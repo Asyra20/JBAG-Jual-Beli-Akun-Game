@@ -41,11 +41,11 @@ class _SidebarGamePembeliState extends State<SidebarGamePembeli> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 45),
+            const SizedBox(height: 15),
             Container(
               color: MyColors.dark,
               child: Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.only(top: 8),
                 child: Align(
                   alignment: Alignment.topLeft,
                   child: IconButton(
@@ -111,7 +111,7 @@ class _SidebarGamePembeliState extends State<SidebarGamePembeli> {
                 Navigator.pop(context);
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => KeranjangScreen()),
+                  MaterialPageRoute(builder: (context) => const KeranjangScreen()),
                 );
               },
             ),
@@ -130,7 +130,7 @@ class _SidebarGamePembeliState extends State<SidebarGamePembeli> {
                 Navigator.pop(context);
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => DaftarAkunScreen()),
+                  MaterialPageRoute(builder: (context) => const DaftarAkunScreen()),
                 );
               },
             ),
@@ -159,6 +159,7 @@ class _SidebarGamePembeliState extends State<SidebarGamePembeli> {
                 _showLogoutConfirmationDialog(context);
               },
             ),
+            const SizedBox(height: 20)
           ],
         ),
       ),

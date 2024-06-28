@@ -10,7 +10,6 @@ import 'package:jbag/src/features/account_games/daftar_akun_pembeli/kartu_akun_g
 import 'package:jbag/src/features/account_games/daftar_akun_pembeli/sidebar_game_pembeli.dart';
 import 'package:jbag/src/features/account_games/model/akun_game_model.dart';
 import 'package:jbag/src/features/account_games/model/game_model.dart';
-import 'package:jbag/src/utils/json_printer.dart';
 
 class DaftarAkunGame extends StatefulWidget {
   const DaftarAkunGame({super.key});
@@ -21,28 +20,20 @@ class DaftarAkunGame extends StatefulWidget {
 
 class _DaftarAkunGameState extends State<DaftarAkunGame> {
   final GameController _gameController = GameController();
-  late Future<void> _future;
   late Future<List<AkunGameModel>> _futureSearch;
+  Future<List<GameModel>>? _futureGames;
 
   final TextEditingController _search = TextEditingController();
 
   int? _selectedGameId;
 
-  List<GameModel> _listGames = [];
   List<AkunGameModel> _akunGames = [];
-
-  Future<void> _fetchGames() async {
-    final items = await _gameController.getGames();
-    setState(() {
-      _listGames = [GameModel(id: 0, nama: "PilihGame", icon: null)] + items;
-    });
-  }
 
   @override
   void initState() {
-    _futureSearch = cari(gameId: null, judul: null);
     super.initState();
-    _future = _fetchGames();
+    _futureSearch = cari(gameId: null, judul: null);
+    _futureGames = _gameController.getGames();
   }
 
   Future<List<AkunGameModel>> cari({
@@ -50,13 +41,12 @@ class _DaftarAkunGameState extends State<DaftarAkunGame> {
     String? judul,
   }) async {
     final queryParams = {
-      // 'game_id': (gameId != null && gameId != 0) ? gameId.toString() : null,
-      // 'judul': (judul != null) ? judul : null,
       if (gameId != null && gameId != 0) 'game_id': gameId.toString(),
       if (judul != null) 'judul': judul,
     };
-    
-    final uri = Uri.parse('$apiEndPoint/akungame/search').replace(queryParameters: queryParams);
+
+    final uri = Uri.parse('$apiEndPoint/akungame/search')
+        .replace(queryParameters: queryParams);
     final response = await http.get(uri);
     final responseBody = json.decode(response.body);
 
@@ -67,15 +57,12 @@ class _DaftarAkunGameState extends State<DaftarAkunGame> {
         }
 
         final data = responseBody['data'];
-        print("response nya");
-        print(JsonPrinter.prettyPrint(responseBody));
 
         return AkunGameModel.fromApiResponseList(data);
       } else {
         throw Exception('Failed to load akun games');
       }
     } catch (e) {
-      print(e.toString());
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(e.toString())),
       );
@@ -113,46 +100,66 @@ class _DaftarAkunGameState extends State<DaftarAkunGame> {
           mainAxisSize: MainAxisSize.max,
           children: [
             FutureBuilder(
-              future: _future,
+              future: _futureGames,
               builder: (context, snapshot) {
-                return DropdownButtonFormField<int>(
-                  value: _selectedGameId,
-                  dropdownColor: MyColors.dark,
-                  onChanged: (newValue) {
-                    setState(() {
-                      _selectedGameId = newValue!;
-                      _futureSearch =
-                          cari(gameId: _selectedGameId, judul: _search.text);
-                    });
-                  },
-                  decoration: const InputDecoration(
-                    filled: false,
-                    border: InputBorder.none,
-                  ),
-                  icon:
-                      const Icon(Icons.arrow_drop_down, color: MyColors.accent),
-                  hint: const Text(
-                    "Pilih Game",
-                    style: TextStyle(
-                      fontSize: 18,
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const CircularProgressIndicator(color: MyColors.white);
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else {
+                  final List<GameModel> listGames = snapshot.data!;
+
+                  return DropdownMenu(
+                    initialSelection: 0,
+                    expandedInsets: EdgeInsets.zero,
+                    menuStyle: MenuStyle(
+                      padding: WidgetStateProperty.all(EdgeInsets.zero),
+                      shape: WidgetStateProperty.all(
+                        const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.zero),
+                      ),
+                      maximumSize:
+                          const WidgetStatePropertyAll(Size.fromHeight(250)),
+                    ),
+                    inputDecorationTheme: const InputDecorationTheme(
+                      constraints: BoxConstraints(maxHeight: 50),
+                      isDense: true,
+                      contentPadding: EdgeInsets.symmetric(horizontal: 6),
+                      filled: true,
+                      fillColor: MyColors.dark,
+                      border: InputBorder.none,
+                    ),
+                    textStyle: const TextStyle(
+                      fontSize: 32,
                       fontFamily: 'LeagueGothic',
                       color: MyColors.white,
                     ),
-                  ),
-                  items: _listGames.map((GameModel game) {
-                    return DropdownMenuItem<int>(
-                      value: game.id,
-                      child: Text(
-                        game.nama!,
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontFamily: 'LeagueGothic',
-                          color: MyColors.white,
-                        ),
-                      ),
-                    );
-                  }).toList(),
-                );
+                    enableSearch: false,
+                    dropdownMenuEntries: listGames
+                        .map(
+                          (e) => DropdownMenuEntry(
+                            label: e.nama!,
+                            value: e.id!,
+                            style: MenuItemButton.styleFrom(
+                              backgroundColor: MyColors.white,
+                              textStyle: const TextStyle(
+                                fontSize: 32,
+                                fontFamily: 'LeagueGothic',
+                                color: MyColors.dark,
+                              ),
+                            ),
+                          ),
+                        )
+                        .toList(),
+                    onSelected: (value) {
+                      setState(() {
+                        _selectedGameId = value;
+                        _futureSearch =
+                            cari(gameId: _selectedGameId, judul: _search.text);
+                      });
+                    },
+                  );
+                }
               },
             ),
             const SizedBox(height: 16),
@@ -201,31 +208,29 @@ class _DaftarAkunGameState extends State<DaftarAkunGame> {
                     _akunGames = snapshot.data!;
 
                     return ListView.builder(
-                        itemCount: _akunGames.length,
-                        itemBuilder: (context, index) {
-                          AkunGameModel akunGame = _akunGames[index];
+                      itemCount: _akunGames.length,
+                      itemBuilder: (context, index) {
+                        AkunGameModel akunGame = _akunGames[index];
 
-                          return KartuAkunGame(
-                            imageUrl: '$baseUrl/${akunGame.gambar!}',
-                            title: akunGame.judul!,
-                            price: akunGame.harga!.toString(),
-                            logoUrl:
-                                'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhoUjcDjDw_TMXthjcyBqcDzmvVEOFc1KZ3Zwuum3Bawyot5g8bXdILcAMF2Eb8MLYAJr1vscCS-fec8sIyqj_1tMTJ5KZjPwodKhXyqaEBcCNKwoUcpPNpM5wL68NXOHFto8cHaW3lrFBc/s2048/mlbb+old-01.png',
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const DetailAkunScreen(
-                                    imageUrl:
-                                        'https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSpSxJS6iDjzpWTViuc1VovCyBT8tCz7Q7FBhGDhP5O-FMXMcK5',
-                                    title: 'AKUN RAWAT PRIBADI SULTAN',
-                                    price: 'Rp 5.000.000',
-                                  ),
+                        return KartuAkunGame(
+                          imageUrl: '$baseUrl/${akunGame.gambar!}',
+                          title: akunGame.judul!,
+                          price: akunGame.harga!.toString(),
+                          logoUrl:
+                              'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhoUjcDjDw_TMXthjcyBqcDzmvVEOFc1KZ3Zwuum3Bawyot5g8bXdILcAMF2Eb8MLYAJr1vscCS-fec8sIyqj_1tMTJ5KZjPwodKhXyqaEBcCNKwoUcpPNpM5wL68NXOHFto8cHaW3lrFBc/s2048/mlbb+old-01.png',
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => DetailAkunScreen(
+                                  akunGameDetail: akunGame,
                                 ),
-                              );
-                            },
-                          );
-                        });
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    );
                   }
                 },
               ),

@@ -267,7 +267,7 @@ class DetailTransaksi extends StatelessWidget {
                                     ),
                                   ),
                                   Image.network(
-                                    "$baseUrl${detailTransaksi!.paymentMethod!.icon!}",
+                                    "$baseUrl/${detailTransaksi!.paymentMethod!.icon!}",
                                     height: 30,
                                   ),
                                 ],
