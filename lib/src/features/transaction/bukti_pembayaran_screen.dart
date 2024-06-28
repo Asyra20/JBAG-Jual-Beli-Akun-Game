@@ -8,7 +8,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:jbag/src/constants/api_constants.dart';
 import 'package:jbag/src/constants/colors.dart';
-import 'package:jbag/src/features/account_games/riwayat/daftar_akun_riwayat.dart';
+import 'package:jbag/src/features/transaction/history/history_transaksi_screen.dart';
 import 'package:jbag/src/utils/json_printer.dart';
 
 class BuktiPembayaranScreen extends StatefulWidget {

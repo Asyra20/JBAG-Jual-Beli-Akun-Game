@@ -3,6 +3,8 @@ import 'package:jbag/src/constants/colors.dart';
 import 'package:jbag/src/features/account_games/daftar_akun_pembeli/kartu_akun_game.dart';
 
 class ProfilPenjualScreen extends StatelessWidget {
+  const ProfilPenjualScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

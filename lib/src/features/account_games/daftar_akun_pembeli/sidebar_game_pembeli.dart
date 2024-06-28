@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jbag/src/constants/colors.dart';
-import 'package:jbag/src/features/account_games/riwayat/daftar_akun_riwayat.dart';
+import 'package:jbag/src/features/transaction/history/history_transaksi_screen.dart';
 import 'package:jbag/src/features/cart/keranjang_screen.dart';
 import 'package:jbag/src/features/profile/pembeli/profil_pembeli_screen.dart';
 import 'package:jbag/src/features/auth/auth_controller.dart';
@@ -111,7 +111,8 @@ class _SidebarGamePembeliState extends State<SidebarGamePembeli> {
                 Navigator.pop(context);
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const KeranjangScreen()),
+                  MaterialPageRoute(
+                      builder: (context) => const KeranjangScreen()),
                 );
               },
             ),
@@ -130,7 +131,8 @@ class _SidebarGamePembeliState extends State<SidebarGamePembeli> {
                 Navigator.pop(context);
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const DaftarAkunScreen()),
+                  MaterialPageRoute(
+                      builder: (context) => const DaftarAkunScreen()),
                 );
               },
             ),

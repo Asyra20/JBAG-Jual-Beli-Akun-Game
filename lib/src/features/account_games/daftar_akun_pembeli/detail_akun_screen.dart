@@ -112,7 +112,7 @@ class DetailAkunScreen extends StatelessWidget {
                         height: 430,
                         color: Colors.white,
                         padding: const EdgeInsets.all(16),
-                        child:  Column(
+                        child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
@@ -127,7 +127,9 @@ class DetailAkunScreen extends StatelessWidget {
                             SizedBox(height: 8),
                             Expanded(
                               child: Text(
-                                akunGameDetail.deskripsi == null ? "-" : akunGameDetail.deskripsi!,
+                                akunGameDetail.deskripsi == null
+                                    ? "-"
+                                    : akunGameDetail.deskripsi!,
                                 style: TextStyle(
                                   fontFamily: 'Poppins',
                                   fontSize: 16,

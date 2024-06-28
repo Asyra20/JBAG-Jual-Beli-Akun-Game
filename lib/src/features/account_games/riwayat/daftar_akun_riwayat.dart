@@ -6,7 +6,7 @@ import 'package:jbag/src/constants/api_constants.dart';
 import 'package:jbag/src/constants/colors.dart';
 import 'package:jbag/src/features/account_games/daftar_akun_pembeli/sidebar_game_pembeli.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:jbag/src/features/account_games/model/riwayat_pembelian_model.dart';
+import 'package:jbag/src/features/transaction/model/riwayat_pembelian_model.dart';
 import 'package:jbag/src/features/transaction/detail_transaksi.dart';
 
 class DaftarAkunScreen extends StatefulWidget {
