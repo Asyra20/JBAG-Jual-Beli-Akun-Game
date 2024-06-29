@@ -119,6 +119,7 @@ class _DaftarAkunScreenState extends State<DaftarAkunScreen>
             const SizedBox(height: 20),
             Container(
               color: MyColors.accent,
+              margin: const EdgeInsets.symmetric(horizontal: 8.0),
               child: TabBar(
                 controller: _tabController,
                 indicatorColor: Colors.red,
@@ -137,14 +138,17 @@ class _DaftarAkunScreenState extends State<DaftarAkunScreen>
               ),
             ),
             Expanded(
-              child: TabBarView(
-                controller: _tabController,
-                physics: const NeverScrollableScrollPhysics(),
-                children: [
-                  tabView(futureAkunGames),
-                  tabView(futureAkunGames),
-                  tabViewTerjual(futureAkunGames),
-                ],
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TabBarView(
+                  controller: _tabController,
+                  physics: const NeverScrollableScrollPhysics(),
+                  children: [
+                    tabView(futureAkunGames),
+                    tabView(futureAkunGames),
+                    tabViewTerjual(futureAkunGames),
+                  ],
+                ),
               ),
             ),
           ],
@@ -166,7 +170,7 @@ class _DaftarAkunScreenState extends State<DaftarAkunScreen>
                   style: const TextStyle(color: MyColors.white)));
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
           return const Center(
-              child: Text('No akun games found',
+              child: Text('Tidak Ada Transaksi',
                   style: TextStyle(color: MyColors.white)));
         } else {
           listAkunGame = snapshot.data!;
@@ -189,14 +193,14 @@ class _DaftarAkunScreenState extends State<DaftarAkunScreen>
                 child: Container(
                   margin: const EdgeInsets.symmetric(vertical: 10),
                   padding: const EdgeInsets.all(10),
-                  color: Colors.grey[800],
+                  color: MyColors.accent,
                   child: Text(
                     pembelian.invoice!,
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                       fontFamily: 'BebasNeue',
-                      fontSize: 18,
-                      color: MyColors.white,
+                      fontSize: 32,
+                      color: MyColors.dark,
                     ),
                   ),
                 ),
@@ -221,7 +225,7 @@ class _DaftarAkunScreenState extends State<DaftarAkunScreen>
                   style: const TextStyle(color: MyColors.white)));
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
           return const Center(
-              child: Text('No akun games found',
+              child: Text('Tidak Ada Transaksi',
                   style: TextStyle(color: MyColors.white)));
         } else {
           listAkunGame = snapshot.data!;
@@ -231,44 +235,58 @@ class _DaftarAkunScreenState extends State<DaftarAkunScreen>
             itemBuilder: (context, index) {
               RiwayatPembelianModel pembelian = listAkunGame[index];
 
-              return Column(
-                children: [
-                  GestureDetector(
-                    child: Container(
-                      margin: const EdgeInsets.symmetric(vertical: 10),
-                      padding: const EdgeInsets.all(10),
-                      color: Colors.grey[800],
-                      child: Text(
-                        pembelian.invoice!,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontFamily: 'BebasNeue',
-                          fontSize: 18,
-                          color: MyColors.white,
+              return Container(
+                margin: const EdgeInsets.symmetric(vertical: 10),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: Container(
+                            padding: const EdgeInsets.all(10),
+                            color: MyColors.accent,
+                            child: Text(
+                              pembelian.invoice!,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                fontFamily: 'BebasNeue',
+                                fontSize: 32,
+                                color: MyColors.dark,
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
+                      ],
                     ),
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Dibeli tanggal',
-                        style: TextStyle(
-                            color: MyColors.white,
-                            fontSize: 14,
-                            fontFamily: 'LeagueGothic'),
-                      ),
-                      const SizedBox(height: 4),
-                      Row(
+                    Container(
+                      padding: const EdgeInsets.all(15),
+                      color: MyColors.primary,
+                      child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text(
-                            "Tanggal",
-                            style: TextStyle(
-                                color: MyColors.white,
-                                fontSize: 14,
-                                fontFamily: 'LeagueGothic'),
+                          const Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Di Beli Tanggal',
+                                style: TextStyle(
+                                  fontFamily: 'LeagueGothic',
+                                  fontSize: 32,
+                                  color: MyColors.secondary,
+                                ),
+                              ),
+                              SizedBox(height: 4.0),
+                              Text(
+                                '14 Mei 2024',
+                                style: TextStyle(
+                                  fontFamily: 'LeagueGothic',
+                                  fontSize: 32,
+                                  color: MyColors.dark,
+                                ),
+                              ),
+                            ],
                           ),
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(
@@ -285,14 +303,18 @@ class _DaftarAkunScreenState extends State<DaftarAkunScreen>
                             },
                             child: const Text(
                               'NILAI',
-                              style: TextStyle(fontFamily: 'LeagueGothic'),
+                              style: TextStyle(
+                                fontFamily: 'BebasNeue',
+                                fontSize: 32,
+                                color: MyColors.dark,
+                              ),
                             ),
                           ),
                         ],
                       ),
-                    ],
-                  ),
-                ],
+                    ),
+                  ],
+                ),
               );
             },
           );
