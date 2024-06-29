@@ -4,13 +4,13 @@ import 'package:http/http.dart' as http;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:jbag/src/constants/api_constants.dart';
 import 'package:jbag/src/constants/colors.dart';
-import 'package:jbag/src/features/account_games/riwayat/daftar_akun_riwayat.dart';
+import 'package:jbag/src/features/transaction/history/history_transaksi_screen.dart';
 import 'package:jbag/src/features/transaction/bukti_pembayaran_screen.dart';
 import 'package:jbag/src/features/transaction/model/detail_transaksi_model.dart';
 import 'package:jbag/src/utils/format/currency_format.dart';
 import 'package:jbag/src/utils/json_printer.dart';
 
-class DetailTransaksi extends StatelessWidget {
+class DetailTransaksi extends StatefulWidget {
   final int _transaksiId;
 
   const DetailTransaksi({
@@ -19,48 +19,64 @@ class DetailTransaksi extends StatelessWidget {
   }) : _transaksiId = transaksiId;
 
   @override
-  Widget build(BuildContext context) {
-    DetailTransaksiModel? detailTransaksi;
+  State<DetailTransaksi> createState() => _DetailTransaksiState();
+}
 
-    Future<DetailTransaksiModel> fetchDetailTransaksi(int transaksiId) async {
-      final response =
-          await http.get(Uri.parse('$baseUrl/api/transaksi/$transaksiId'));
+class _DetailTransaksiState extends State<DetailTransaksi> {
+  late Future<void> futureDetail;
 
-      if (response.statusCode == 200) {
-        final responseBody = json.decode(response.body);
-        if (responseBody['success'] == true) {
-          print("DetailTransaksiModel");
-          print(JsonPrinter.prettyPrint(responseBody['data']));
-          return DetailTransaksiModel.fromJson(responseBody['data']);
-        } else {
-          throw Exception(
-              'Failed to fetch detail transaksi: ${responseBody['message']}');
-        }
+  DetailTransaksiModel? detailTransaksi;
+
+  @override
+  void initState() {
+    super.initState();
+    futureDetail = fetchDetailTransaksi(widget._transaksiId);
+  }
+
+  Future<void> fetchDetailTransaksi(int transaksiId) async {
+    final response =
+        await http.get(Uri.parse('$apiEndPoint/transaksi/$transaksiId'));
+
+    if (response.statusCode == 200) {
+      final responseBody = json.decode(response.body);
+      if (responseBody['success'] == true) {
+        print("DetailTransaksiModel");
+        print(JsonPrinter.prettyPrint(responseBody['data']));
+
+        setState(() {
+          detailTransaksi = DetailTransaksiModel.fromJson(responseBody['data']);
+        });
       } else {
         throw Exception(
-            'Failed to fetch detail transaksi: ${response.reasonPhrase}');
+            'Failed to fetch detail transaksi: ${responseBody['message']}');
       }
+    } else {
+      throw Exception(
+          'Failed to fetch detail transaksi: ${response.reasonPhrase}');
     }
+  }
 
-    Future<bool> deleteTransaksi(int transaksiId) async {
-      final url = Uri.parse('$baseUrl/api/transaksi/$transaksiId');
-      final response = await http.delete(url);
+  Future<bool> deleteTransaksi(int transaksiId) async {
+    final url = Uri.parse('$baseUrl/api/transaksi/$transaksiId');
+    final response = await http.delete(url);
 
-      if (response.statusCode == 200) {
-        final responseBody = json.decode(response.body);
-        if (responseBody['success'] == true) {
-          return true;
-        }
-        return false;
-      } else {
-        return false;
+    if (response.statusCode == 200) {
+      final responseBody = json.decode(response.body);
+      if (responseBody['success'] == true) {
+        return true;
       }
+      return false;
+    } else {
+      return false;
     }
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF131A2A),
+      backgroundColor: MyColors.dark,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF131A2A),
+        backgroundColor: MyColors.dark,
         leading: IconButton(
           onPressed: () => Navigator.push(
             context,
@@ -70,7 +86,7 @@ class DetailTransaksi extends StatelessWidget {
           ),
           icon: const FaIcon(
             FontAwesomeIcons.chevronLeft,
-            color: Color(0xFFFFFAFF),
+            color: MyColors.white,
           ),
         ),
       ),
@@ -91,7 +107,7 @@ class DetailTransaksi extends StatelessWidget {
                       style: TextStyle(
                         fontFamily: 'BebasNeue',
                         fontSize: 48,
-                        color: Color(0xFFFFFAFF),
+                        color: MyColors.white,
                       ),
                     ),
                   ),
@@ -99,7 +115,7 @@ class DetailTransaksi extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               FutureBuilder(
-                future: fetchDetailTransaksi(_transaksiId),
+                future: futureDetail,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(
@@ -114,17 +130,17 @@ class DetailTransaksi extends StatelessWidget {
                         style: const TextStyle(
                           fontFamily: 'LeagueGothic',
                           fontSize: 18,
-                          color: Color(0xFFFFFAFF),
+                          color: MyColors.white,
                         ),
                       ),
                     );
                   }
 
-                  if (!snapshot.hasData) {
-                    return Center(
+                  if (detailTransaksi == null) {
+                    return const Center(
                       child: Text(
-                        'Error: ${snapshot.error}',
-                        style: const TextStyle(
+                        'Keranjang kosong',
+                        style: TextStyle(
                           fontFamily: 'LeagueGothic',
                           fontSize: 18,
                           color: Color(0xFFFFFAFF),
@@ -132,8 +148,6 @@ class DetailTransaksi extends StatelessWidget {
                       ),
                     );
                   }
-
-                  detailTransaksi = snapshot.data!;
 
                   return Column(
                     mainAxisSize: MainAxisSize.max,
@@ -148,7 +162,7 @@ class DetailTransaksi extends StatelessWidget {
                             style: TextStyle(
                               fontFamily: 'BebasNeue',
                               fontSize: 32,
-                              color: Color(0xFFFFFAFF),
+                              color: MyColors.white,
                             ),
                           ),
                           Text(
@@ -157,7 +171,7 @@ class DetailTransaksi extends StatelessWidget {
                             style: const TextStyle(
                               fontFamily: 'BebasNeue',
                               fontSize: 32,
-                              color: Color(0xFFFFFAFF),
+                              color: MyColors.white,
                             ),
                           ),
                         ],
@@ -171,7 +185,7 @@ class DetailTransaksi extends StatelessWidget {
                             style: TextStyle(
                               fontFamily: 'BebasNeue',
                               fontSize: 32,
-                              color: Color(0xFFFFFAFF),
+                              color: MyColors.white,
                             ),
                           ),
                           Text(
@@ -180,7 +194,30 @@ class DetailTransaksi extends StatelessWidget {
                             style: const TextStyle(
                               fontFamily: 'BebasNeue',
                               fontSize: 32,
-                              color: Color(0xFFFFFAFF),
+                              color: MyColors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            "Status Pembayaran",
+                            style: TextStyle(
+                              fontFamily: 'BebasNeue',
+                              fontSize: 32,
+                              color: MyColors.white,
+                            ),
+                          ),
+                          Text(
+                            detailTransaksi!.statusPembayaran!,
+                            overflow: TextOverflow.clip,
+                            style: const TextStyle(
+                              fontFamily: 'BebasNeue',
+                              fontSize: 32,
+                              color: MyColors.white,
                             ),
                           ),
                         ],
@@ -207,7 +244,7 @@ class DetailTransaksi extends StatelessWidget {
                             margin: const EdgeInsets.symmetric(vertical: 4.0),
                             padding:
                                 const EdgeInsets.symmetric(horizontal: 16.0),
-                            color: const Color(0xFFECE8E1),
+                            color: MyColors.primary,
                             child: Row(
                               children: [
                                 Expanded(
@@ -235,7 +272,7 @@ class DetailTransaksi extends StatelessWidget {
                                         style: const TextStyle(
                                           fontFamily: 'BebasNeue',
                                           fontSize: 32,
-                                          color: Color(0xFF131A2A),
+                                          color: MyColors.dark,
                                         ),
                                       ),
                                     ],
@@ -253,7 +290,7 @@ class DetailTransaksi extends StatelessWidget {
                           Expanded(
                             child: Container(
                               padding: const EdgeInsets.all(8.0),
-                              color: const Color(0xFFFFFAFF),
+                              color: MyColors.white,
                               child: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
@@ -267,7 +304,7 @@ class DetailTransaksi extends StatelessWidget {
                                     ),
                                   ),
                                   Image.network(
-                                    "$baseUrl${detailTransaksi!.paymentMethod!.icon!}",
+                                    "$baseUrl/${detailTransaksi!.paymentMethod!.icon!}",
                                     height: 30,
                                   ),
                                 ],
@@ -283,11 +320,11 @@ class DetailTransaksi extends StatelessWidget {
                           Expanded(
                             child: Container(
                               padding: const EdgeInsets.all(8.0),
-                              color: const Color(0xFFECE8E1),
+                              color: MyColors.primary,
                               child: Text(
                                 detailTransaksi!.namaProfilEwallet!,
                                 style: const TextStyle(
-                                  color: Color(0xFF131A2A),
+                                  color: MyColors.dark,
                                   fontSize: 32,
                                   fontFamily: 'LeagueGothic',
                                 ),
@@ -303,11 +340,11 @@ class DetailTransaksi extends StatelessWidget {
                           Expanded(
                             child: Container(
                               padding: const EdgeInsets.all(8.0),
-                              color: const Color(0xFFECE8E1),
+                              color: MyColors.primary,
                               child: Text(
                                 detailTransaksi!.nomorEwallet!,
                                 style: const TextStyle(
-                                  color: Color(0xFF131A2A),
+                                  color: MyColors.dark,
                                   fontSize: 32,
                                   fontFamily: 'LeagueGothic',
                                 ),
@@ -340,7 +377,7 @@ class DetailTransaksi extends StatelessWidget {
                           style: TextStyle(
                             fontFamily: 'Poppins',
                             fontSize: 12,
-                            color: Color(0xFFFFFAFF),
+                            color: MyColors.white,
                           ),
                         ),
                       ),
@@ -371,7 +408,7 @@ class DetailTransaksi extends StatelessWidget {
                           builder: (context) {
                             dialogContext = context;
                             return Dialog(
-                              backgroundColor: const Color(0xFFECE8E1),
+                              backgroundColor: MyColors.primary,
                               shape: const RoundedRectangleBorder(
                                   borderRadius: BorderRadius.zero),
                               child: Container(
@@ -386,7 +423,7 @@ class DetailTransaksi extends StatelessWidget {
                                       style: TextStyle(
                                         fontFamily: 'BebasNeue',
                                         fontSize: 38,
-                                        color: Color(0xFF131A2A),
+                                        color: MyColors.dark,
                                       ),
                                     ),
                                     const SizedBox(height: 10),
@@ -396,15 +433,15 @@ class DetailTransaksi extends StatelessWidget {
                                       style: TextStyle(
                                         fontFamily: 'BebasNeue',
                                         fontSize: 28,
-                                        color: Color(0xFF131A2A),
+                                        color: MyColors.dark,
                                       ),
                                     ),
                                     const SizedBox(height: 25),
                                     MyButton(
                                       text: "Batal",
                                       onPressed: () async {
-                                        bool isDeleted =
-                                            await deleteTransaksi(_transaksiId);
+                                        bool isDeleted = await deleteTransaksi(
+                                            widget._transaksiId);
 
                                         if (dialogContext.mounted) {
                                           if (isDeleted) {
@@ -450,7 +487,7 @@ class DetailTransaksi extends StatelessWidget {
                   MaterialPageRoute(
                     builder: (context) {
                       return BuktiPembayaranScreen(
-                        transaksiId: _transaksiId,
+                        transaksiId: widget._transaksiId,
                         isPaid:
                             detailTransaksi?.statusPembayaran != "belum_bayar",
                       );
@@ -486,7 +523,7 @@ class MyButton extends StatelessWidget {
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
         backgroundColor: color,
-        foregroundColor: const Color(0xFF131A2A),
+        foregroundColor: MyColors.dark,
         padding: EdgeInsets.symmetric(horizontal: padding),
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.zero,

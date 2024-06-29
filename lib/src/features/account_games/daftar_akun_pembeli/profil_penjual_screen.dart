@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:jbag/src/constants/colors.dart';
-import 'package:jbag/src/features/account_games/daftar_akun_pembeli/detail_akun_screen.dart';
 import 'package:jbag/src/features/account_games/daftar_akun_pembeli/kartu_akun_game.dart';
 
 class ProfilPenjualScreen extends StatelessWidget {
+  const ProfilPenjualScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -149,17 +150,17 @@ class ProfilPenjualScreen extends StatelessWidget {
                             logoUrl:
                                 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhoUjcDjDw_TMXthjcyBqcDzmvVEOFc1KZ3Zwuum3Bawyot5g8bXdILcAMF2Eb8MLYAJr1vscCS-fec8sIyqj_1tMTJ5KZjPwodKhXyqaEBcCNKwoUcpPNpM5wL68NXOHFto8cHaW3lrFBc/s2048/mlbb+old-01.png',
                             onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => DetailAkunScreen(
-                                    imageUrl:
-                                        'https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSpSxJS6iDjzpWTViuc1VovCyBT8tCz7Q7FBhGDhP5O-FMXMcK5',
-                                    title: 'AKUN RAWAT PRIBADI SULTAN',
-                                    price: 'Rp 5.000.000',
-                                  ),
-                                ),
-                              );
+                              // Navigator.push(
+                              //   context,
+                              //   MaterialPageRoute(
+                              //     builder: (context) => DetailAkunScreen(
+                              //       imageUrl:
+                              //           'https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSpSxJS6iDjzpWTViuc1VovCyBT8tCz7Q7FBhGDhP5O-FMXMcK5',
+                              //       title: 'AKUN RAWAT PRIBADI SULTAN',
+                              //       price: 'Rp 5.000.000',
+                              //     ),
+                              //   ),
+                              // );
                             },
                           ),
                           SizedBox(height: 16),
@@ -171,17 +172,17 @@ class ProfilPenjualScreen extends StatelessWidget {
                             logoUrl:
                                 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhoUjcDjDw_TMXthjcyBqcDzmvVEOFc1KZ3Zwuum3Bawyot5g8bXdILcAMF2Eb8MLYAJr1vscCS-fec8sIyqj_1tMTJ5KZjPwodKhXyqaEBcCNKwoUcpPNpM5wL68NXOHFto8cHaW3lrFBc/s2048/mlbb+old-01.png',
                             onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => DetailAkunScreen(
-                                    imageUrl:
-                                        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQQSfrZ5oLUBB1CkW-IAxwa8oQJECoYK-JMNk-US5AgsG9ZXMM4',
-                                    title: 'AKUN PRO PLAYER SULTAN',
-                                    price: 'Rp 2.000.000',
-                                  ),
-                                ),
-                              );
+                              // Navigator.push(
+                              //   context,
+                              //   MaterialPageRoute(
+                              //     builder: (context) => DetailAkunScreen(
+                              //       imageUrl:
+                              //           'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQQSfrZ5oLUBB1CkW-IAxwa8oQJECoYK-JMNk-US5AgsG9ZXMM4',
+                              //       title: 'AKUN PRO PLAYER SULTAN',
+                              //       price: 'Rp 2.000.000',
+                              //     ),
+                              //   ),
+                              // );
                             },
                           ),
                           SizedBox(height: 16),

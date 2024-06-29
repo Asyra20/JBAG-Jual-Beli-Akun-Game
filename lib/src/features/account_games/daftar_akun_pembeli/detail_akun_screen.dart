@@ -1,61 +1,50 @@
 import 'package:flutter/material.dart';
+import 'package:jbag/src/constants/api_constants.dart';
+import 'package:jbag/src/constants/colors.dart';
 import 'package:jbag/src/features/account_games/daftar_akun_pembeli/profil_penjual_screen.dart';
 import 'package:jbag/src/features/account_games/model/akun_game_model.dart';
 import 'package:jbag/src/features/cart/keranjang_screen.dart';
 import 'package:jbag/src/features/cart/model/keranjang_item.dart';
 import 'package:jbag/src/features/checkout/checkout_screen.dart';
+import 'package:jbag/src/utils/format/currency_format.dart';
 
 class DetailAkunScreen extends StatelessWidget {
-  final String imageUrl;
-  final String title;
-  final String price;
+  final AkunGameModel akunGameDetail;
 
   const DetailAkunScreen({
     super.key,
-    required this.imageUrl,
-    required this.title,
-    required this.price,
+    required this.akunGameDetail,
   });
 
   @override
   Widget build(BuildContext context) {
-    final AkunGameModel akunGame = AkunGameModel(
-      id: 1,
-      gameId: 1,
-      judul: "AKUN SKIN BLESSED CHARLOTTE HEXSWORD",
-      deskripsi: "disertai winrate 80%",
-      harga: 100000,
-      gambar: "images/",
-      penjualId: 1,
-      usernamePenjual: "NopStore",
-    );
-
     final List<KeranjangItem> checkoutData = [
       KeranjangItem(
-          id: akunGame.id,
-          idAkunGame: akunGame.id,
-          judul: akunGame.judul,
-          harga: akunGame.harga,
-          idPenjual: akunGame.penjualId,
-          usernamePenjual: akunGame.usernamePenjual),
+        id: akunGameDetail.id,
+        idAkunGame: akunGameDetail.id,
+        judul: akunGameDetail.judul,
+        harga: akunGameDetail.harga,
+        idPenjual: akunGameDetail.penjualId,
+        usernamePenjual: akunGameDetail.usernamePenjual,
+      ),
     ];
 
     return Scaffold(
       appBar: AppBar(
-        iconTheme: const IconThemeData(color: Color(0xFFFFFAFF)),
+        iconTheme: const IconThemeData(color: MyColors.white),
         title: const Text(
           'Detail Akun',
           style: TextStyle(
             fontFamily: 'LeagueGothic',
-            color: Color(0xFFFFFAFF),
+            color: MyColors.white,
             fontSize: 35,
           ),
         ),
-        backgroundColor: Color(0xFF131A2A),
+        backgroundColor: MyColors.dark,
       ),
       body: Container(
         decoration: const BoxDecoration(
-          color: Color(0xFF131A2A),
+          color: MyColors.dark,
         ),
         child: Column(
           children: [
@@ -66,19 +55,28 @@ class DetailAkunScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Image.network(imageUrl,
-                          width: double.infinity, fit: BoxFit.cover),
-                      SizedBox(height: 16),
+                      Image.network(
+                        '$baseUrl/${akunGameDetail.gambar!}',
+                        fit: BoxFit.cover,
+                        errorBuilder: (BuildContext context, Object exception,
+                            StackTrace? stackTrace) {
+                          return Image.asset(
+                              'assets/logo/logo-splash.png'); // Ganti dengan path gambar default-mu
+                        },
+                      ),
+                      const SizedBox(height: 16),
                       Text(
-                        title,
-                        style: TextStyle(
+                        akunGameDetail.judul!,
+                        maxLines: 5,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
                           fontFamily: 'Poppins',
-                          fontSize: 24,
+                          fontSize: 22,
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFFFFFAFF),
+                          color: MyColors.white,
                         ),
                       ),
-                      SizedBox(height: 16),
+                      const SizedBox(height: 16),
                       GestureDetector(
                         onTap: () {
                           Navigator.push(
@@ -89,31 +87,31 @@ class DetailAkunScreen extends StatelessWidget {
                           );
                         },
                         child: Text(
-                          'NopStore',
-                          style: TextStyle(
+                          akunGameDetail.usernamePenjual!,
+                          style: const TextStyle(
                             fontFamily: 'Poppins',
                             fontSize: 15,
                             fontWeight: FontWeight.bold,
-                            color: Color(0xFFFFFAFF),
+                            color: MyColors.white,
                           ),
                         ),
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       Text(
-                        price,
-                        style: TextStyle(
+                        CurrencyFormat.convert2Idr(akunGameDetail.harga!, 2),
+                        style: const TextStyle(
                           fontFamily: 'Poppins',
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFFFFFAFF),
+                          color: MyColors.white,
                         ),
                       ),
-                      SizedBox(height: 16),
+                      const SizedBox(height: 16),
                       Container(
                         width: double.infinity,
                         height: 430,
                         color: Colors.white,
-                        padding: EdgeInsets.all(16),
+                        padding: const EdgeInsets.all(16),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -123,32 +121,34 @@ class DetailAkunScreen extends StatelessWidget {
                                 fontFamily: 'Poppins',
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
-                                color: Color(0xFF131A2A),
+                                color: MyColors.dark,
                               ),
                             ),
                             SizedBox(height: 8),
                             Expanded(
                               child: Text(
-                                '',
+                                akunGameDetail.deskripsi == null
+                                    ? "-"
+                                    : akunGameDetail.deskripsi!,
                                 style: TextStyle(
                                   fontFamily: 'Poppins',
                                   fontSize: 16,
-                                  color: Color(0xFF131A2A),
+                                  color: MyColors.dark,
                                 ),
                               ),
                             ),
                           ],
                         ),
                       ),
-                      SizedBox(height: 16),
+                      const SizedBox(height: 16),
                     ],
                   ),
                 ),
               ),
             ),
             Container(
-              color: Color(0xFF131A2A),
-              padding: EdgeInsets.all(16),
+              color: MyColors.dark,
+              padding: const EdgeInsets.all(16),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -158,20 +158,20 @@ class DetailAkunScreen extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => KeranjangScreen(),
+                          builder: (context) => const KeranjangScreen(),
                         ),
                       );
                     },
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.black,
-                      backgroundColor: Color(0xFFFFC639),
-                      shape: RoundedRectangleBorder(
+                      backgroundColor: const Color(0xFFFFC639),
+                      shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.zero,
                       ),
                     ),
-                    child: Icon(
+                    child: const Icon(
                       Icons.shopping_cart,
-                      color: Color(0xFF131A2A),
+                      color: MyColors.dark,
                       size: 24,
                     ),
                   ),
@@ -182,19 +182,20 @@ class DetailAkunScreen extends StatelessWidget {
                         MaterialPageRoute(
                           builder: (context) => CheckoutScreen(
                             itemKeranjang: checkoutData,
-                            groupedIdPenjual: akunGame.penjualId.toString(),
+                            groupedIdPenjual:
+                                akunGameDetail.penjualId.toString(),
                           ),
                         ),
                       );
                     },
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.black,
-                      backgroundColor: Color(0xFFFFC639),
-                      shape: RoundedRectangleBorder(
+                      backgroundColor: const Color(0xFFFFC639),
+                      shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.zero,
                       ),
                     ),
-                    child: Text(
+                    child: const Text(
                       'BELI',
                       style: TextStyle(
                         fontFamily: 'BebasNeue',

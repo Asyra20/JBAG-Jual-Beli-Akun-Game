@@ -8,7 +8,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:jbag/src/constants/api_constants.dart';
 import 'package:jbag/src/constants/colors.dart';
-import 'package:jbag/src/features/account_games/riwayat/daftar_akun_riwayat.dart';
+import 'package:jbag/src/features/transaction/history/history_transaksi_screen.dart';
 import 'package:jbag/src/utils/json_printer.dart';
 
 class BuktiPembayaranScreen extends StatefulWidget {
@@ -87,7 +87,7 @@ class _BuktiPembayaranScreenState extends State<BuktiPembayaranScreen> {
     final url = Uri.parse('$baseUrl/api/transaksi/update/$id');
 
     final request = http.MultipartRequest('POST', url)
-      ..fields['status_pembayaran'] = 'proses_bayar'
+      ..fields['status_pembayaran'] = 'sudah_bayar'
       ..files.add(await http.MultipartFile.fromPath(
           'bukti_pembayaran', imageFile.path));
 
@@ -240,33 +240,37 @@ class _BuktiPembayaranScreenState extends State<BuktiPembayaranScreen> {
                     child: MyButton(
                       text: "Upload",
                       color: const Color(0xFFFFC639),
-                      onPressed: () async {
-                        BuildContext dialogContext;
+                      onPressed: _image == null
+                          ? null
+                          : () async {
+                              BuildContext dialogContext;
 
-                        if (await _isFileSizeValid(_image!) == false) {
-                          if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Ukuran file lebih dari 10MB.'),
-                              ),
-                            );
-                          }
-                        } else {
-                          bool isUploaded =
-                              await uploadImage(_image!, widget._transaksiId);
+                              if (await _isFileSizeValid(_image!) == false) {
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content:
+                                          Text('Ukuran file lebih dari 10MB.'),
+                                    ),
+                                  );
+                                }
+                              } else {
+                                bool isUploaded = await uploadImage(
+                                    _image!, widget._transaksiId);
 
-                          if (context.mounted) {
-                            showDialog(
-                              barrierDismissible: false,
-                              context: context,
-                              builder: (context) {
-                                dialogContext = context;
-                                return dialogConfirm(dialogContext, isUploaded);
-                              },
-                            );
-                          }
-                        }
-                      },
+                                if (context.mounted) {
+                                  showDialog(
+                                    barrierDismissible: false,
+                                    context: context,
+                                    builder: (context) {
+                                      dialogContext = context;
+                                      return dialogConfirm(
+                                          dialogContext, isUploaded);
+                                    },
+                                  );
+                                }
+                              }
+                            },
                     ),
                   ),
                 ],
@@ -377,7 +381,7 @@ class MyButton extends StatelessWidget {
 
   final String text;
   final Color color;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
   final double padding;
 
   @override

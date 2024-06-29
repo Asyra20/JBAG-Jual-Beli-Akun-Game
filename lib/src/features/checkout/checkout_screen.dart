@@ -192,7 +192,7 @@ class CheckoutScreen extends StatelessWidget {
                                           ),
                                         ),
                                         Image.network(
-                                          "$baseUrl${itemPenjual["paymentMethod"].image}",
+                                          "$baseUrl/${itemPenjual["paymentMethod"].image}",
                                           height: 30,
                                         ),
                                       ],

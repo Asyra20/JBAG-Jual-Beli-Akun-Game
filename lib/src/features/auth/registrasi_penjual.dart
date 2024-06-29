@@ -447,8 +447,8 @@ class MyDropdown extends StatelessWidget {
                 )),
         expandedInsets: EdgeInsets.zero,
         menuStyle: MenuStyle(
-          padding: MaterialStateProperty.all(EdgeInsets.zero),
-          shape: MaterialStateProperty.all(
+          padding: WidgetStateProperty.all(EdgeInsets.zero),
+          shape: WidgetStateProperty.all(
             const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
           ),
         ),
