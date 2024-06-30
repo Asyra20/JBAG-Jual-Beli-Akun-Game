@@ -281,3 +281,39 @@ class DropdownAndSearchWidget extends StatelessWidget {
     );
   }
 }
+
+class MyButton extends StatelessWidget {
+  const MyButton({
+    super.key,
+    required this.text,
+    required this.onPressed,
+    required this.color,
+    this.padding = 20,
+  });
+
+  final String text;
+  final Color color;
+  final VoidCallback onPressed;
+  final double padding;
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: onPressed,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: color,
+        foregroundColor: const Color(0xFF131A2A),
+        padding: EdgeInsets.symmetric(horizontal: padding),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.zero,
+        ),
+        textStyle: const TextStyle(
+          fontSize: 32,
+          fontFamily: 'BebasNeue',
+          color: Color(0xFF393E46),
+        ),
+      ),
+      child: Text(text),
+    );
+  }
+}

@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:jbag/src/constants/api_constants.dart';
-import 'package:jbag/src/features/account_games/daftar_akun_pembeli/daftar_akun_game.dart';
-import 'package:jbag/src/features/account_games/daftar_akun_penjual/daftar_akun_screen.dart';
+import 'package:jbag/src/features/account_games/daftar_akun_pembeli/pembeli_daftar_akun.dart';
+import 'package:jbag/src/features/account_games/daftar_akun_penjual/penjual_daftar_akun.dart';
 import 'package:jbag/src/features/admin/admin_homescreen.dart';
 import 'package:jbag/src/features/auth/login_screen.dart';
 import 'package:jbag/src/utils/json_printer.dart';
@@ -62,16 +62,15 @@ class AuthController {
 
       String role = dataResponse['user']['role'];
 
-      // Navigate based on user role
       if (role == 'penjual') {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const DaftarAkunScreen()),
+          MaterialPageRoute(builder: (context) => const PenjualDaftarAkun()),
         );
       } else if (role == 'pembeli') {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const DaftarAkunGame()),
+          MaterialPageRoute(builder: (context) => const PembeliDaftarAkunGame()),
         );
       } else if (role == 'admin') {
         Navigator.pushReplacement(

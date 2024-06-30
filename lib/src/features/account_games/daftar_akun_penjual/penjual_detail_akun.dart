@@ -1,26 +1,25 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
-
 import 'package:flutter/material.dart';
-import 'package:jbag/src/constants/api_constants.dart';
+import 'package:http/http.dart' as http;
 import 'package:jbag/src/constants/colors.dart';
-import 'package:jbag/src/features/account_games/daftar_akun_penjual/daftar_akun_screen.dart';
+import 'package:jbag/src/constants/api_constants.dart';
 import 'package:jbag/src/features/account_games/model/akun_game_model.dart';
 import 'package:jbag/src/features/account_games/penjual_crud/edit_akun_game.dart';
+import 'package:jbag/src/features/account_games/daftar_akun_penjual/penjual_daftar_akun.dart';
 
-class AkunDetailScreen extends StatefulWidget {
+class PenjualDetailAkun extends StatefulWidget {
   final AkunGameModel? akunGame;
 
-  const AkunDetailScreen({
+  const PenjualDetailAkun({
     super.key,
     this.akunGame,
   });
 
   @override
-  State<AkunDetailScreen> createState() => _AkunDetailScreenState();
+  State<PenjualDetailAkun> createState() => _AkunDetailScreenState();
 }
 
-class _AkunDetailScreenState extends State<AkunDetailScreen> {
+class _AkunDetailScreenState extends State<PenjualDetailAkun> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -61,7 +60,7 @@ class _AkunDetailScreenState extends State<AkunDetailScreen> {
                     errorBuilder: (BuildContext context, Object exception,
                         StackTrace? stackTrace) {
                       return Image.asset(
-                          'assets/logo/logo-splash.png'); // Ganti dengan path gambar default-mu
+                          'assets/logo/logo-splash.png');
                     },
                   ),
                 ),
@@ -137,7 +136,7 @@ class _AkunDetailScreenState extends State<AkunDetailScreen> {
                             '$baseUrl/api/akungame/${widget.akunGame!.id!}'));
                         final responseBody = json.decode(response.body);
                         if (response.statusCode == 200) {
-                          if (responseBody['success'] == false) {
+                          if (responseBody['sukses'] == false) {
                             throw Exception(responseBody['message']);
                           }
 
@@ -152,11 +151,11 @@ class _AkunDetailScreenState extends State<AkunDetailScreen> {
                             Navigator.of(context).pushReplacement(
                               MaterialPageRoute(
                                   builder: (context) =>
-                                      const DaftarAkunScreen()),
+                                      const PenjualDaftarAkun()),
                             );
                           });
                         } else {
-                          throw Exception('Failed to delete akun game');
+                          throw Exception('Gagal menghapus akun game');
                         }
                       } catch (e) {
                         final errorMessage =

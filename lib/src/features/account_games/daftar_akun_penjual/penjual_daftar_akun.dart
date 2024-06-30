@@ -1,24 +1,23 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:jbag/src/constants/api_constants.dart';
 import 'package:jbag/src/constants/colors.dart';
-import 'package:jbag/src/features/account_games/daftar_akun_penjual/akun_detail_screen.dart';
-import 'package:jbag/src/features/account_games/daftar_akun_penjual/dialog_penilaian.dart';
-import 'package:jbag/src/features/account_games/daftar_akun_penjual/pending_detail_screen.dart';
-import 'package:jbag/src/features/account_games/daftar_akun_penjual/sidebar_game_penjual.dart';
+import 'package:jbag/src/constants/api_constants.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:jbag/src/features/account_games/model/akun_game_model.dart';
+import 'package:jbag/src/features/account_games/daftar_akun_penjual/penjual_sidebar.dart';
+import 'package:jbag/src/features/account_games/daftar_akun_penjual/dialog_penilaian.dart';
+import 'package:jbag/src/features/account_games/daftar_akun_penjual/penjual_detail_akun.dart';
+import 'package:jbag/src/features/account_games/daftar_akun_penjual/penjual_pending_detail.dart';
 
-class DaftarAkunScreen extends StatefulWidget {
-  const DaftarAkunScreen({super.key});
+class PenjualDaftarAkun extends StatefulWidget {
+  const PenjualDaftarAkun({super.key});
 
   @override
-  State<DaftarAkunScreen> createState() => _DaftarAkunScreenState();
+  State<PenjualDaftarAkun> createState() => _DaftarAkunScreenState();
 }
 
-class _DaftarAkunScreenState extends State<DaftarAkunScreen>
+class _DaftarAkunScreenState extends State<PenjualDaftarAkun>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   int _activeTabIndex = 0;
@@ -65,14 +64,14 @@ class _DaftarAkunScreenState extends State<DaftarAkunScreen>
 
     try {
       if (response.statusCode == 200) {
-        if (responseBody['success'] == false) {
-          throw Exception('Failed to load akun games');
+        if (responseBody['sukses'] == false) {
+          throw Exception('Gagal memuat akun games');
         }
 
         final data = responseBody['data'];
         return AkunGameModel.fromApiResponseList(data);
       } else {
-        throw Exception('Failed to load akun games');
+        throw Exception('Gagal memuat akun games');
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -180,7 +179,7 @@ class _DaftarAkunScreenState extends State<DaftarAkunScreen>
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => AkunDetailScreen(
+                        builder: (context) => PenjualDetailAkun(
                           akunGame: akunGame,
                         ),
                       ),
@@ -189,7 +188,7 @@ class _DaftarAkunScreenState extends State<DaftarAkunScreen>
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => PendingDetailScreen(
+                        builder: (context) => PenjualPendingDetail(
                           imageUrl: '$baseUrl/${akunGame.gambar!}',
                           email: 'NopalGaming@gmail.com',
                           detail:
@@ -247,7 +246,7 @@ class _DaftarAkunScreenState extends State<DaftarAkunScreen>
                             const Text(
                               'Terjual tanggal',
                               style: TextStyle(
-                                  color: Colors.white,
+                                  color: MyColors.white,
                                   fontSize: 14,
                                   fontFamily: 'BebasNeue'),
                             ),
@@ -258,7 +257,7 @@ class _DaftarAkunScreenState extends State<DaftarAkunScreen>
                                 const Text(
                                   "soldDate",
                                   style: TextStyle(
-                                      color: Colors.white,
+                                      color: MyColors.white,
                                       fontSize: 14,
                                       fontFamily: 'BebasNeue'),
                                 ),
