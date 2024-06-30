@@ -5,10 +5,10 @@ import 'package:jbag/src/constants/colors.dart';
 import 'package:jbag/src/constants/api_constants.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:jbag/src/features/account_games/model/akun_game_model.dart';
+import 'package:jbag/src/features/account_games/penjual/penjual_kirim_akun.dart';
 import 'package:jbag/src/features/reuseable_component/penjual_sidebar.dart';
 import 'package:jbag/src/features/account_games/penjual/dialog_penilaian.dart';
 import 'package:jbag/src/features/account_games/penjual/penjual_detail_akun.dart';
-import 'package:jbag/src/features/account_games/penjual/penjual_pending_detail.dart';
 
 class PenjualDaftarAkun extends StatefulWidget {
   const PenjualDaftarAkun({super.key});
@@ -166,6 +166,7 @@ class _DaftarAkunScreenState extends State<PenjualDaftarAkun>
               child: Text('No akun games found',
                   style: TextStyle(color: MyColors.white)));
         } else {
+          
           listAkunGame = snapshot.data!;
 
           return ListView.builder(
@@ -188,11 +189,8 @@ class _DaftarAkunScreenState extends State<PenjualDaftarAkun>
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => PenjualPendingDetail(
-                          imageUrl: '$baseUrl/${akunGame.gambar!}',
-                          email: 'NopalGaming@gmail.com',
-                          detail:
-                              'Email Akun ML via Moonton:\nDzakyGG@gmail.com\n\nPassword Akun:\nDzakyTampan123\n\nTerima Kasih telah membeli di toko kami, jangan lupa bintang 5 :D',
+                        builder: (context) => PenjualKirimAkun(
+                          transaksiId: akunGame.id!,
                         ),
                       ),
                     );

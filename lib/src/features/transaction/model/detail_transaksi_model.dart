@@ -2,6 +2,7 @@ class DetailTransaksiModel {
   String? invoice;
   String? tanggalWaktu;
   String? penjual;
+  String? emailPembeli;
   String? statusPembayaran;
   List<Akun>? akun;
   int? hargaTotal;
@@ -13,6 +14,7 @@ class DetailTransaksiModel {
     this.invoice,
     this.tanggalWaktu,
     this.penjual,
+    this.emailPembeli,
     this.statusPembayaran,
     this.akun,
     this.hargaTotal,
@@ -25,6 +27,7 @@ class DetailTransaksiModel {
     invoice = json['invoice'];
     tanggalWaktu = json['tanggal_waktu'];
     penjual = json['penjual']['user']['nama'];
+    emailPembeli = json['pembeli']['email'];
     statusPembayaran = json['status_pembayaran'];
     if (json['detail_transaksi'] != null) {
       akun = <Akun>[];
