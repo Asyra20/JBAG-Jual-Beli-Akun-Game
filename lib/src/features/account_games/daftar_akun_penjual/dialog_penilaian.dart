@@ -73,7 +73,6 @@ class DialogPenilaian extends StatelessWidget {
                 foregroundColor: Colors.black,
               ),
               onPressed: () {
-                // Handle the submit action
                 Navigator.of(context).pop();
               },
               child: const Text(

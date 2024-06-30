@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
-
-class HomeS extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: AdminMenuScreen(),
-    );
-  }
-}
+import 'package:jbag/src/features/admin/Daftar%20Ewallet/admin_daftar_ewallet.dart';
+import 'package:jbag/src/features/admin/Daftar%20Game/admin_daftar_game.dart';
+import 'package:jbag/src/features/admin/Daftar%20Transaksi/admin_cek_transaksi.dart';
+import 'package:jbag/src/features/admin/Daftar%20Penjual/admin_daftar_akun_penjual.dart';
+import 'package:jbag/src/features/reuseable_component/reuseable_component.dart';
 
 class AdminMenuScreen extends StatelessWidget {
   @override
@@ -36,26 +32,50 @@ class AdminMenuScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       MyButton(
-                        text: "review akun penjual",
+                        text: "akun penjual",
                         color: const Color(0xFFFFC639),
                         onPressed: () => Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) {
-                              return ReviewAkunPenjualScreen();
+                              return AdminDaftarAkunPenjual();
                             },
                           ),
                         ),
                       ),
                       SizedBox(height: 20),
                       MyButton(
-                        text: "CEK TRANSAKSI",
+                        text: "cek transaksi",
                         color: const Color(0xFFFFC639),
                         onPressed: () => Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) {
                               return CekTransaksiScreen();
+                            },
+                          ),
+                        ),
+                      ),
+                      MyButton(
+                        text: "game",
+                        color: const Color(0xFFFFC639),
+                        onPressed: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return AdminDaftarGame();
+                            },
+                          ),
+                        ),
+                      ),
+                      MyButton(
+                        text: "ewallet",
+                        color: const Color(0xFFFFC639),
+                        onPressed: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return AdminDaftarEwallet();
                             },
                           ),
                         ),
@@ -78,369 +98,6 @@ class AdminMenuScreen extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-class ReviewAkunPenjualScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color(0xFF131A2A),
-      appBar: AppBar(
-        backgroundColor: Color(0xFF131A2A),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.blue),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0),
-          child: Column(
-            children: [
-              Center(
-                child: Text(
-                  'REVIEW AKUN PENJUAL',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontFamily: 'BebasNeue',
-                    color: Color(0xFFFFFAFF),
-                    fontSize: 48,
-                  ),
-                ),
-              ),
-              SizedBox(height: 40),
-              Container(
-                width: double.infinity,
-                color: const Color(0xFFFFC639),
-                child: ListTile(
-                  title: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text(
-                        'NAMA PENJUAL',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 32,
-                          fontFamily: 'BebasNeue',
-                        ),
-                      ),
-                    ],
-                  ),
-                  trailing: Icon(Icons.info, color: Colors.black),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => NamaPenjualScreen()),
-                    );
-                  },
-                ),
-              ),
-              Expanded(
-                child: Center(
-                  child: Container(),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class NamaPenjualScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color(0xFF131A2A),
-      appBar: AppBar(
-        backgroundColor: Color(0xFF131A2A),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.blue),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0),
-          child: Column(
-            children: [
-              Center(
-                child: Text(
-                  'REVIEW AKUN PENJUAL',
-                  style: TextStyle(
-                    fontFamily: 'BebasNeue',
-                    color: Color(0xFFFFFAFF),
-                    fontSize: 48,
-                  ),
-                ),
-              ),
-              Expanded(
-                child: ListView(
-                  children: [
-                    _buildTextField('Nama'),
-                    _buildTextField('Username'),
-                    _buildTextField('Email'),
-                    _buildTextField('Password'),
-                    _buildTextField('Nomor Telepon'),
-                    _buildTextField('Foto KTP + Muka', isPhotoField: true),
-                    _buildTextField('Jenis E-wallet'),
-                    _buildTextField('Nama Profil pada e-wallet'),
-                    _buildTextField('Nomer e-wallet'),
-                    SizedBox(height: 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        MyButton(
-                          text: "Reject",
-                          color: const Color(0xFFF9564F),
-                          onPressed: () {},
-                        ),
-                        MyButton(
-                          text: "accept",
-                          color: const Color(0xFFFFC639),
-                          onPressed: () {},
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTextField(String label, {bool isPhotoField = false}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: TextField(
-        readOnly: true,
-        decoration: InputDecoration(
-          labelText: label,
-          labelStyle: TextStyle(color: Colors.black),
-          fillColor: Color(0xFFFFFAFF),
-          filled: true,
-          suffixIcon:
-              isPhotoField ? Icon(Icons.camera_alt, color: Colors.black) : null,
-        ),
-      ),
-    );
-  }
-}
-
-class CekTransaksiScreen extends StatelessWidget {
-  const CekTransaksiScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color(0xFF131A2A),
-      appBar: AppBar(
-        backgroundColor: Color(0xFF131A2A),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.blue),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0),
-          child: Column(
-            children: [
-              Center(
-                child: Text(
-                  'CEK TRANSAKSI',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontFamily: 'BebasNeue',
-                    color: Color(0xFFFFFAFF),
-                    fontSize: 48,
-                  ),
-                ),
-              ),
-              SizedBox(height: 40),
-              Container(
-                width: double.infinity,
-                color: const Color(0xFFFFC639),
-                child: ListTile(
-                  title: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text(
-                        'NOMOR INVOICE',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 32,
-                          fontFamily: 'BebasNeue',
-                        ),
-                      ),
-                    ],
-                  ),
-                  trailing: Icon(Icons.info, color: Colors.black),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => DetailTransaksiScreen()),
-                    );
-                  },
-                ),
-              ),
-              Expanded(
-                child: Center(
-                  child: Container(),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class DetailTransaksiScreen extends StatelessWidget {
-  const DetailTransaksiScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color(0xFF131A2A),
-      appBar: AppBar(
-        backgroundColor: Color(0xFF131A2A),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.blue),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0),
-          child: Column(
-            children: [
-              Center(
-                child: Text(
-                  'DETAIL TRANSAKSI',
-                  style: TextStyle(
-                    fontFamily: 'BebasNeue',
-                    color: Color(0xFFFFFAFF),
-                    fontSize: 48,
-                  ),
-                ),
-              ),
-              SizedBox(height: 40),
-              Container(
-                width: double.infinity,
-                color: const Color(0xFFFFC639),
-                child: ListTile(
-                  title: Text(
-                    'DETAIL AKUN',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 32,
-                      fontFamily: 'BebasNeue',
-                    ),
-                  ),
-                  trailing: Icon(Icons.arrow_forward, color: Colors.black),
-                  onTap: () {},
-                ),
-              ),
-              SizedBox(height: 30),
-              _buildDetailItem('NOMOR INVOICE'),
-              SizedBox(height: 5),
-              _buildDetailItem('TANGGAL TRANSAKSI'),
-              SizedBox(height: 5),
-              _buildDetailItem('NOMOR E-WALLET'),
-              SizedBox(height: 5),
-              _buildDetailItem('HARGA TOTAL'),
-              SizedBox(height: 5),
-              _buildDetailItem('BUKTI PEMBAYARAN'),
-              Spacer(),
-              Container(
-                width: double.infinity,
-                color: const Color(0xFFFFC639),
-                child: TextButton(
-                  onPressed: () {},
-                  child: Text(
-                    'HUBUNGI PENJUAL',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 32,
-                      fontFamily: 'BebasNeue',
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(height: 40),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDetailItem(String label) {
-    return Container(
-      width: double.infinity,
-      color: Colors.grey[800],
-      padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 8.0),
-      child: Text(
-        label,
-        style: TextStyle(
-          color: Color(0xFFFFFAFF),
-          fontSize: 18,
-        ),
-      ),
-    );
-  }
-}
-
-class MyButton extends StatelessWidget {
-  const MyButton({
-    super.key,
-    required this.text,
-    required this.onPressed,
-    required this.color,
-    this.padding = 20,
-  });
-
-  final String text;
-  final Color color;
-  final VoidCallback onPressed;
-  final double padding;
-
-  @override
-  Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: onPressed,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: color,
-        foregroundColor: const Color(0xFF131A2A),
-        padding: EdgeInsets.symmetric(horizontal: padding),
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.zero,
-        ),
-        textStyle: const TextStyle(
-          fontSize: 32,
-          fontFamily: 'BebasNeue',
-          color: Color(0xFF393E46),
-        ),
-      ),
-      child: Text(text),
     );
   }
 }

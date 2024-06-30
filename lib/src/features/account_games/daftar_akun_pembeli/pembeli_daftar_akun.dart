@@ -1,24 +1,23 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:jbag/src/constants/api_constants.dart';
 import 'package:jbag/src/constants/colors.dart';
-import 'package:jbag/src/features/account_games/controller/game_controller.dart';
-import 'package:jbag/src/features/account_games/daftar_akun_pembeli/detail_akun_screen.dart';
-import 'package:jbag/src/features/account_games/daftar_akun_pembeli/kartu_akun_game.dart';
-import 'package:jbag/src/features/account_games/daftar_akun_pembeli/sidebar_game_pembeli.dart';
-import 'package:jbag/src/features/account_games/model/akun_game_model.dart';
+import 'package:jbag/src/constants/api_constants.dart';
 import 'package:jbag/src/features/account_games/model/game_model.dart';
+import 'package:jbag/src/features/account_games/model/akun_game_model.dart';
+import 'package:jbag/src/features/account_games/controller/game_controller.dart';
+import 'package:jbag/src/features/account_games/daftar_akun_pembeli/kartu_akun_game.dart';
+import 'package:jbag/src/features/account_games/daftar_akun_pembeli/pembeli_sidebar.dart';
+import 'package:jbag/src/features/account_games/daftar_akun_pembeli/pembeli_detail_akun.dart';
 
-class DaftarAkunGame extends StatefulWidget {
-  const DaftarAkunGame({super.key});
+class PembeliDaftarAkunGame extends StatefulWidget {
+  const PembeliDaftarAkunGame({super.key});
 
   @override
-  State<DaftarAkunGame> createState() => _DaftarAkunGameState();
+  State<PembeliDaftarAkunGame> createState() => _DaftarAkunGameState();
 }
 
-class _DaftarAkunGameState extends State<DaftarAkunGame> {
+class _DaftarAkunGameState extends State<PembeliDaftarAkunGame> {
   final GameController _gameController = GameController();
   late Future<List<AkunGameModel>> _futureSearch;
   Future<List<GameModel>>? _futureGames;
@@ -52,15 +51,15 @@ class _DaftarAkunGameState extends State<DaftarAkunGame> {
 
     try {
       if (response.statusCode == 200) {
-        if (responseBody['success'] == false) {
-          throw Exception('Failed to load akun games');
+        if (responseBody['sukses'] == false) {
+          throw Exception('Gagal memuat akun games');
         }
 
         final data = responseBody['data'];
 
         return AkunGameModel.fromApiResponseList(data);
       } else {
-        throw Exception('Failed to load akun games');
+        throw Exception('Gagal memuat akun games');
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -78,7 +77,7 @@ class _DaftarAkunGameState extends State<DaftarAkunGame> {
         iconTheme: const IconThemeData(color: MyColors.white, size: 35),
         backgroundColor: MyColors.dark,
         bottom: const PreferredSize(
-          preferredSize: Size.fromHeight(70), // Tinggi teks "Daftar Akun Games"
+          preferredSize: Size.fromHeight(70),
           child: Align(
             alignment: Alignment.center,
             child: Text(
@@ -202,7 +201,7 @@ class _DaftarAkunGameState extends State<DaftarAkunGame> {
                             style: const TextStyle(color: MyColors.white)));
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                     return const Center(
-                        child: Text('No akun games found',
+                        child: Text('Tidak ada akun game ditemukan',
                             style: TextStyle(color: MyColors.white)));
                   } else {
                     _akunGames = snapshot.data!;
@@ -222,7 +221,7 @@ class _DaftarAkunGameState extends State<DaftarAkunGame> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => DetailAkunScreen(
+                                builder: (context) => PembeliDetailAkun(
                                   akunGameDetail: akunGame,
                                 ),
                               ),

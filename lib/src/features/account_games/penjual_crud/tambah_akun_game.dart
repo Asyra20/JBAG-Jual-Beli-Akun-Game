@@ -9,9 +9,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:jbag/src/constants/api_constants.dart';
 import 'package:jbag/src/constants/colors.dart';
 import 'package:jbag/src/features/account_games/controller/game_controller.dart';
-import 'package:jbag/src/features/account_games/daftar_akun_penjual/daftar_akun_screen.dart';
+import 'package:jbag/src/features/account_games/daftar_akun_penjual/penjual_daftar_akun.dart';
 
-import 'package:jbag/src/features/account_games/daftar_akun_penjual/sidebar_game_penjual.dart';
+import 'package:jbag/src/features/account_games/daftar_akun_penjual/penjual_sidebar.dart';
 import 'package:jbag/src/features/account_games/model/game_model.dart';
 import 'package:jbag/src/utils/get_sharedpreferences/get_data.dart';
 
@@ -328,7 +328,7 @@ class _TambahAkunGameBodyState extends State<TambahAkunGameBody> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => const DaftarAkunScreen(),
+          builder: (context) => const PenjualDaftarAkun(),
         ),
       );
     } catch (e) {

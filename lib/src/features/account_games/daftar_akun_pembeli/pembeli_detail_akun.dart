@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:jbag/src/constants/api_constants.dart';
 import 'package:jbag/src/constants/colors.dart';
-import 'package:jbag/src/features/account_games/daftar_akun_pembeli/profil_penjual_screen.dart';
-import 'package:jbag/src/features/account_games/model/akun_game_model.dart';
-import 'package:jbag/src/features/cart/keranjang_screen.dart';
-import 'package:jbag/src/features/cart/model/keranjang_item.dart';
-import 'package:jbag/src/features/checkout/checkout_screen.dart';
+import 'package:jbag/src/constants/api_constants.dart';
 import 'package:jbag/src/utils/format/currency_format.dart';
+import 'package:jbag/src/features/cart/keranjang_screen.dart';
+import 'package:jbag/src/features/checkout/checkout_screen.dart';
+import 'package:jbag/src/features/cart/model/keranjang_item.dart';
+import 'package:jbag/src/features/account_games/model/akun_game_model.dart';
+import 'package:jbag/src/features/account_games/daftar_akun_pembeli/profil_penjual.dart';
 
-class DetailAkunScreen extends StatelessWidget {
+class PembeliDetailAkun extends StatelessWidget {
   final AkunGameModel akunGameDetail;
 
-  const DetailAkunScreen({
+  const PembeliDetailAkun({
     super.key,
     required this.akunGameDetail,
   });
@@ -61,7 +61,7 @@ class DetailAkunScreen extends StatelessWidget {
                         errorBuilder: (BuildContext context, Object exception,
                             StackTrace? stackTrace) {
                           return Image.asset(
-                              'assets/logo/logo-splash.png'); // Ganti dengan path gambar default-mu
+                              'assets/logo/logo-splash.png'); 
                         },
                       ),
                       const SizedBox(height: 16),
@@ -82,7 +82,7 @@ class DetailAkunScreen extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => ProfilPenjualScreen(),
+                              builder: (context) => ProfilPenjual(),
                             ),
                           );
                         },

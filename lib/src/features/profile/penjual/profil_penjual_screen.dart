@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:jbag/src/features/account_games/daftar_akun_penjual/sidebar_game_penjual.dart';
+import 'package:jbag/src/features/account_games/daftar_akun_penjual/penjual_sidebar.dart';
 
 class ProfilPenjual extends StatelessWidget {
   const ProfilPenjual({super.key});

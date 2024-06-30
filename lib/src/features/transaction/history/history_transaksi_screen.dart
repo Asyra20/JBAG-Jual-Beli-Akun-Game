@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:jbag/src/constants/api_constants.dart';
 import 'package:jbag/src/constants/colors.dart';
-import 'package:jbag/src/features/account_games/daftar_akun_pembeli/sidebar_game_pembeli.dart';
+import 'package:jbag/src/features/account_games/daftar_akun_pembeli/pembeli_sidebar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:jbag/src/features/transaction/model/riwayat_pembelian_model.dart';
 import 'package:jbag/src/features/transaction/detail_transaksi.dart';

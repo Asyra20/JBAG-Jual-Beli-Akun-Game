@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class PendingDetailScreen extends StatelessWidget {
+class PenjualPendingDetail extends StatelessWidget {
   final String imageUrl;
   final String email;
   final String detail;
 
-  const PendingDetailScreen({
+  const PenjualPendingDetail({
     Key? key,
     required this.imageUrl,
     required this.email,
