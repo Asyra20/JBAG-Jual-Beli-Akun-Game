@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:jbag/src/features/admin/Daftar%20Transaksi/admin_detail_transaksi.dart';
+import 'package:jbag/src/features/admin/transaksi/admin_detail_transaksi.dart';
 
 class CekTransaksiScreen extends StatelessWidget {
   const CekTransaksiScreen({super.key});

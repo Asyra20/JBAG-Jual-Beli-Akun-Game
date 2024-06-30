@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:jbag/src/features/account_games/daftar_akun_penjual/penjual_daftar_akun.dart';
-import 'package:jbag/src/features/account_games/penjual_crud/tambah_akun_game.dart';
+import 'package:jbag/src/features/account_games/penjual/penjual_daftar_akun.dart';
+import 'package:jbag/src/features/account_games/penjual/tambah_akun_game.dart';
 import 'package:jbag/src/features/auth/login_screen.dart';
 import 'package:jbag/src/features/profile/penjual/profil_penjual_screen.dart';
 

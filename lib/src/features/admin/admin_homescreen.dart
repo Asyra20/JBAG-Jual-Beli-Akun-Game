@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:jbag/src/features/admin/Daftar%20Ewallet/admin_daftar_ewallet.dart';
-import 'package:jbag/src/features/admin/Daftar%20Game/admin_daftar_game.dart';
-import 'package:jbag/src/features/admin/Daftar%20Transaksi/admin_cek_transaksi.dart';
-import 'package:jbag/src/features/admin/Daftar%20Penjual/admin_daftar_akun_penjual.dart';
+import 'package:jbag/src/features/admin/ewallet/admin_daftar_ewallet.dart';
+import 'package:jbag/src/features/admin/game/admin_daftar_game.dart';
+import 'package:jbag/src/features/admin/transaksi/admin_cek_transaksi.dart';
+import 'package:jbag/src/features/admin/penjual/admin_daftar_akun_penjual.dart';
 import 'package:jbag/src/features/reuseable_component/reuseable_component.dart';
 
 class AdminMenuScreen extends StatelessWidget {

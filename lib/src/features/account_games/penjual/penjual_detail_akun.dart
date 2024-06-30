@@ -4,8 +4,8 @@ import 'package:http/http.dart' as http;
 import 'package:jbag/src/constants/colors.dart';
 import 'package:jbag/src/constants/api_constants.dart';
 import 'package:jbag/src/features/account_games/model/akun_game_model.dart';
-import 'package:jbag/src/features/account_games/penjual_crud/edit_akun_game.dart';
-import 'package:jbag/src/features/account_games/daftar_akun_penjual/penjual_daftar_akun.dart';
+import 'package:jbag/src/features/account_games/penjual/edit_akun_game.dart';
+import 'package:jbag/src/features/account_games/penjual/penjual_daftar_akun.dart';
 
 class PenjualDetailAkun extends StatefulWidget {
   final AkunGameModel? akunGame;

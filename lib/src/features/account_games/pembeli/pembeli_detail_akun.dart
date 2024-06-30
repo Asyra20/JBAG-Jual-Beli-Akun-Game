@@ -6,7 +6,7 @@ import 'package:jbag/src/features/cart/keranjang_screen.dart';
 import 'package:jbag/src/features/checkout/checkout_screen.dart';
 import 'package:jbag/src/features/cart/model/keranjang_item.dart';
 import 'package:jbag/src/features/account_games/model/akun_game_model.dart';
-import 'package:jbag/src/features/account_games/daftar_akun_pembeli/profil_penjual.dart';
+import 'package:jbag/src/features/account_games/pembeli/profil_penjual.dart';
 
 class PembeliDetailAkun extends StatelessWidget {
   final AkunGameModel akunGameDetail;

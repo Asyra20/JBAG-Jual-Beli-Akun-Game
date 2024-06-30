@@ -5,10 +5,10 @@ import 'package:jbag/src/constants/colors.dart';
 import 'package:jbag/src/constants/api_constants.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:jbag/src/features/account_games/model/akun_game_model.dart';
-import 'package:jbag/src/features/account_games/daftar_akun_penjual/penjual_sidebar.dart';
-import 'package:jbag/src/features/account_games/daftar_akun_penjual/dialog_penilaian.dart';
-import 'package:jbag/src/features/account_games/daftar_akun_penjual/penjual_detail_akun.dart';
-import 'package:jbag/src/features/account_games/daftar_akun_penjual/penjual_pending_detail.dart';
+import 'package:jbag/src/features/reuseable_component/penjual_sidebar.dart';
+import 'package:jbag/src/features/account_games/penjual/dialog_penilaian.dart';
+import 'package:jbag/src/features/account_games/penjual/penjual_detail_akun.dart';
+import 'package:jbag/src/features/account_games/penjual/penjual_pending_detail.dart';
 
 class PenjualDaftarAkun extends StatefulWidget {
   const PenjualDaftarAkun({super.key});

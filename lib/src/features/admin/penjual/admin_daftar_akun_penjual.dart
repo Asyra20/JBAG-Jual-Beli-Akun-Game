@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:jbag/src/features/admin/Daftar%20Game/admin_detail_game.dart';
+import 'package:jbag/src/features/admin/penjual/admin_detail_akun_penjual.dart';
 
-class AdminDaftarGame extends StatelessWidget {
-  const AdminDaftarGame({super.key});
-
+class AdminDaftarAkunPenjual extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,7 +22,7 @@ class AdminDaftarGame extends StatelessWidget {
             children: [
               Center(
                 child: Text(
-                  'DAFTAR GAME',
+                  'REVIEW AKUN PENJUAL',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontFamily: 'BebasNeue',
@@ -42,7 +40,7 @@ class AdminDaftarGame extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
-                        'NAMA GAME',
+                        'NAMA PENJUAL',
                         style: TextStyle(
                           color: Colors.black,
                           fontSize: 32,
@@ -51,12 +49,12 @@ class AdminDaftarGame extends StatelessWidget {
                       ),
                     ],
                   ),
-                  trailing: Icon(Icons.edit, color: Colors.black),
+                  trailing: Icon(Icons.info, color: Colors.black),
                   onTap: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => AdminDetailGame()),
+                          builder: (context) => AdminDetailAkunPenjual()),
                     );
                   },
                 ),

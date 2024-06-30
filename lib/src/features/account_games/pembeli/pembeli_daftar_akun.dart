@@ -6,9 +6,9 @@ import 'package:jbag/src/constants/api_constants.dart';
 import 'package:jbag/src/features/account_games/model/game_model.dart';
 import 'package:jbag/src/features/account_games/model/akun_game_model.dart';
 import 'package:jbag/src/features/account_games/controller/game_controller.dart';
-import 'package:jbag/src/features/account_games/daftar_akun_pembeli/kartu_akun_game.dart';
-import 'package:jbag/src/features/account_games/daftar_akun_pembeli/pembeli_sidebar.dart';
-import 'package:jbag/src/features/account_games/daftar_akun_pembeli/pembeli_detail_akun.dart';
+import 'package:jbag/src/features/account_games/pembeli/kartu_akun_game.dart';
+import 'package:jbag/src/features/reuseable_component/pembeli_sidebar.dart';
+import 'package:jbag/src/features/account_games/pembeli/pembeli_detail_akun.dart';
 
 class PembeliDaftarAkunGame extends StatefulWidget {
   const PembeliDaftarAkunGame({super.key});

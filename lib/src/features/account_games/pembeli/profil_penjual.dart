@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jbag/src/constants/colors.dart';
-import 'package:jbag/src/features/account_games/daftar_akun_pembeli/kartu_akun_game.dart';
+import 'package:jbag/src/features/account_games/pembeli/kartu_akun_game.dart';
 
 class ProfilPenjual extends StatelessWidget {
   const ProfilPenjual({super.key});

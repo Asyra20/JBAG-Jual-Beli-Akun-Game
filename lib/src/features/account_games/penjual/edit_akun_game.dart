@@ -9,29 +9,33 @@ import 'package:image_picker/image_picker.dart';
 import 'package:jbag/src/constants/api_constants.dart';
 import 'package:jbag/src/constants/colors.dart';
 import 'package:jbag/src/features/account_games/controller/game_controller.dart';
-import 'package:jbag/src/features/account_games/daftar_akun_penjual/penjual_daftar_akun.dart';
+import 'package:jbag/src/features/account_games/penjual/penjual_daftar_akun.dart';
 
-import 'package:jbag/src/features/account_games/daftar_akun_penjual/penjual_sidebar.dart';
+import 'package:jbag/src/features/reuseable_component/penjual_sidebar.dart';
+import 'package:jbag/src/features/account_games/model/akun_game_model.dart';
 import 'package:jbag/src/features/account_games/model/game_model.dart';
 import 'package:jbag/src/utils/get_sharedpreferences/get_data.dart';
+import 'package:jbag/src/utils/json_printer.dart';
 
-class TambahAkunGame extends StatelessWidget {
-  const TambahAkunGame({super.key});
+class EditAkunGame extends StatelessWidget {
+  final AkunGameModel? akunGame;
+
+  const EditAkunGame({super.key, this.akunGame});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: const CustomDrawer(),
+      drawer: CustomDrawer(),
       resizeToAvoidBottomInset: false,
-      backgroundColor: MyColors.dark,
+      backgroundColor: const Color(0xFF131A2A),
       appBar: AppBar(
-        backgroundColor: MyColors.dark,
+        backgroundColor: const Color(0xFF131A2A),
         leading: Builder(
           builder: (context) {
             return IconButton(
               icon: const FaIcon(
                 FontAwesomeIcons.bars,
-                color: MyColors.white,
+                color: Color(0xFFFFFAFF),
               ),
               onPressed: () {
                 Scaffold.of(context).openDrawer();
@@ -40,23 +44,26 @@ class TambahAkunGame extends StatelessWidget {
           },
         ),
       ),
-      body: const TambahAkunGameBody(),
+      body: EdiitAkunGameBody(akunGame: akunGame),
     );
   }
 }
 
-class TambahAkunGameBody extends StatefulWidget {
-  const TambahAkunGameBody({super.key});
+class EdiitAkunGameBody extends StatefulWidget {
+  final AkunGameModel? akunGame;
+
+  const EdiitAkunGameBody({super.key, this.akunGame});
 
   @override
-  State<TambahAkunGameBody> createState() => _TambahAkunGameBodyState();
+  State<EdiitAkunGameBody> createState() => _EdiitAkunGameBodyState();
 }
 
-class _TambahAkunGameBodyState extends State<TambahAkunGameBody> {
+class _EdiitAkunGameBodyState extends State<EdiitAkunGameBody> {
   final GameController _gameController = GameController();
   late Future<void> _future;
 
   Map<String, dynamic>? _penjual;
+  int? id;
 
   final _formKey = GlobalKey<FormState>();
 
@@ -82,13 +89,6 @@ class _TambahAkunGameBodyState extends State<TambahAkunGameBody> {
     });
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _loadUserData();
-    _future = _fetchGames();
-  }
-
   File? _image;
 
   Future getImage(ImageSource source) async {
@@ -108,14 +108,19 @@ class _TambahAkunGameBodyState extends State<TambahAkunGameBody> {
     }
   }
 
-  void _clearForm() {
-    setState(() {
-      _judulController.clear();
-      _hargaController.clear();
-      _gambarController.clear();
-      _deskripsiController.clear();
-      _selectedGameId = null;
-    });
+  late Future<List<AkunGameModel>> futureAkunGames;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+    _future = _fetchGames();
+    id = widget.akunGame!.id!;
+    _judulController.text = widget.akunGame!.judul!;
+    _hargaController.text = widget.akunGame!.harga!.toString();
+    _deskripsiController.text = widget.akunGame!.deskripsi!;
+    _gambarController.text = "-";
+    _selectedGameId = widget.akunGame!.gameId!;
   }
 
   @override
@@ -124,6 +129,7 @@ class _TambahAkunGameBodyState extends State<TambahAkunGameBody> {
     _hargaController.dispose();
     _gambarController.dispose();
     _deskripsiController.dispose();
+    _image = null;
     super.dispose();
   }
 
@@ -137,19 +143,19 @@ class _TambahAkunGameBodyState extends State<TambahAkunGameBody> {
           child: Column(
             children: [
               const Text(
-                'Tambah Akun Game',
+                'Edit Akun Game',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontFamily: 'BebasNeue',
                   fontSize: 50,
-                  color: MyColors.white,
+                  color: Color(0xFFFFFAFF),
                 ),
               ),
               const SizedBox(height: 32),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 decoration: BoxDecoration(
-                  border: Border.all(color: MyColors.accent, width: 2),
+                  border: Border.all(color: const Color(0xFFFFC639), width: 2),
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: FutureBuilder(
@@ -228,32 +234,24 @@ class _TambahAkunGameBodyState extends State<TambahAkunGameBody> {
                 maxLines: 3,
               ),
               const SizedBox(height: 40),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  MyButtonForm(
-                    label: "BATAL",
-                    color: Colors.red,
-                    onPressed: _clearForm,
-                  ),
-                  MyButtonForm(
-                    label: "TAMBAH",
-                    color: MyColors.accent,
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        createAkunGame(
-                          context,
-                          _penjual!['id'],
-                          _judulController.text,
-                          _hargaController.text,
-                          _image,
-                          _deskripsiController.text,
-                          _selectedGameId,
-                        );
-                      }
-                    },
-                  ),
-                ],
+              MyButtonForm(
+                label: "Edit",
+                color: const Color(0xFFFFC639),
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) {
+                    editAkunGame(
+                      context,
+                      id!,
+                      _penjual!['id'],
+                      _judulController.text,
+                      _hargaController.text,
+                      _image,
+                      _gambarController.text,
+                      _deskripsiController.text,
+                      _selectedGameId,
+                    );
+                  }
+                },
               ),
             ],
           ),
@@ -293,24 +291,28 @@ class _TambahAkunGameBodyState extends State<TambahAkunGameBody> {
     );
   }
 
-  Future<void> createAkunGame(
+  Future<void> editAkunGame(
     BuildContext context,
+    int id,
     int penjualId,
     String judul,
     String harga,
     File? image,
+    String gambar,
     String deskripsi,
     int? selectedGameId,
   ) async {
-    final url = Uri.parse('$baseUrl/api/akungame');
+    print(image!.path);
 
-    final request = http.MultipartRequest('POST', url);
-    request.fields['penjual_id'] = penjualId.toString();
-    request.fields['game_id'] = selectedGameId.toString();
-    request.fields['judul'] = judul;
-    request.files.add(await http.MultipartFile.fromPath('gambar', image!.path));
-    request.fields['deskripsi'] = deskripsi;
-    request.fields['harga'] = harga;
+    final url = Uri.parse('$baseUrl/api/akungame/update/$id');
+
+    final request = http.MultipartRequest('POST', url)
+      ..fields['penjual_id'] = penjualId.toString()
+      ..fields['game_id'] = selectedGameId.toString()
+      ..fields['judul'] = selectedGameId.toString()
+      ..fields['deskripsi'] = deskripsi
+      ..fields['harga'] = harga
+      ..files.add(await http.MultipartFile.fromPath('gambar', image.path));
 
     try {
       final response = await request.send();
@@ -319,13 +321,16 @@ class _TambahAkunGameBodyState extends State<TambahAkunGameBody> {
         final responseData = await http.Response.fromStream(response);
         final responseDataDecoded = json.decode(responseData.body);
 
+        print(JsonPrinter.prettyPrint(responseDataDecoded));
+
         if (responseDataDecoded['success'] == false) {
           throw Exception(responseDataDecoded['message']);
         }
       } else {
         throw Exception('Gagal menambah akun');
       }
-      Navigator.push(
+
+      Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (context) => const PenjualDaftarAkun(),
@@ -339,6 +344,15 @@ class _TambahAkunGameBodyState extends State<TambahAkunGameBody> {
       );
     }
   }
+}
+
+class DaftarGame {
+  int? id;
+  String? nama;
+  DaftarGame({
+    this.id,
+    this.nama,
+  });
 }
 
 class MyButtonForm extends StatelessWidget {
@@ -359,7 +373,7 @@ class MyButtonForm extends StatelessWidget {
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
         backgroundColor: color,
-        foregroundColor: MyColors.dark,
+        foregroundColor: const Color(0xFF131A2A),
         elevation: 5,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.zero,
@@ -402,7 +416,7 @@ class MyTextField extends StatelessWidget {
         readOnly: isReadOnly,
         controller: controller,
         obscureText: (label == "Password" ? true : false),
-        cursorColor: MyColors.dark,
+        cursorColor: const Color(0xFF131A2A),
         maxLines: maxLines ?? 1,
         style: const TextStyle(
           fontSize: 32,
