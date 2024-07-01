@@ -51,7 +51,7 @@ class _DaftarAkunGameState extends State<PembeliDaftarAkunGame> {
 
     try {
       if (response.statusCode == 200) {
-        if (responseBody['sukses'] == false) {
+        if (responseBody['success'] == false) {
           throw Exception('Gagal memuat akun games');
         }
 
