@@ -136,7 +136,7 @@ class _AkunDetailScreenState extends State<PenjualDetailAkun> {
                             '$baseUrl/api/akungame/${widget.akunGame!.id!}'));
                         final responseBody = json.decode(response.body);
                         if (response.statusCode == 200) {
-                          if (responseBody['sukses'] == false) {
+                          if (responseBody['success'] == false) {
                             throw Exception(responseBody['message']);
                           }
 
