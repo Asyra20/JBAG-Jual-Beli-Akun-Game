@@ -8,7 +8,7 @@ class ProfilPenjual extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: CustomDrawer(),
+      drawer: const PenjualSidebar(),
       resizeToAvoidBottomInset: false,
       backgroundColor: const Color(0xFF131A2A),
       appBar: AppBar(

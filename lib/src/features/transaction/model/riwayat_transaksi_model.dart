@@ -1,24 +1,24 @@
-class RiwayatPembelianModel {
+class RiwayatTransaksiModel {
   int? id;
   String? invoice;
   String? status;
 
-  RiwayatPembelianModel({
+  RiwayatTransaksiModel({
     required this.id,
     required this.invoice,
     required this.status,
   });
 
-  RiwayatPembelianModel.fromJson(Map<String, dynamic> json) {
+  RiwayatTransaksiModel.fromJson(Map<String, dynamic> json) {
     id = json["id"];
     invoice = json['invoice'];
     status = json['status_pembayaran'];
   }
 
-  static List<RiwayatPembelianModel> fromApiResponseList(
+  static List<RiwayatTransaksiModel> fromApiResponseList(
       List<dynamic> jsonList) {
     return jsonList
-        .map((json) => RiwayatPembelianModel.fromJson(json))
+        .map((json) => RiwayatTransaksiModel.fromJson(json))
         .toList();
   }
 }
