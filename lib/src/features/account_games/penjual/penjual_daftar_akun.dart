@@ -5,7 +5,7 @@ import 'package:jbag/src/constants/colors.dart';
 import 'package:jbag/src/constants/api_constants.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:jbag/src/features/account_games/model/akun_game_model.dart';
-import 'package:jbag/src/features/account_games/penjual/penjual_kirim_akun.dart';
+import 'package:jbag/src/features/transaction/penjual/penjual_kirim_akun.dart';
 import 'package:jbag/src/features/reuseable_component/penjual_sidebar.dart';
 import 'package:jbag/src/features/account_games/penjual/dialog_penilaian.dart';
 import 'package:jbag/src/features/account_games/penjual/penjual_detail_akun.dart';
@@ -24,7 +24,7 @@ class _DaftarAkunScreenState extends State<PenjualDaftarAkun>
   late Future<List<AkunGameModel>> futureAkunGames;
   List<AkunGameModel> listAkunGame = [];
 
-  final int idPenjual = 1;
+  final int idPenjual = 2;
 
   @override
   void initState() {
@@ -87,7 +87,7 @@ class _DaftarAkunScreenState extends State<PenjualDaftarAkun>
     return DefaultTabController(
       length: 3,
       child: Scaffold(
-        drawer: const CustomDrawer(),
+        drawer: const PenjualSidebar(),
         resizeToAvoidBottomInset: false,
         backgroundColor: const Color(0xFF131A2A),
         appBar: AppBar(
@@ -166,7 +166,6 @@ class _DaftarAkunScreenState extends State<PenjualDaftarAkun>
               child: Text('No akun games found',
                   style: TextStyle(color: MyColors.white)));
         } else {
-          
           listAkunGame = snapshot.data!;
 
           return ListView.builder(

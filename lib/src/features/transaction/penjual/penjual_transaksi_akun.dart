@@ -1,34 +1,35 @@
 import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:jbag/src/constants/api_constants.dart';
 import 'package:jbag/src/constants/colors.dart';
-import 'package:jbag/src/features/reuseable_component/pembeli_sidebar.dart';
+import 'package:jbag/src/constants/api_constants.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:jbag/src/features/transaction/model/riwayat_transaksi_model.dart';
-import 'package:jbag/src/features/transaction/detail_transaksi.dart';
+import 'package:jbag/src/features/transaction/penjual/penjual_kirim_akun.dart';
+import 'package:jbag/src/features/reuseable_component/penjual_sidebar.dart';
+import 'package:jbag/src/features/account_games/penjual/dialog_penilaian.dart';
 
-class DaftarAkunScreen extends StatefulWidget {
-  const DaftarAkunScreen({super.key});
+class PenjualTransaksiAkun extends StatefulWidget {
+  const PenjualTransaksiAkun({super.key});
 
   @override
-  State<DaftarAkunScreen> createState() => _DaftarAkunScreenState();
+  State<PenjualTransaksiAkun> createState() => _PenjualTransaksiAkunState();
 }
 
-class _DaftarAkunScreenState extends State<DaftarAkunScreen>
+class _PenjualTransaksiAkunState extends State<PenjualTransaksiAkun>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   int _activeTabIndex = 0;
   late Future<List<RiwayatTransaksiModel>> futureAkunGames;
   List<RiwayatTransaksiModel> listAkunGame = [];
 
-  final int idPembeli = 2;
+  final int idPenjual = 2;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 2, vsync: this);
     _tabController.addListener(_handleTabSelection);
     futureAkunGames = fetchAkunGames(getStatusFromIndex(_activeTabIndex));
   }
@@ -45,19 +46,17 @@ class _DaftarAkunScreenState extends State<DaftarAkunScreen>
   String getStatusFromIndex(int index) {
     switch (index) {
       case 0:
-        return 'belum_bayar';
+        return 'pending';
       case 1:
-        return 'sudah_bayar';
-      case 2:
         return 'terjual';
       default:
-        return 'belum_bayar';
+        return 'pending';
     }
   }
 
   Future<List<RiwayatTransaksiModel>> fetchAkunGames(String status) async {
     final response = await http.get(
-      Uri.parse('$apiEndPoint/transaksi/user/$idPembeli?status=$status'),
+      Uri.parse('$apiEndPoint/transaksi/penjual/$idPenjual?status=$status'),
     );
     final responseBody = json.decode(response.body);
 
@@ -83,81 +82,66 @@ class _DaftarAkunScreenState extends State<DaftarAkunScreen>
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 3,
-      child: Scaffold(
-        drawer: const SidebarGamePembeli(),
-        resizeToAvoidBottomInset: false,
+    return Scaffold(
+      drawer: const PenjualSidebar(),
+      resizeToAvoidBottomInset: false,
+      backgroundColor: MyColors.dark,
+      appBar: AppBar(
         backgroundColor: MyColors.dark,
-        appBar: AppBar(
-          backgroundColor: MyColors.dark,
-          leading: Builder(
-            builder: (context) {
-              return IconButton(
-                icon: const FaIcon(
-                  FontAwesomeIcons.bars,
-                  color: MyColors.white,
-                ),
-                onPressed: () {
-                  Scaffold.of(context).openDrawer();
-                },
-              );
-            },
-          ),
-        ),
-        body: Column(
-          children: [
-            const Text(
-              'Riyawat Pembelian',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontFamily: 'BebasNeue',
-                fontSize: 50,
+        leading: Builder(
+          builder: (context) {
+            return IconButton(
+              icon: const FaIcon(
+                FontAwesomeIcons.bars,
                 color: MyColors.white,
               ),
-            ),
-            const SizedBox(height: 20),
-            Container(
-              color: MyColors.accent,
-              margin: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: TabBar(
-                controller: _tabController,
-                indicatorColor: Colors.red,
-                labelColor: MyColors.dark,
-                // unselectedLabelColor: MyColors.dark,
-                labelStyle: const TextStyle(
-                  fontFamily: 'BebasNeue',
-                  fontSize: 18,
-                  color: MyColors.white,
-                ),
-                tabs: const [
-                  Tab(text: 'Belum Dibayar'),
-                  Tab(text: 'Diproses'),
-                  Tab(text: 'Dibeli'),
-                ],
-              ),
-            ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TabBarView(
-                  controller: _tabController,
-                  physics: const NeverScrollableScrollPhysics(),
-                  children: [
-                    tabView(futureAkunGames),
-                    tabView(futureAkunGames),
-                    tabViewTerjual(futureAkunGames),
-                  ],
-                ),
-              ),
-            ),
-          ],
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
+            );
+          },
         ),
+        title: const Text(
+          "Transaksi",
+          style: TextStyle(
+            fontFamily: 'BebasNeue',
+            fontSize: 42,
+            color: MyColors.white,
+          ),
+        ),
+      ),
+      body: Column(
+        children: [
+          const SizedBox(height: 20),
+          Container(
+            color: MyColors.accent,
+            child: TabBar(
+              controller: _tabController,
+              indicatorColor: MyColors.tertiary,
+              labelColor: MyColors.dark,
+              unselectedLabelColor: MyColors.dark,
+              tabs: const [
+                Tab(text: 'Pending'),
+                Tab(text: 'Terjual'),
+              ],
+            ),
+          ),
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              physics: const NeverScrollableScrollPhysics(),
+              children: [
+                tabViewPending(futureAkunGames),
+                tabViewTerjual(futureAkunGames),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget tabView(Future<List<RiwayatTransaksiModel>> futureAkunGames) {
+  Widget tabViewPending(Future<List<RiwayatTransaksiModel>> futureAkunGames) {
     return FutureBuilder<List<RiwayatTransaksiModel>>(
       future: futureAkunGames,
       builder: (context, snapshot) {
@@ -186,7 +170,7 @@ class _DaftarAkunScreenState extends State<DaftarAkunScreen>
                     context,
                     MaterialPageRoute(
                       builder: (context) =>
-                          DetailTransaksi(transaksiId: pembelian.id!),
+                          PenjualKirimAkun(transaksiId: pembelian.id!),
                     ),
                   );
                 },
@@ -302,7 +286,7 @@ class _DaftarAkunScreenState extends State<DaftarAkunScreen>
                               );
                             },
                             child: const Text(
-                              'NILAI',
+                              'LIHAT NILAI',
                               style: TextStyle(
                                 fontFamily: 'BebasNeue',
                                 fontSize: 32,
@@ -320,87 +304,6 @@ class _DaftarAkunScreenState extends State<DaftarAkunScreen>
           );
         }
       },
-    );
-  }
-}
-
-class DialogPenilaian extends StatelessWidget {
-  const DialogPenilaian({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      backgroundColor: MyColors.primary,
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Center(
-            child: Text(
-              'PENILAIAN',
-              style: TextStyle(
-                  color: MyColors.dark,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'LeagueGothic'),
-            ),
-          ),
-          const SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                'Rating',
-                style:
-                    TextStyle(color: MyColors.dark, fontFamily: 'LeagueGothic'),
-              ),
-              Row(
-                children: List.generate(5, (index) {
-                  return const Icon(
-                    Icons.star,
-                    color: MyColors.accent,
-                  );
-                }),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          const Text(
-            'Review',
-            style: TextStyle(color: MyColors.dark, fontFamily: 'LeagueGothic'),
-          ),
-          const SizedBox(height: 5),
-          TextField(
-            maxLines: 4,
-            decoration: InputDecoration(
-              filled: true,
-              fillColor: MyColors.white,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-          ),
-          const SizedBox(height: 10),
-          Center(
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: MyColors.accent,
-                foregroundColor: MyColors.dark,
-              ),
-              onPressed: () {
-                // Handle the submit action
-                Navigator.of(context).pop();
-              },
-              child: const Text(
-                'KIRIM',
-                style: TextStyle(fontFamily: 'LeagueGothic'),
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

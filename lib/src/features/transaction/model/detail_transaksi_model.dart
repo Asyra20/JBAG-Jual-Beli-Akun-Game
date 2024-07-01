@@ -1,4 +1,5 @@
 class DetailTransaksiModel {
+  int? idTransaksi;
   String? invoice;
   String? tanggalWaktu;
   String? penjual;
@@ -11,6 +12,7 @@ class DetailTransaksiModel {
   String? nomorEwallet;
 
   DetailTransaksiModel({
+    this.idTransaksi,
     this.invoice,
     this.tanggalWaktu,
     this.penjual,
@@ -24,6 +26,7 @@ class DetailTransaksiModel {
   });
 
   DetailTransaksiModel.fromJson(Map<String, dynamic> json) {
+    idTransaksi = json['id'];
     invoice = json['invoice'];
     tanggalWaktu = json['tanggal_waktu'];
     penjual = json['penjual']['user']['nama'];
@@ -45,12 +48,21 @@ class DetailTransaksiModel {
 }
 
 class Akun {
+  int? idDetailTransaksi;
+  int? idAkunGame;
   String? judul;
   int? harga;
 
-  Akun({this.judul, this.harga});
+  Akun({
+    this.judul,
+    this.harga,
+    this.idDetailTransaksi,
+    this.idAkunGame,
+  });
 
   Akun.fromJson(Map<String, dynamic> json) {
+    idDetailTransaksi = json['id'];
+    idAkunGame = json['akun_game_id'];
     judul = json['akun_game']['judul'];
     harga = json['akun_game']['harga'];
   }
