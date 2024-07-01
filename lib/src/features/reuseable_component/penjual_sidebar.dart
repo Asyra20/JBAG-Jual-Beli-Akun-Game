@@ -1,26 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:jbag/src/constants/colors.dart';
 import 'package:jbag/src/features/account_games/penjual/penjual_daftar_akun.dart';
 import 'package:jbag/src/features/account_games/penjual/tambah_akun_game.dart';
 import 'package:jbag/src/features/auth/login_screen.dart';
 import 'package:jbag/src/features/profile/penjual/profil_penjual_screen.dart';
+import 'package:jbag/src/features/transaction/penjual/penjual_transaksi_akun.dart';
 
-class CustomDrawer extends StatelessWidget {
-  const CustomDrawer({super.key});
+class PenjualSidebar extends StatelessWidget {
+  const PenjualSidebar({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Drawer(
       child: Container(
-        color: const Color(0xFF131A2A),
+        color: MyColors.dark,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 35),
+            const SizedBox(height: 35),
             Container(
               padding: const EdgeInsets.all(8.0),
-              color: const Color(0xFF131A2A),
+              color: MyColors.dark,
               child: IconButton(
-                icon: const Icon(Icons.close, color: Colors.white, size: 30),
+                icon: const Icon(Icons.close, color: MyColors.white, size: 30),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
@@ -34,7 +36,7 @@ class CustomDrawer extends StatelessWidget {
                     title: const Text(
                       'Profile',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: MyColors.white,
                         fontSize: 32,
                         fontFamily: 'BebasNeue',
                       ),
@@ -43,7 +45,8 @@ class CustomDrawer extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const ProfilPenjual()),
+                          builder: (context) => const ProfilPenjual(),
+                        ),
                       );
                     },
                   ),
@@ -51,7 +54,7 @@ class CustomDrawer extends StatelessWidget {
                     title: const Text(
                       'Daftar akun',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: MyColors.white,
                         fontSize: 32,
                         fontFamily: 'BebasNeue',
                       ),
@@ -60,7 +63,8 @@ class CustomDrawer extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const PenjualDaftarAkun()),
+                          builder: (context) => const PenjualDaftarAkun(),
+                        ),
                       );
                     },
                   ),
@@ -68,7 +72,7 @@ class CustomDrawer extends StatelessWidget {
                     title: const Text(
                       'Tambah akun',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: MyColors.white,
                         fontSize: 32,
                         fontFamily: 'BebasNeue',
                       ),
@@ -77,7 +81,26 @@ class CustomDrawer extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const TambahAkunGame()),
+                          builder: (context) => const TambahAkunGame(),
+                        ),
+                      );
+                    },
+                  ),
+                  ListTile(
+                    title: const Text(
+                      'Transaksi',
+                      style: TextStyle(
+                        color: MyColors.white,
+                        fontSize: 32,
+                        fontFamily: 'BebasNeue',
+                      ),
+                    ),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const PenjualTransaksiAkun(),
+                        ),
                       );
                     },
                   ),
@@ -90,7 +113,7 @@ class CustomDrawer extends StatelessWidget {
                   title: const Text(
                     'Report',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: MyColors.white,
                       fontSize: 32,
                       fontFamily: 'BebasNeue',
                     ),
@@ -103,7 +126,7 @@ class CustomDrawer extends StatelessWidget {
                   title: const Text(
                     'Logout',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: MyColors.white,
                       fontSize: 32,
                       fontFamily: 'BebasNeue',
                     ),

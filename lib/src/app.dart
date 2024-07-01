@@ -1,16 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:jbag/src/features/account_games/penjual/penjual_kirim_akun.dart';
+import 'package:jbag/src/constants/colors.dart';
+import 'package:jbag/src/features/account_games/pembeli/pembeli_daftar_akun.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: PenjualKirimAkun(
-                          transaksiId: 1,
-                        ),
+      theme: ThemeData(
+        textSelectionTheme: TextSelectionThemeData(
+          cursorColor: MyColors.dark,
+          selectionColor: MyColors.dark.withOpacity(0.5),
+          selectionHandleColor: MyColors.dark,
+        ),
+      ),
+      home: const PembeliDaftarAkunGame(),
     );
   }
 }

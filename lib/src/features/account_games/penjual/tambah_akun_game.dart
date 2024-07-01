@@ -21,7 +21,7 @@ class TambahAkunGame extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: const CustomDrawer(),
+      drawer: const PenjualSidebar(),
       resizeToAvoidBottomInset: false,
       backgroundColor: MyColors.dark,
       appBar: AppBar(
