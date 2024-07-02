@@ -5,10 +5,10 @@ import 'package:jbag/src/constants/colors.dart';
 import 'package:jbag/src/constants/api_constants.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:jbag/src/features/account_games/model/akun_game_model.dart';
-import 'package:jbag/src/features/transaction/penjual/penjual_kirim_akun.dart';
 import 'package:jbag/src/features/reuseable_component/penjual_sidebar.dart';
 import 'package:jbag/src/features/account_games/penjual/dialog_penilaian.dart';
 import 'package:jbag/src/features/account_games/penjual/penjual_detail_akun.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PenjualDaftarAkun extends StatefulWidget {
   const PenjualDaftarAkun({super.key});
@@ -24,14 +24,26 @@ class _DaftarAkunScreenState extends State<PenjualDaftarAkun>
   late Future<List<AkunGameModel>> futureAkunGames;
   List<AkunGameModel> listAkunGame = [];
 
-  final int idPenjual = 2;
+  int idPenjual = 0;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 1, vsync: this);
     _tabController.addListener(_handleTabSelection);
     futureAkunGames = fetchAkunGames(getStatusFromIndex(_activeTabIndex));
+  }
+
+  _loadUserData() async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var penjual = jsonDecode(localStorage.getString('penjual')!);
+
+    if (penjual != null) {
+      setState(() {
+        idPenjual = penjual['id'];
+        print(idPenjual);
+      });
+    }
   }
 
   void _handleTabSelection() {
@@ -47,22 +59,24 @@ class _DaftarAkunScreenState extends State<PenjualDaftarAkun>
     switch (index) {
       case 0:
         return 'tersedia';
-      case 1:
-        return 'pending';
-      case 2:
-        return 'terjual';
       default:
         return 'tersedia';
     }
   }
 
   Future<List<AkunGameModel>> fetchAkunGames(String status) async {
-    final response = await http.get(
-      Uri.parse('$baseUrl/api/akungame/penjual/$idPenjual?status=$status'),
-    );
-    final responseBody = json.decode(response.body);
+    await _loadUserData();
 
     try {
+      if (idPenjual == 0) {
+        throw Exception('ID Penjual tidak ditemukan');
+      }
+
+      final response = await http.get(
+        Uri.parse('$baseUrl/api/akungame/penjual/$idPenjual?status=$status'),
+      );
+      final responseBody = json.decode(response.body);
+
       if (response.statusCode == 200) {
         if (responseBody['success'] == false) {
           throw Exception('Gagal memuat akun games');
@@ -127,8 +141,6 @@ class _DaftarAkunScreenState extends State<PenjualDaftarAkun>
                 unselectedLabelColor: const Color(0xFF131A2A),
                 tabs: const [
                   Tab(text: 'Dijual'),
-                  Tab(text: 'Pending'),
-                  Tab(text: 'Terjual'),
                 ],
               ),
             ),
@@ -138,8 +150,6 @@ class _DaftarAkunScreenState extends State<PenjualDaftarAkun>
                 physics: const NeverScrollableScrollPhysics(),
                 children: [
                   buildAkunGameList(futureAkunGames, 'tersedia'),
-                  buildAkunGameList(futureAkunGames, 'pending'),
-                  buildAkunGameList(futureAkunGames, 'terjual'),
                 ],
               ),
             ),
@@ -175,25 +185,14 @@ class _DaftarAkunScreenState extends State<PenjualDaftarAkun>
 
               return GestureDetector(
                 onTap: () {
-                  if (status == "tersedia") {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => PenjualDetailAkun(
-                          akunGame: akunGame,
-                        ),
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => PenjualDetailAkun(
+                        akunGame: akunGame,
                       ),
-                    );
-                  } else if (status == "pending") {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => PenjualKirimAkun(
-                          transaksiId: akunGame.id!,
-                        ),
-                      ),
-                    );
-                  } else if (status == "terjual") {}
+                    ),
+                  );
                 },
                 child: Container(
                   margin: const EdgeInsets.symmetric(vertical: 10),

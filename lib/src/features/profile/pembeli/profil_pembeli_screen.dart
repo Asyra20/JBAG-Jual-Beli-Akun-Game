@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:jbag/src/features/reuseable_component/pembeli_sidebar.dart';
 
 class ProfilPembeli extends StatelessWidget {
   const ProfilPembeli({super.key});
@@ -8,15 +9,22 @@ class ProfilPembeli extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
+      drawer: const PembeliSidebar(),
       backgroundColor: Color(0xFF131A2A),
       appBar: AppBar(
-        backgroundColor: Color(0xFF131A2A),
-        leading: IconButton(
-          onPressed: () {},
-          icon: const FaIcon(
-            FontAwesomeIcons.bars,
-            color: Color(0xFFFFFAFF),
-          ),
+        backgroundColor: const Color(0xFF131A2A),
+        leading: Builder(
+          builder: (context) {
+            return IconButton(
+              icon: const FaIcon(
+                FontAwesomeIcons.bars,
+                color: Color(0xFFFFFAFF),
+              ),
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
+            );
+          },
         ),
       ),
       body: ProfilPembeliBody(),
@@ -35,7 +43,7 @@ class _ProfilPembeliBodyState extends State<ProfilPembeliBody> {
   final _formKey = GlobalKey<FormState>();
 
   bool _isEditable = false;
-  
+
   final TextEditingController _namaController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
@@ -152,7 +160,7 @@ class _ProfilPembeliBodyState extends State<ProfilPembeliBody> {
                                 _emailController.text = _initEmail;
                                 _passwordController.text = _initPassword;
                                 _noTelpController.text = _initNoTelp;
-      
+
                                 setState(() {
                                   _isEditable = false;
                                 });

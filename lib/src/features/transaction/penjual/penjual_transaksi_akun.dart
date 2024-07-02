@@ -9,6 +9,7 @@ import 'package:jbag/src/features/transaction/model/riwayat_transaksi_model.dart
 import 'package:jbag/src/features/transaction/penjual/penjual_kirim_akun.dart';
 import 'package:jbag/src/features/reuseable_component/penjual_sidebar.dart';
 import 'package:jbag/src/features/account_games/penjual/dialog_penilaian.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PenjualTransaksiAkun extends StatefulWidget {
   const PenjualTransaksiAkun({super.key});
@@ -24,7 +25,7 @@ class _PenjualTransaksiAkunState extends State<PenjualTransaksiAkun>
   late Future<List<RiwayatTransaksiModel>> futureAkunGames;
   List<RiwayatTransaksiModel> listAkunGame = [];
 
-  final int idPenjual = 2;
+  int idPenjual = 0;
 
   @override
   void initState() {
@@ -34,11 +35,24 @@ class _PenjualTransaksiAkunState extends State<PenjualTransaksiAkun>
     futureAkunGames = fetchAkunGames(getStatusFromIndex(_activeTabIndex));
   }
 
+  _loadUserData() async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var penjual = jsonDecode(localStorage.getString('penjual')!);
+
+    if (penjual != null) {
+      setState(() {
+        idPenjual = penjual['id'];
+      });
+    }
+  }
+
   void _handleTabSelection() {
     if (_tabController.indexIsChanging) {
       setState(() {
         _activeTabIndex = _tabController.index;
-        futureAkunGames = fetchAkunGames(getStatusFromIndex(_activeTabIndex));
+        if (idPenjual != 0) {
+          futureAkunGames = fetchAkunGames(getStatusFromIndex(_activeTabIndex));
+        }
       });
     }
   }
@@ -55,12 +69,17 @@ class _PenjualTransaksiAkunState extends State<PenjualTransaksiAkun>
   }
 
   Future<List<RiwayatTransaksiModel>> fetchAkunGames(String status) async {
-    final response = await http.get(
-      Uri.parse('$apiEndPoint/transaksi/penjual/$idPenjual?status=$status'),
-    );
-    final responseBody = json.decode(response.body);
+    await _loadUserData();
 
     try {
+      if (idPenjual == 0) {
+        throw Exception('ID Penjual tidak ditemukan');
+      }
+      final response = await http.get(
+        Uri.parse('$apiEndPoint/transaksi/penjual/$idPenjual?status=$status'),
+      );
+      final responseBody = json.decode(response.body);
+
       if (response.statusCode == 200) {
         if (responseBody['success'] == false) {
           throw Exception('Failed to load akun games');

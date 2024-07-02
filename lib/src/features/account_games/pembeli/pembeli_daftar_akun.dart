@@ -20,7 +20,7 @@ class PembeliDaftarAkunGame extends StatefulWidget {
 class _DaftarAkunGameState extends State<PembeliDaftarAkunGame> {
   final GameController _gameController = GameController();
   late Future<List<AkunGameModel>> _futureSearch;
-  Future<List<GameModel>>? _futureGames;
+  late Future<List<GameModel>> _futureGames;
 
   final TextEditingController _search = TextEditingController();
 
@@ -31,8 +31,21 @@ class _DaftarAkunGameState extends State<PembeliDaftarAkunGame> {
   @override
   void initState() {
     super.initState();
+    _initializeGames();
     _futureSearch = cari(gameId: null, judul: null);
-    _futureGames = _gameController.getGames();
+  }
+
+  void _initializeGames() async {
+    try {
+      _futureGames = _gameController.getGames();
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+      print('Error: $e');
+      // Mengembalikan Future yang error agar tidak mengganggu eksekusi FutureBuilder atau pemanggilan lainnya
+      _futureGames = Future.error(e);
+    }
   }
 
   Future<List<AkunGameModel>> cari({
@@ -91,7 +104,7 @@ class _DaftarAkunGameState extends State<PembeliDaftarAkunGame> {
           ),
         ),
       ),
-      drawer: const SidebarGamePembeli(),
+      drawer: const PembeliSidebar(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

@@ -1,10 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:jbag/src/constants/colors.dart';
 import 'package:jbag/src/features/cart/controller/keranjang_controller.dart';
 import 'package:jbag/src/features/cart/model/keranjang_item.dart';
 import 'package:jbag/src/features/checkout/checkout_screen.dart';
+import 'package:jbag/src/features/reuseable_component/pembeli_sidebar.dart';
 import 'package:jbag/src/utils/format/currency_format.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class KeranjangScreen extends StatefulWidget {
   const KeranjangScreen({super.key});
@@ -16,7 +20,7 @@ class KeranjangScreen extends StatefulWidget {
 class _KeranjangScreenState extends State<KeranjangScreen> {
   final KeranjangController _keranjangController = KeranjangController();
   List<KeranjangItem> itemKeranjang = [];
-  int userId = 2;
+  int userId = 0;
 
   int _selectedCount = 0;
   double _totalHarga = 0;
@@ -29,7 +33,19 @@ class _KeranjangScreenState extends State<KeranjangScreen> {
     _futureKeranjang = _fetchKeranjang();
   }
 
+  _loadUserData() async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var user = jsonDecode(localStorage.getString('user')!);
+
+    if (user != null) {
+      setState(() {
+        userId = user['id'];
+      });
+    }
+  }
+
   Future<void> _fetchKeranjang() async {
+    await _loadUserData();
     final items = await _keranjangController.fetchKeranjang(userId);
     setState(() {
       itemKeranjang = items;
@@ -41,30 +57,36 @@ class _KeranjangScreenState extends State<KeranjangScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
-      backgroundColor: const Color(0xFF131A2A),
+      backgroundColor: MyColors.dark,
+      drawer: const PembeliSidebar(),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF131A2A),
-        leading: IconButton(
-          onPressed: () {},
-          icon: const FaIcon(
-            FontAwesomeIcons.bars,
-            color: Color(0xFFFFFAFF),
+        iconTheme: const IconThemeData(color: MyColors.white, size: 35),
+        backgroundColor: MyColors.dark,
+        title: const Text(
+          "Keranjang",
+          style: TextStyle(
+            fontFamily: 'BebasNeue',
+            fontSize: 42,
+            color: MyColors.white,
           ),
+        ),
+        leading: Builder(
+          builder: (context) {
+            return IconButton(
+              icon: const FaIcon(
+                FontAwesomeIcons.bars,
+                color: MyColors.white,
+              ),
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
+            );
+          },
         ),
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            const Text(
-              'Keranjang',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontFamily: 'BebasNeue',
-                fontSize: 48,
-                color: Color(0xFFFFFAFF),
-              ),
-            ),
             const SizedBox(height: 20),
             FutureBuilder(
               future: _futureKeranjang,
@@ -247,9 +269,9 @@ class KeranjangBottomNavigationBar extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 disabledBackgroundColor:
                     const Color.fromARGB(255, 178, 139, 39),
-                disabledForegroundColor: const Color(0xFF131A2A),
+                disabledForegroundColor: MyColors.dark,
                 backgroundColor: const Color(0xFFFFC639),
-                foregroundColor: const Color(0xFF131A2A),
+                foregroundColor: MyColors.dark,
                 elevation: 5,
                 shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.zero,
@@ -375,7 +397,7 @@ class _KeranjangItemCardState extends State<KeranjangItemCard> {
                 widget.item.isSelected!
                     ? FontAwesomeIcons.solidSquareCheck
                     : FontAwesomeIcons.square,
-                color: const Color(0xFF131A2A),
+                color: MyColors.dark,
               ),
               onPressed: widget.onItemSelected,
             ),

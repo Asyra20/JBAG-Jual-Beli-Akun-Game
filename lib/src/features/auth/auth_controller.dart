@@ -70,7 +70,8 @@ class AuthController {
       } else if (role == 'pembeli') {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const PembeliDaftarAkunGame()),
+          MaterialPageRoute(
+              builder: (context) => const PembeliDaftarAkunGame()),
         );
       } else if (role == 'admin') {
         Navigator.pushReplacement(
