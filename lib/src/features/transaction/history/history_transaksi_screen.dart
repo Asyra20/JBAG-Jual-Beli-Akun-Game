@@ -8,6 +8,7 @@ import 'package:jbag/src/features/reuseable_component/pembeli_sidebar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:jbag/src/features/transaction/model/riwayat_transaksi_model.dart';
 import 'package:jbag/src/features/transaction/detail_transaksi.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DaftarAkunScreen extends StatefulWidget {
   const DaftarAkunScreen({super.key});
@@ -23,7 +24,7 @@ class _DaftarAkunScreenState extends State<DaftarAkunScreen>
   late Future<List<RiwayatTransaksiModel>> futureAkunGames;
   List<RiwayatTransaksiModel> listAkunGame = [];
 
-  final int idPembeli = 2;
+  int userId = 0;
 
   @override
   void initState() {
@@ -31,6 +32,17 @@ class _DaftarAkunScreenState extends State<DaftarAkunScreen>
     _tabController = TabController(length: 3, vsync: this);
     _tabController.addListener(_handleTabSelection);
     futureAkunGames = fetchAkunGames(getStatusFromIndex(_activeTabIndex));
+  }
+
+  _loadUserData() async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var user = jsonDecode(localStorage.getString('user')!);
+
+    if (user != null) {
+      setState(() {
+        userId = user['id'];
+      });
+    }
   }
 
   void _handleTabSelection() {
@@ -56,8 +68,10 @@ class _DaftarAkunScreenState extends State<DaftarAkunScreen>
   }
 
   Future<List<RiwayatTransaksiModel>> fetchAkunGames(String status) async {
+    await _loadUserData();
+
     final response = await http.get(
-      Uri.parse('$apiEndPoint/transaksi/user/$idPembeli?status=$status'),
+      Uri.parse('$apiEndPoint/transaksi/user/$userId?status=$status'),
     );
     final responseBody = json.decode(response.body);
 
@@ -86,7 +100,7 @@ class _DaftarAkunScreenState extends State<DaftarAkunScreen>
     return DefaultTabController(
       length: 3,
       child: Scaffold(
-        drawer: const SidebarGamePembeli(),
+        drawer: const PembeliSidebar(),
         resizeToAvoidBottomInset: false,
         backgroundColor: MyColors.dark,
         appBar: AppBar(

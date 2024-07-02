@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jbag/src/constants/colors.dart';
-import 'package:jbag/src/features/account_games/pembeli/pembeli_daftar_akun.dart';
+import 'package:jbag/src/features/auth/login_screen.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
           selectionHandleColor: MyColors.dark,
         ),
       ),
-      home: const PembeliDaftarAkunGame(),
+      home: const LoginScreen(),
     );
   }
 }

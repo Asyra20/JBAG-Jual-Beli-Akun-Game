@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:jbag/src/constants/colors.dart';
+import 'package:jbag/src/features/account_games/pembeli/pembeli_daftar_akun.dart';
 import 'package:jbag/src/features/auth/auth_controller.dart';
 import 'package:jbag/src/features/cart/keranjang_screen.dart';
 import 'package:jbag/src/features/profile/pembeli/profil_pembeli_screen.dart';
 import 'package:jbag/src/features/transaction/history/history_transaksi_screen.dart';
 
-class SidebarGamePembeli extends StatefulWidget {
-  const SidebarGamePembeli({super.key});
+class PembeliSidebar extends StatefulWidget {
+  const PembeliSidebar({super.key});
 
   @override
-  State<SidebarGamePembeli> createState() => _SidebarGamePembeliState();
+  State<PembeliSidebar> createState() => _PembeliSidebarState();
 }
 
-class _SidebarGamePembeliState extends State<SidebarGamePembeli> {
+class _PembeliSidebarState extends State<PembeliSidebar> {
   final AuthController _authController = AuthController();
   Future<void> _handleLogout() async {
     try {
@@ -94,6 +95,11 @@ class _SidebarGamePembeliState extends State<SidebarGamePembeli> {
               onTap: () {
                 onItemTapped(1);
                 Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const PembeliDaftarAkunGame()),
+                );
               },
             ),
             ListTile(

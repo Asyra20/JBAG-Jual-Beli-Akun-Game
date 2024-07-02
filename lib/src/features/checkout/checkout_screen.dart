@@ -9,8 +9,9 @@ import 'package:jbag/src/features/checkout/model/payment_method_penjual.dart';
 import 'package:jbag/src/features/transaction/detail_transaksi.dart';
 import 'package:jbag/src/utils/format/currency_format.dart';
 import 'package:jbag/src/utils/json_printer.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class CheckoutScreen extends StatelessWidget {
+class CheckoutScreen extends StatefulWidget {
   const CheckoutScreen({
     super.key,
     required this.itemKeranjang,
@@ -21,8 +22,32 @@ class CheckoutScreen extends StatelessWidget {
   final List<KeranjangItem> itemKeranjang;
 
   @override
+  State<CheckoutScreen> createState() => _CheckoutScreenState();
+}
+
+class _CheckoutScreenState extends State<CheckoutScreen> {
+  int userId = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  _loadUserData() async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var user = jsonDecode(localStorage.getString('user')!);
+
+    if (user != null) {
+      setState(() {
+        userId = user['id'];
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    int totalHarga = itemKeranjang
+    int totalHarga = widget.itemKeranjang
         .map((item) => item.harga!)
         .reduce((total, current) => total + current);
 
@@ -77,7 +102,7 @@ class CheckoutScreen extends StatelessWidget {
               for (var penjual in checkoutData) {
                 grupPenjual[penjual.usernamePenjual!] = {
                   'paymentMethod': penjual,
-                  'items': itemKeranjang
+                  'items': widget.itemKeranjang
                       .where((item) =>
                           item.usernamePenjual == penjual.usernamePenjual)
                       .toList(),
@@ -103,6 +128,7 @@ class CheckoutScreen extends StatelessWidget {
                     itemBuilder: (context, index) {
                       final penjual = grupPenjual.keys.elementAt(index); // keys
                       final itemPenjual = grupPenjual[penjual]!;
+                      print(itemPenjual);
 
                       return Container(
                         margin: const EdgeInsets.symmetric(
@@ -194,6 +220,12 @@ class CheckoutScreen extends StatelessWidget {
                                         Image.network(
                                           "$baseUrl/${itemPenjual["paymentMethod"].image}",
                                           height: 30,
+                                          errorBuilder: (BuildContext context,
+                                              Object exception,
+                                              StackTrace? stackTrace) {
+                                            return Image.asset(
+                                                'assets/logo/logo-splash.png'); // Ganti dengan path gambar default-mu
+                                          },
                                         ),
                                       ],
                                     ),
@@ -244,7 +276,7 @@ class CheckoutScreen extends StatelessWidget {
               color: const Color(0xFFFFC639),
               padding: 40,
               onPressed: () async {
-                await buatTransaksi(context, grupPenjual);
+                await buatTransaksi(userId, context, grupPenjual);
               },
             ),
           ],
@@ -254,8 +286,8 @@ class CheckoutScreen extends StatelessWidget {
   }
 
   Future<List<PaymentMethodPenjual>> fetchData() async {
-    final response = await http
-        .get(Uri.parse('$baseUrl/api/checkout?penjual=$groupedIdPenjual'));
+    final response = await http.get(
+        Uri.parse('$baseUrl/api/checkout?penjual=${widget.groupedIdPenjual}'));
 
     final responseBody = json.decode(response.body);
     if (response.statusCode == 200) {
@@ -270,10 +302,10 @@ class CheckoutScreen extends StatelessWidget {
   }
 
   Future<void> buatTransaksi(
+    int userId,
     BuildContext context,
     Map<String, Map<String, dynamic>> grupPenjual,
   ) async {
-    int userId = 2;
     var waktuEpoch = DateTime.now().millisecondsSinceEpoch ~/ 1000;
 
     var jsonData = <String, dynamic>{

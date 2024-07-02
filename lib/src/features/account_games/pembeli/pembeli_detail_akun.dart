@@ -1,14 +1,17 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+
 import 'package:flutter/material.dart';
 import 'package:jbag/src/constants/colors.dart';
 import 'package:jbag/src/constants/api_constants.dart';
 import 'package:jbag/src/utils/format/currency_format.dart';
-import 'package:jbag/src/features/cart/keranjang_screen.dart';
 import 'package:jbag/src/features/checkout/checkout_screen.dart';
 import 'package:jbag/src/features/cart/model/keranjang_item.dart';
 import 'package:jbag/src/features/account_games/model/akun_game_model.dart';
 import 'package:jbag/src/features/account_games/pembeli/profil_penjual.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class PembeliDetailAkun extends StatelessWidget {
+class PembeliDetailAkun extends StatefulWidget {
   final AkunGameModel akunGameDetail;
 
   const PembeliDetailAkun({
@@ -17,15 +20,39 @@ class PembeliDetailAkun extends StatelessWidget {
   });
 
   @override
+  State<PembeliDetailAkun> createState() => _PembeliDetailAkunState();
+}
+
+class _PembeliDetailAkunState extends State<PembeliDetailAkun> {
+  int userId = 0;
+
+  @override
+  void initState() {
+    _loadUserData();
+    super.initState();
+  }
+
+  _loadUserData() async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var user = jsonDecode(localStorage.getString('user')!);
+
+    if (user != null) {
+      setState(() {
+        userId = user['id'];
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final List<KeranjangItem> checkoutData = [
       KeranjangItem(
-        id: akunGameDetail.id,
-        idAkunGame: akunGameDetail.id,
-        judul: akunGameDetail.judul,
-        harga: akunGameDetail.harga,
-        idPenjual: akunGameDetail.penjualId,
-        usernamePenjual: akunGameDetail.usernamePenjual,
+        id: widget.akunGameDetail.id,
+        idAkunGame: widget.akunGameDetail.id,
+        judul: widget.akunGameDetail.judul,
+        harga: widget.akunGameDetail.harga,
+        idPenjual: widget.akunGameDetail.penjualId,
+        usernamePenjual: widget.akunGameDetail.usernamePenjual,
       ),
     ];
 
@@ -56,17 +83,16 @@ class PembeliDetailAkun extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Image.network(
-                        '$baseUrl/${akunGameDetail.gambar!}',
+                        '$baseUrl/${widget.akunGameDetail.gambar!}',
                         fit: BoxFit.cover,
                         errorBuilder: (BuildContext context, Object exception,
                             StackTrace? stackTrace) {
-                          return Image.asset(
-                              'assets/logo/logo-splash.png'); 
+                          return Image.asset('assets/logo/logo-splash.png');
                         },
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        akunGameDetail.judul!,
+                        widget.akunGameDetail.judul!,
                         maxLines: 5,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
@@ -87,7 +113,7 @@ class PembeliDetailAkun extends StatelessWidget {
                           );
                         },
                         child: Text(
-                          akunGameDetail.usernamePenjual!,
+                          widget.akunGameDetail.usernamePenjual!,
                           style: const TextStyle(
                             fontFamily: 'Poppins',
                             fontSize: 15,
@@ -98,7 +124,8 @@ class PembeliDetailAkun extends StatelessWidget {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        CurrencyFormat.convert2Idr(akunGameDetail.harga!, 2),
+                        CurrencyFormat.convert2Idr(
+                            widget.akunGameDetail.harga!, 2),
                         style: const TextStyle(
                           fontFamily: 'Poppins',
                           fontSize: 20,
@@ -127,9 +154,9 @@ class PembeliDetailAkun extends StatelessWidget {
                             SizedBox(height: 8),
                             Expanded(
                               child: Text(
-                                akunGameDetail.deskripsi == null
+                                widget.akunGameDetail.deskripsi == null
                                     ? "-"
-                                    : akunGameDetail.deskripsi!,
+                                    : widget.akunGameDetail.deskripsi!,
                                 style: TextStyle(
                                   fontFamily: 'Poppins',
                                   fontSize: 16,
@@ -153,18 +180,22 @@ class PembeliDetailAkun extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const KeranjangScreen(),
-                        ),
-                      );
+                    onPressed: () async {
+                      try {
+                        await tambahKeranjang(userId, widget.akunGameDetail.id);
+                      } catch (e) {
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(e.toString())));
+                          return;
+                        }
+                      }
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                          content: Text("Berhasil menambahkan")));
                     },
                     style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.black,
-                      backgroundColor: const Color(0xFFFFC639),
+                      foregroundColor: MyColors.dark,
+                      backgroundColor: MyColors.accent,
                       shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.zero,
                       ),
@@ -183,14 +214,14 @@ class PembeliDetailAkun extends StatelessWidget {
                           builder: (context) => CheckoutScreen(
                             itemKeranjang: checkoutData,
                             groupedIdPenjual:
-                                akunGameDetail.penjualId.toString(),
+                                widget.akunGameDetail.penjualId.toString(),
                           ),
                         ),
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.black,
-                      backgroundColor: const Color(0xFFFFC639),
+                      foregroundColor: MyColors.dark,
+                      backgroundColor: MyColors.accent,
                       shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.zero,
                       ),
@@ -210,5 +241,29 @@ class PembeliDetailAkun extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<void> tambahKeranjang(int userId, int? id) async {
+    final response = await http.post(
+      Uri.parse('$apiEndPoint/keranjang'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, dynamic>{
+        'user_id': userId,
+        'akun_game_id': id,
+      }),
+    );
+
+    final responseBody = json.decode(response.body);
+
+    if ((response.statusCode == 200 || response.statusCode == 201) &&
+        responseBody['success'] == true) {
+      if (responseBody['success'] == false) {
+        throw Exception(responseBody['message']);
+      }
+    } else {
+      throw Exception(responseBody['message']);
+    }
   }
 }

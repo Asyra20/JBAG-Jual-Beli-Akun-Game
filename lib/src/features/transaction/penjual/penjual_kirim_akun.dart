@@ -162,7 +162,7 @@ class _PenjualKirimAkunState extends State<PenjualKirimAkun> {
                               "Invoice",
                               style: TextStyle(
                                 fontFamily: 'BebasNeue',
-                                fontSize: 32,
+                                fontSize: 22,
                                 color: MyColors.white,
                               ),
                             ),
@@ -171,7 +171,7 @@ class _PenjualKirimAkunState extends State<PenjualKirimAkun> {
                               overflow: TextOverflow.clip,
                               style: const TextStyle(
                                 fontFamily: 'BebasNeue',
-                                fontSize: 32,
+                                fontSize: 22,
                                 color: MyColors.white,
                               ),
                             ),
@@ -185,7 +185,7 @@ class _PenjualKirimAkunState extends State<PenjualKirimAkun> {
                               "Tanggal Waktu",
                               style: TextStyle(
                                 fontFamily: 'BebasNeue',
-                                fontSize: 32,
+                                fontSize: 22,
                                 color: MyColors.white,
                               ),
                             ),
@@ -194,7 +194,7 @@ class _PenjualKirimAkunState extends State<PenjualKirimAkun> {
                               overflow: TextOverflow.clip,
                               style: const TextStyle(
                                 fontFamily: 'BebasNeue',
-                                fontSize: 32,
+                                fontSize: 22,
                                 color: MyColors.white,
                               ),
                             ),
@@ -528,10 +528,14 @@ class _PenjualKirimAkunState extends State<PenjualKirimAkun> {
 
     if ((response.statusCode == 200 || response.statusCode == 204) &&
         responseBody['success'] == true) {
+      print(responseBody['message']);
+      print(responseBody['data']);
       if (responseBody['success'] == false) {
+        print(responseBody['data']);
         throw Exception(responseBody['message']);
       }
     } else {
+      print(responseBody['data']);
       throw Exception(responseBody['message']);
     }
   }

@@ -161,7 +161,7 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
                             "Invoice",
                             style: TextStyle(
                               fontFamily: 'BebasNeue',
-                              fontSize: 32,
+                              fontSize: 22,
                               color: MyColors.white,
                             ),
                           ),
@@ -170,7 +170,7 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
                             overflow: TextOverflow.clip,
                             style: const TextStyle(
                               fontFamily: 'BebasNeue',
-                              fontSize: 32,
+                              fontSize: 22,
                               color: MyColors.white,
                             ),
                           ),
@@ -184,7 +184,7 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
                             "Tangal Waktu",
                             style: TextStyle(
                               fontFamily: 'BebasNeue',
-                              fontSize: 32,
+                              fontSize: 22,
                               color: MyColors.white,
                             ),
                           ),
@@ -193,7 +193,7 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
                             overflow: TextOverflow.clip,
                             style: const TextStyle(
                               fontFamily: 'BebasNeue',
-                              fontSize: 32,
+                              fontSize: 22,
                               color: MyColors.white,
                             ),
                           ),
@@ -207,7 +207,7 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
                             "Status Pembayaran",
                             style: TextStyle(
                               fontFamily: 'BebasNeue',
-                              fontSize: 32,
+                              fontSize: 22,
                               color: MyColors.white,
                             ),
                           ),
@@ -216,7 +216,7 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
                             overflow: TextOverflow.clip,
                             style: const TextStyle(
                               fontFamily: 'BebasNeue',
-                              fontSize: 32,
+                              fontSize: 22,
                               color: MyColors.white,
                             ),
                           ),
@@ -529,7 +529,7 @@ class MyButton extends StatelessWidget {
           borderRadius: BorderRadius.zero,
         ),
         textStyle: const TextStyle(
-          fontSize: 32,
+          fontSize: 28,
           fontFamily: 'BebasNeue',
           color: Color(0xFF393E46),
         ),
