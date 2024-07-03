@@ -81,6 +81,7 @@ class _DaftarAkunScreenState extends State<DaftarAkunScreen>
           throw Exception('Failed to load akun games');
         }
 
+        print(responseBody['data']);
         final data = responseBody['data'];
         return RiwayatTransaksiModel.fromApiResponseList(data);
       } else {
