@@ -1,5 +1,10 @@
+import 'dart:convert';
+
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:jbag/src/constants/api_constants.dart';
+import 'package:jbag/src/constants/colors.dart';
 import 'package:jbag/src/features/auth/login_screen.dart';
 
 class RegistrasiPembeli extends StatelessWidget {
@@ -9,14 +14,22 @@ class RegistrasiPembeli extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      backgroundColor: const Color(0xFF131A2A),
+      backgroundColor: MyColors.dark,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF131A2A),
+        backgroundColor: MyColors.dark,
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
           icon: const FaIcon(
             FontAwesomeIcons.arrowLeft,
-            color: Color(0xFFFFFAFF),
+            color: MyColors.white,
+          ),
+        ),
+        title: const Text(
+          "Registrasi Pembeli",
+          style: TextStyle(
+            fontFamily: 'BebasNeue',
+            fontSize: 42,
+            color: MyColors.white,
           ),
         ),
       ),
@@ -39,7 +52,6 @@ class _RegistrasiPembeliBodyState extends State<RegistrasiPembeliBody> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _noTelpController = TextEditingController();
 
   void _clearForm() {
     setState(() {
@@ -47,7 +59,6 @@ class _RegistrasiPembeliBodyState extends State<RegistrasiPembeliBody> {
       _usernameController.clear();
       _emailController.clear();
       _passwordController.clear();
-      _noTelpController.clear();
     });
   }
 
@@ -57,83 +68,66 @@ class _RegistrasiPembeliBodyState extends State<RegistrasiPembeliBody> {
     _usernameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
-    _noTelpController.dispose();
     super.dispose();
   }
 
   void _showLoginConfirmationDialog(BuildContext context) {
     showDialog(
+      barrierDismissible: false,
       context: context,
       builder: (BuildContext context) {
         return Dialog(
           backgroundColor: Colors.transparent,
           child: Container(
-            padding: EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Color(0xFFECE8E1),
+              color: MyColors.primary,
               borderRadius: BorderRadius.circular(8),
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
+                const Text(
                   "PEMBERITAHUAN",
                   style: TextStyle(
                     fontFamily: 'BebasNeue',
                     fontSize: 24,
-                    color: Color(0xFF131A2A),
+                    color: MyColors.dark,
                   ),
                 ),
-                SizedBox(height: 16),
-                Text(
+                const SizedBox(height: 16),
+                const Text(
                   "REGISTRASI BERHASIL!",
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontFamily: 'BebasNeue',
                     fontSize: 18,
-                    color: Color(0xFF131A2A),
+                    color: MyColors.dark,
                   ),
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  mainAxisSize: MainAxisSize.max,
                   children: [
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFFFFC639),
-                        shape: RoundedRectangleBorder(
+                        backgroundColor: MyColors.accent,
+                        shape: const RoundedRectangleBorder(
                           borderRadius: BorderRadius.zero,
                         ),
                       ),
                       onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const LoginScreen()),
-                );
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const LoginScreen()),
+                        );
                       },
-                      child: Text(
+                      child: const Text(
                         "LOGIN!",
                         style: TextStyle(
-                          color: Colors.black,
-                          fontFamily: 'BebasNeue',
-                          fontSize: 20,
-                        ),
-                      ),
-                    ),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFFF9564F),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.zero,
-                        ),
-                      ),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: Text(
-                        "NAH!",
-                        style: TextStyle(
-                          color: Colors.black,
+                          color: MyColors.dark,
                           fontFamily: 'BebasNeue',
                           fontSize: 20,
                         ),
@@ -161,15 +155,6 @@ class _RegistrasiPembeliBodyState extends State<RegistrasiPembeliBody> {
                 padding: const EdgeInsets.all(25.0),
                 child: Column(
                   children: [
-                    const Text(
-                      'Registrasi Pembeli',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontFamily: 'BebasNeue',
-                        fontSize: 48,
-                        color: Color(0xFFFFFAFF),
-                      ),
-                    ),
                     const SizedBox(height: 20),
                     MyTextField(
                       label: "Nama",
@@ -195,12 +180,6 @@ class _RegistrasiPembeliBodyState extends State<RegistrasiPembeliBody> {
                       controller: _passwordController,
                       inputType: TextInputType.text,
                     ),
-                    MyTextField(
-                      label: "Nomor Telepon",
-                      isReadOnly: false,
-                      controller: _noTelpController,
-                      inputType: TextInputType.number,
-                    ),
                     const SizedBox(height: 50),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -210,14 +189,31 @@ class _RegistrasiPembeliBodyState extends State<RegistrasiPembeliBody> {
                           color: const Color(0xFFFFC639),
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {
+                              try {
+                                registrasi(
+                                  _namaController.text,
+                                  _usernameController.text,
+                                  _emailController.text,
+                                  _passwordController.text,
+                                );
+                              } catch (e) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(e.toString()),
+                                  ),
+                                );
+
+                                return;
+                              }
+
                               _showLoginConfirmationDialog(context);
                             }
                           },
                         ),
-                        const SizedBox(width: 20), // Add some space between the buttons
+                        const SizedBox(width: 20),
                         MyButtonForm(
                           label: "CLEAR",
-                          color: Colors.red,
+                          color: MyColors.tertiary,
                           onPressed: _clearForm,
                         ),
                       ],
@@ -230,6 +226,32 @@ class _RegistrasiPembeliBodyState extends State<RegistrasiPembeliBody> {
         ],
       ),
     );
+  }
+
+  Future<void> registrasi(
+      String nama, String username, String email, String password) async {
+    final response = await http.post(
+      Uri.parse('$apiEndPoint/register-user'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'nama': nama,
+        'username': username,
+        'email': email,
+        'password': password,
+      }),
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      final data = jsonDecode(response.body);
+
+      if (data['success'] == false) {
+        throw Exception(data['message']);
+      }
+    } else {
+      throw Exception('Gagal registrasi');
+    }
   }
 }
 
@@ -251,7 +273,7 @@ class MyButtonForm extends StatelessWidget {
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
         backgroundColor: color,
-        foregroundColor: const Color(0xFF131A2A),
+        foregroundColor: MyColors.dark,
         elevation: 5,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.zero,
@@ -290,24 +312,29 @@ class MyTextField extends StatelessWidget {
         readOnly: isReadOnly,
         controller: controller,
         obscureText: (label == "Password" ? true : false),
-        cursorColor: const Color(0xFF131A2A),
+        cursorColor: MyColors.dark,
         style: const TextStyle(
           fontSize: 32,
           fontFamily: 'LeagueGothic',
-          color: Color(0xFF131A2A),
+          color: MyColors.dark,
         ),
         decoration: InputDecoration(
           isDense: true,
-          contentPadding: const EdgeInsets.symmetric(vertical: 6, horizontal: 6),
+          contentPadding:
+              const EdgeInsets.symmetric(vertical: 6, horizontal: 6),
           filled: true,
-          fillColor: const Color(0xFFECE8E1),
+          fillColor: MyColors.primary,
           hintText: label,
           hintStyle: const TextStyle(
-            color: Color(0xFF393E46),
+            color: MyColors.secondary,
             fontFamily: 'LeagueGothic',
             fontSize: 32,
           ),
           border: InputBorder.none,
+          errorStyle: const TextStyle(
+            fontFamily: 'Poppins',
+            color: MyColors.tertiary,
+          ),
         ),
         validator: (value) {
           if (value == null || value.isEmpty) {
