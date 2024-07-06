@@ -1,8 +1,13 @@
+import 'dart:convert';
 import 'dart:io';
+
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:jbag/src/constants/api_constants.dart';
+import 'package:jbag/src/constants/colors.dart';
 import 'package:jbag/src/features/auth/login_screen.dart';
 
 class RegistrasiPenjual extends StatelessWidget {
@@ -12,14 +17,14 @@ class RegistrasiPenjual extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      backgroundColor: const Color(0xFF131A2A),
+      backgroundColor: MyColors.dark,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF131A2A),
+        backgroundColor: MyColors.dark,
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
           icon: const FaIcon(
             FontAwesomeIcons.arrowLeft,
-            color: Color(0xFFFFFAFF),
+            color: MyColors.white,
           ),
         ),
       ),
@@ -43,17 +48,44 @@ class _RegistrasiPenjualBodyState extends State<RegistrasiPenjualBody> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _noTelpController = TextEditingController();
-  final TextEditingController _namaProfilEwalletController = TextEditingController();
+  final TextEditingController _alamatController = TextEditingController();
+  final TextEditingController _namaProfilEwalletController =
+      TextEditingController();
   final TextEditingController _noEwalletController = TextEditingController();
   final TextEditingController _fotoktpController = TextEditingController();
 
-  String? _selectedEwallet;
+  int? _selectedEwalletId;
+  List<EwalletModel> _listEwallet = [];
+  late Future<void> _futureEwallets;
 
-  final List<Map<String, String>> _listEwallet = [
-    {"label": "Dana", "icon": "assets/logo/logo-dana.png"},
-    {"label": "GOPAY", "icon": "assets/logo/logo-gopay.png"},
-    {"label": "OVO", "icon": "assets/logo/logo-ovo.png"},
-  ];
+  File? _image;
+
+  @override
+  void initState() {
+    super.initState();
+    _futureEwallets = getEwallets();
+  }
+
+  Future<void> getEwallets() async {
+    final response = await http.get(Uri.parse('$apiEndPoint/ewallets'));
+    final responseBody = json.decode(response.body);
+    if (response.statusCode == 200) {
+      if (responseBody['success'] == false) {
+        throw Exception(responseBody['message']);
+      }
+      final data = responseBody['data'];
+
+      List<EwalletModel> ewallets = EwalletModel.fromApiResponseList(data);
+      ewallets.insert(
+          0, EwalletModel(id: 0, nama: "Pilih Ewallet", icon: null));
+
+      setState(() {
+        _listEwallet = ewallets;
+      });
+    } else {
+      throw Exception('Failed to load ewallets');
+    }
+  }
 
   Future getImage(ImageSource source) async {
     try {
@@ -64,6 +96,7 @@ class _RegistrasiPenjualBodyState extends State<RegistrasiPenjualBody> {
       String fileName = imageTemp.path.split('/').last;
 
       setState(() {
+        _image = imageTemp;
         _fotoktpController.text = fileName;
       });
     } on PlatformException catch (e) {
@@ -81,96 +114,8 @@ class _RegistrasiPenjualBodyState extends State<RegistrasiPenjualBody> {
       _namaProfilEwalletController.clear();
       _noEwalletController.clear();
       _fotoktpController.clear();
-      _selectedEwallet = null;
+      _selectedEwalletId = 0;
     });
-  }
-
-  void _showLoginConfirmationDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return Dialog(
-          backgroundColor: Colors.transparent,
-          child: Container(
-            padding: EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Color(0xFFECE8E1),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  "PEMBERITAHUAN",
-                  style: TextStyle(
-                    fontFamily: 'BebasNeue',
-                    fontSize: 24,
-                    color: Color(0xFF131A2A),
-                  ),
-                ),
-                SizedBox(height: 16),
-                Text(
-                  "REGISTRASI BERHASIL!",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontFamily: 'BebasNeue',
-                    fontSize: 18,
-                    color: Color(0xFF131A2A),
-                  ),
-                ),
-                SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFFFFC639),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.zero,
-                        ),
-                      ),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const LoginScreen()),
-                        );
-                      },
-                      child: Text(
-                        "LOGIN!",
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontFamily: 'BebasNeue',
-                          fontSize: 20,
-                        ),
-                      ),
-                    ),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFFF9564F),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.zero,
-                        ),
-                      ),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: Text(
-                        "NAH!",
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontFamily: 'BebasNeue',
-                          fontSize: 20,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
   }
 
   @override
@@ -182,6 +127,7 @@ class _RegistrasiPenjualBodyState extends State<RegistrasiPenjualBody> {
     _noTelpController.dispose();
     _namaProfilEwalletController.dispose();
     _noEwalletController.dispose();
+    _selectedEwalletId = null;
     super.dispose();
   }
 
@@ -200,7 +146,7 @@ class _RegistrasiPenjualBodyState extends State<RegistrasiPenjualBody> {
                 style: TextStyle(
                   fontFamily: 'BebasNeue',
                   fontSize: 48,
-                  color: Color(0xFFFFFAFF),
+                  color: MyColors.white,
                 ),
               ),
               const SizedBox(height: 20),
@@ -235,26 +181,57 @@ class _RegistrasiPenjualBodyState extends State<RegistrasiPenjualBody> {
                 inputType: TextInputType.number,
               ),
               MyTextField(
+                label: "Deskripsi",
+                isReadOnly: false,
+                controller: _alamatController,
+                inputType: TextInputType.multiline,
+                maxLines: 3,
+              ),
+              MyTextField(
                 label: "Foto KTP + Muka",
                 isReadOnly: true,
                 controller: _fotoktpController,
                 inputType: TextInputType.text,
                 suffixIcon: IconButton(
-                  padding: EdgeInsets.only(right: 8.0),
-                  icon: FaIcon(FontAwesomeIcons.fileImport, size: 32),
+                  padding: const EdgeInsets.only(right: 8.0),
+                  icon: const FaIcon(FontAwesomeIcons.fileImport, size: 32),
                   onPressed: () {
                     openModalOption(context);
                   },
                 ),
               ),
-              MyDropdown(
-                listEwallet: _listEwallet,
-                onSelected: (value) {
-                  setState(() {
-                    _selectedEwallet = value;
-                  });
+              FutureBuilder(
+                future: _futureEwallets,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                        child:
+                            CircularProgressIndicator(color: MyColors.white));
+                  }
+
+                  if (_listEwallet.isEmpty) {
+                    return const Center(
+                      child: Text(
+                        'Ewallet kosong',
+                        style: TextStyle(
+                          fontFamily: 'LeagueGothic',
+                          fontSize: 18,
+                          color: MyColors.white,
+                        ),
+                      ),
+                    );
+                  }
+
+                  return MyDropdown(
+                    listEwallet: _listEwallet,
+                    onSelected: (value) {
+                      setState(() {
+                        _selectedEwalletId = value;
+                      });
+                    },
+                    selectedEwallet: _selectedEwalletId,
+                  );
                 },
-                selectedEwallet: _selectedEwallet,
               ),
               MyTextField(
                 label: "Nama Profil pada e-Wallet",
@@ -274,17 +251,40 @@ class _RegistrasiPenjualBodyState extends State<RegistrasiPenjualBody> {
                 children: [
                   MyButtonForm(
                     label: "SUBMIT",
-                    color: const Color(0xFFFFC639),
+                    color: MyColors.accent,
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
+                        try {
+                          registrasiPenjual(
+                            _namaController.text,
+                            _usernameController.text,
+                            _emailController.text,
+                            _passwordController.text,
+                            _noTelpController.text,
+                            _alamatController.text,
+                            _image,
+                            _selectedEwalletId,
+                            _namaProfilEwalletController.text,
+                            _noEwalletController.text,
+                          );
+                        } catch (e) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(e.toString()),
+                            ),
+                          );
+
+                          return;
+                        }
+
                         _showLoginConfirmationDialog(context);
                       }
                     },
                   ),
-                  const SizedBox(width: 20), // Add some space between the buttons
+                  const SizedBox(width: 20),
                   MyButtonForm(
                     label: "CLEAR",
-                    color: Colors.red,
+                    color: MyColors.tertiary,
                     onPressed: _clearForm,
                   ),
                 ],
@@ -304,7 +304,7 @@ class _RegistrasiPenjualBodyState extends State<RegistrasiPenjualBody> {
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
-              tileColor: const Color(0xFFECE8E1),
+              tileColor: MyColors.primary,
               leading: const FaIcon(FontAwesomeIcons.camera),
               title: const Text('Camera'),
               onTap: () {
@@ -313,7 +313,7 @@ class _RegistrasiPenjualBodyState extends State<RegistrasiPenjualBody> {
               },
             ),
             ListTile(
-              tileColor: const Color(0xFFECE8E1),
+              tileColor: MyColors.primary,
               leading: const FaIcon(FontAwesomeIcons.solidImage),
               title: const Text('Gallery'),
               onTap: () {
@@ -325,6 +325,136 @@ class _RegistrasiPenjualBodyState extends State<RegistrasiPenjualBody> {
         );
       },
     );
+  }
+
+  void _showLoginConfirmationDialog(BuildContext context) {
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: MyColors.primary,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  "PEMBERITAHUAN",
+                  style: TextStyle(
+                    fontFamily: 'BebasNeue',
+                    fontSize: 24,
+                    color: MyColors.dark,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                const Text(
+                  "REGISTRASI BERHASIL!",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: 'BebasNeue',
+                    fontSize: 18,
+                    color: MyColors.dark,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: MyColors.accent,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.zero,
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const LoginScreen()),
+                        );
+                      },
+                      child: const Text(
+                        "LOGIN!",
+                        style: TextStyle(
+                          color: MyColors.dark,
+                          fontFamily: 'BebasNeue',
+                          fontSize: 20,
+                        ),
+                      ),
+                    ),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: MyColors.tertiary,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.zero,
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text(
+                        "NAH!",
+                        style: TextStyle(
+                          color: MyColors.dark,
+                          fontFamily: 'BebasNeue',
+                          fontSize: 20,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> registrasiPenjual(
+    String nama,
+    String username,
+    String email,
+    String password,
+    String notelp,
+    String alamat,
+    File? image,
+    int? ewalletId,
+    String namaProfilEwallet,
+    String noEwallet,
+  ) async {
+    final url = Uri.parse('$apiEndPoint/register-penjual');
+
+    final request = http.MultipartRequest('POST', url);
+    request.fields['nama'] = nama;
+    request.fields['username'] = username;
+    request.fields['email'] = email;
+    request.fields['password'] = password;
+    request.fields['no_telp'] = notelp;
+    request.fields['alamat'] = alamat;
+    request.files.add(await http.MultipartFile.fromPath('foto', image!.path));
+    request.fields['ewallet_id'] = ewalletId!.toString();
+    request.fields['nama_profil_ewallet'] = namaProfilEwallet;
+    request.fields['nomor_ewallet'] = noEwallet;
+
+    final response = await request.send();
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      final responseData = await http.Response.fromStream(response);
+      final responseDataDecoded = json.decode(responseData.body);
+
+      if (responseDataDecoded['success'] == false) {
+        throw Exception(responseDataDecoded['message']);
+      }
+    } else {
+      throw Exception('Gagal Registrasi Penjual');
+    }
   }
 }
 
@@ -346,7 +476,7 @@ class MyButtonForm extends StatelessWidget {
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
         backgroundColor: color,
-        foregroundColor: const Color(0xFF131A2A),
+        foregroundColor: MyColors.dark,
         elevation: 5,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.zero,
@@ -368,14 +498,16 @@ class MyTextField extends StatelessWidget {
   final TextEditingController controller;
   final TextInputType inputType;
   final IconButton? suffixIcon;
+  final int? maxLines;
 
   const MyTextField({
     super.key,
     required this.label,
     required this.isReadOnly,
     required this.controller,
-    required this.inputType, 
+    required this.inputType,
     this.suffixIcon,
+    this.maxLines,
   });
 
   @override
@@ -384,28 +516,34 @@ class MyTextField extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: TextFormField(
         keyboardType: inputType,
-        readOnly: isReadOnly, 
+        readOnly: isReadOnly,
         controller: controller,
         obscureText: (label == "Password" ? true : false),
-        cursorColor: const Color(0xFF131A2A),
+        cursorColor: MyColors.dark,
+        maxLines: maxLines ?? 1,
         style: const TextStyle(
           fontSize: 32,
           fontFamily: 'LeagueGothic',
-          color: Color(0xFF131A2A),
+          color: MyColors.dark,
         ),
         decoration: InputDecoration(
           isDense: true,
-          contentPadding: const EdgeInsets.symmetric(vertical: 6, horizontal: 6),
+          contentPadding:
+              const EdgeInsets.symmetric(vertical: 6, horizontal: 6),
           filled: true,
-          fillColor: const Color(0xFFECE8E1),
+          fillColor: MyColors.primary,
           hintText: label,
           hintStyle: const TextStyle(
-            color: Color(0xFF393E46),
+            color: MyColors.secondary,
             fontFamily: 'LeagueGothic',
             fontSize: 32,
           ),
           suffixIcon: suffixIcon,
           border: InputBorder.none,
+          errorStyle: const TextStyle(
+            fontFamily: 'Poppins',
+            color: MyColors.tertiary,
+          ),
         ),
         validator: (value) {
           if (value == null || value.isEmpty) {
@@ -419,9 +557,9 @@ class MyTextField extends StatelessWidget {
 }
 
 class MyDropdown extends StatelessWidget {
-  final List<Map<String, String>> listEwallet;
-  final ValueChanged<String?> onSelected;
-  final String? selectedEwallet;
+  final List<EwalletModel> listEwallet;
+  final ValueChanged<int?> onSelected;
+  final int? selectedEwallet;
 
   const MyDropdown({
     super.key,
@@ -432,63 +570,102 @@ class MyDropdown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: DropdownMenu(
-        label: selectedEwallet != null 
-            ? Image.asset(
-                listEwallet.firstWhere((element) => element['label'] == selectedEwallet)['icon']!,
-                height: 40,
-              )
-            : const Text("Jenis e-Wallet", style: TextStyle(
-                  fontSize: 32,
-                  fontFamily: 'LeagueGothic',
-                  color: Color(0xFF131A2A),
-                )),
-        expandedInsets: EdgeInsets.zero,
-        menuStyle: MenuStyle(
-          padding: WidgetStateProperty.all(EdgeInsets.zero),
-          shape: WidgetStateProperty.all(
-            const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-          ),
-        ),
-        inputDecorationTheme: const InputDecorationTheme(
-          constraints: BoxConstraints(maxHeight: 50),
-          isDense: true,
-          contentPadding: EdgeInsets.symmetric(horizontal: 6),
-          filled: true,
-          fillColor: Color(0xFFECE8E1),
-          border: InputBorder.none,
-        ),
-        textStyle: const TextStyle(
-          fontSize: 32,
-          fontFamily: 'LeagueGothic',
-          color: Color(0xFF131A2A),
-        ),
-        enableSearch: false,
-        dropdownMenuEntries: listEwallet
-            .map(
-              (e) => DropdownMenuEntry(
-                label: '',
-                value: e['label']!,
-                leadingIcon: Image.asset(
-                  e['icon']!,
-                  height: 40,
-                  alignment: Alignment.centerLeft,
-                ),
-                style: MenuItemButton.styleFrom(
-                  backgroundColor: const Color(0xFFECE8E1),
-                  textStyle: const TextStyle(
-                    fontSize: 32,
-                    fontFamily: 'LeagueGothic',
-                    color: Color(0xFF131A2A),
-                  ),
+    print("selectedEwallet");
+    print(selectedEwallet);
+
+    return (listEwallet.isNotEmpty
+        ? Container(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: DropdownMenu<int>(
+              label: selectedEwallet != 0 && selectedEwallet != null
+                  ? Image.network(
+                      "$baseUrl/${listEwallet.firstWhere((element) => element.id == selectedEwallet).icon!}",
+                      height: 40,
+                    )
+                  : const Text(
+                      "Jenis e-Wallet",
+                      style: TextStyle(
+                        fontSize: 32,
+                        fontFamily: 'LeagueGothic',
+                        color: MyColors.dark,
+                      ),
+                    ),
+              expandedInsets: EdgeInsets.zero,
+              menuStyle: MenuStyle(
+                padding: WidgetStateProperty.all(EdgeInsets.zero),
+                shape: WidgetStateProperty.all(
+                  const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
                 ),
               ),
-            )
-            .toList(),
-        onSelected: onSelected,
-      ),
-    );
+              inputDecorationTheme: const InputDecorationTheme(
+                constraints: BoxConstraints(maxHeight: 50),
+                isDense: true,
+                contentPadding: EdgeInsets.symmetric(horizontal: 6),
+                filled: true,
+                fillColor: MyColors.primary,
+                border: InputBorder.none,
+              ),
+              textStyle: const TextStyle(
+                fontSize: 32,
+                fontFamily: 'LeagueGothic',
+                color: MyColors.dark,
+              ),
+              enableSearch: false,
+              dropdownMenuEntries: listEwallet
+                  .map(
+                    (e) => DropdownMenuEntry<int>(
+                      label: '',
+                      value: e.id!,
+                      leadingIcon: e.icon != null
+                          ? Image.network(
+                              "$baseUrl/${e.icon!}",
+                              height: 40,
+                              alignment: Alignment.centerLeft,
+                            )
+                          : Text(
+                            e.nama!,
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontFamily: 'LeagueGothic',
+                              color: MyColors.dark,
+                            ),
+                          ),
+                      style: MenuItemButton.styleFrom(  
+                        backgroundColor: MyColors.primary,
+                        textStyle: const TextStyle(
+                          fontSize: 32,
+                          fontFamily: 'LeagueGothic',
+                          color: MyColors.dark,
+                        ),
+                      ),
+                    ),
+                  )
+                  .toList(),
+              onSelected: onSelected,
+            ),
+          )
+        : Container());
+  }
+}
+
+class EwalletModel {
+  int? id;
+  String? nama;
+  String? icon;
+
+  EwalletModel({
+    required this.id,
+    required this.nama,
+    required this.icon,
+  });
+
+  EwalletModel.fromJson(Map<String, dynamic> json) {
+    id = json["id"];
+    nama = json["nama"];
+    icon = json["icon"];
+  }
+
+  static List<EwalletModel> fromApiResponseList(List<dynamic> jsonList) {
+    return jsonList.map((json) => EwalletModel.fromJson(json)).toList();
   }
 }
