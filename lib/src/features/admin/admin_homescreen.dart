@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:jbag/src/features/admin/ewallet/admin_daftar_ewallet.dart';
 import 'package:jbag/src/features/admin/game/admin_daftar_game.dart';
-import 'package:jbag/src/features/admin/transaksi/admin_cek_transaksi.dart';
-import 'package:jbag/src/features/admin/penjual/admin_daftar_akun_penjual.dart';
+
 import 'package:jbag/src/features/reuseable_component/reuseable_component.dart';
 
 class AdminMenuScreen extends StatelessWidget {
@@ -31,31 +30,6 @@ class AdminMenuScreen extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      MyButton(
-                        text: "akun penjual",
-                        color: const Color(0xFFFFC639),
-                        onPressed: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) {
-                              return AdminDaftarAkunPenjual();
-                            },
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 20),
-                      MyButton(
-                        text: "cek transaksi",
-                        color: const Color(0xFFFFC639),
-                        onPressed: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) {
-                              return CekTransaksiScreen();
-                            },
-                          ),
-                        ),
-                      ),
                       MyButton(
                         text: "game",
                         color: const Color(0xFFFFC639),

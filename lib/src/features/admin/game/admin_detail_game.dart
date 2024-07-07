@@ -1,20 +1,42 @@
 import 'package:flutter/material.dart';
-import 'package:jbag/src/features/reuseable_component/reuseable_component.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:jbag/src/constants/colors.dart';
+import 'package:jbag/src/constants/api_constants.dart';
 
-class AdminDetailGame extends StatelessWidget {
-  const AdminDetailGame({super.key});
+class AdminDetailGame extends StatefulWidget {
+  final int id;
+  final String nama;
+  final String icon;
+  const AdminDetailGame(
+      {super.key, required this.id, required this.nama, required this.icon});
 
+  @override
+  State<AdminDetailGame> createState() => _AdminDetailGameState();
+}
+
+class _AdminDetailGameState extends State<AdminDetailGame> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-    backgroundColor: Color(0xFF131A2A),
+      backgroundColor: MyColors.dark,
       appBar: AppBar(
-        backgroundColor: Color(0xFF131A2A),
+        backgroundColor: MyColors.dark,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.blue),
+          icon: const FaIcon(
+            FontAwesomeIcons.chevronLeft,
+            color: MyColors.white,
+          ),
           onPressed: () {
             Navigator.pop(context);
           },
+        ),
+        title: const Text(
+          'Detail Game',
+          style: TextStyle(
+            fontFamily: 'BebasNeue',
+            color: MyColors.white,
+            fontSize: 42,
+          ),
         ),
       ),
       body: SafeArea(
@@ -22,59 +44,38 @@ class AdminDetailGame extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 20.0),
           child: Column(
             children: [
-              Center(
-                child: Text(
-                  'DAFTAR GAME',
-                  style: TextStyle(
-                    fontFamily: 'BebasNeue',
-                    color: Color(0xFFFFFAFF),
-                    fontSize: 48,
-                  ),
-                ),
-              ),
               Expanded(
                 child: ListView(
                   children: [
-                    _buildTextField('Nama'),
-                    _buildTextField('Icon'),
-                    SizedBox(height: 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        MyButton(
-                          text: "Batal",
-                          color: const Color(0xFFF9564F),
-                          onPressed: () {},
+                    const SizedBox(height: 40),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: TextField(
+                        readOnly: true,
+                        decoration: InputDecoration(
+                          labelText: widget.nama,
+                          labelStyle: TextStyle(color: MyColors.dark),
+                          fillColor: MyColors.white,
+                          filled: true,
                         ),
-                        MyButton(
-                          text: "Tambah",
-                          color: const Color(0xFFFFC639),
-                          onPressed: () {},
-                        ),
-                      ],
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Image.network(
+                      '$baseUrl/${widget.icon}',
+                      fit: BoxFit.cover,
+                      alignment: Alignment.center,
+                      filterQuality: FilterQuality.medium,
+                      errorBuilder: (BuildContext context, Object exception,
+                          StackTrace? stackTrace) {
+                        return Image.asset('assets/logo/logo-splash.png');
+                      },
                     ),
                   ],
                 ),
               ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTextField(String label, {bool isPhotoField = false}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: TextField(
-        readOnly: true,
-        decoration: InputDecoration(
-          labelText: label,
-          labelStyle: TextStyle(color: Colors.black),
-          fillColor: Color(0xFFFFFAFF),
-          filled: true,
-          suffixIcon:
-              isPhotoField ? Icon(Icons.camera_alt, color: Colors.black) : null,
         ),
       ),
     );
