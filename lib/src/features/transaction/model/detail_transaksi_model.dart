@@ -10,6 +10,7 @@ class DetailTransaksiModel {
   PaymentMethod? paymentMethod;
   String? namaProfilEwallet;
   String? nomorEwallet;
+  String? buktiPembayaran;
 
   DetailTransaksiModel({
     this.idTransaksi,
@@ -23,6 +24,7 @@ class DetailTransaksiModel {
     this.paymentMethod,
     this.namaProfilEwallet,
     this.nomorEwallet,
+    this.buktiPembayaran,
   });
 
   DetailTransaksiModel.fromJson(Map<String, dynamic> json) {
@@ -44,6 +46,7 @@ class DetailTransaksiModel {
         : null;
     namaProfilEwallet = json['nama_profil_ewallet'];
     nomorEwallet = json['nomor_ewallet'];
+    buktiPembayaran = json['bukti_pembayaran'];
   }
 }
 

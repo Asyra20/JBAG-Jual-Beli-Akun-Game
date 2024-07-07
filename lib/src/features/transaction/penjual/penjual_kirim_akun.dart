@@ -7,6 +7,7 @@ import 'package:jbag/src/constants/api_constants.dart';
 import 'package:jbag/src/constants/colors.dart';
 import 'package:jbag/src/features/transaction/model/detail_transaksi_model.dart';
 import 'package:jbag/src/features/transaction/penjual/penjual_transaksi_akun.dart';
+import 'package:jbag/src/features/transaction/penjual/verifikasi_pembayaran.dart';
 import 'package:jbag/src/utils/format/currency_format.dart';
 import 'package:jbag/src/utils/json_printer.dart';
 
@@ -229,7 +230,18 @@ class _PenjualKirimAkunState extends State<PenjualKirimAkun> {
                                     ),
                                     child: InkWell(
                                       highlightColor: MyColors.primary,
-                                      onTap: () {},
+                                      onTap: () {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                VerifikasiPembayaran(
+                                                  id: detailTransaksi!.idTransaksi!,
+                                              buktiPembayaran: detailTransaksi!
+                                                  .buktiPembayaran!,
+                                            ),
+                                          ),
+                                        );
+                                      },
                                       child: Container(
                                         alignment: Alignment.centerRight,
                                         padding: const EdgeInsets.all(8),
