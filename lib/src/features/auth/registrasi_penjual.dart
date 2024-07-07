@@ -181,11 +181,10 @@ class _RegistrasiPenjualBodyState extends State<RegistrasiPenjualBody> {
                 inputType: TextInputType.number,
               ),
               MyTextField(
-                label: "Deskripsi",
+                label: "Alamat",
                 isReadOnly: false,
                 controller: _alamatController,
                 inputType: TextInputType.multiline,
-                maxLines: 3,
               ),
               MyTextField(
                 label: "Foto KTP + Muka",
